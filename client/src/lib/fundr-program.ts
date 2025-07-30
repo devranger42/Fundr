@@ -113,78 +113,63 @@ export class FundrService {
   }
 
   // Generate fund PDA
-  static findFundAddress(manager: PublicKey): [PublicKey, number] {
+  static findFundAddress(manager: PublicKey | string): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
-    console.log('Manager type:', typeof manager, manager);
-    console.log('Manager methods:', Object.getOwnPropertyNames(manager));
     
-    // Handle different possible manager types
-    let managerBytes;
-    if (manager && typeof manager.toBuffer === 'function') {
-      managerBytes = manager.toBuffer();
-    } else if (manager && typeof manager.toBytes === 'function') {
-      managerBytes = manager.toBytes();
-    } else if (manager && manager.toBase58) {
-      managerBytes = buffer.from(manager.toBase58(), 'base58');
+    // Convert string to PublicKey if needed
+    let managerPubkey: PublicKey;
+    if (typeof manager === 'string') {
+      managerPubkey = new PublicKey(manager);
     } else {
-      throw new Error(`Invalid manager type: ${typeof manager}`);
+      managerPubkey = manager;
     }
     
     return PublicKey.findProgramAddressSync(
-      [buffer.from('fund'), managerBytes],
+      [buffer.from('fund'), managerPubkey.toBytes()],
       FUNDR_PROGRAM_ID
     );
   }
 
   // Generate fund vault PDA
-  static findFundVaultAddress(fund: PublicKey): [PublicKey, number] {
+  static findFundVaultAddress(fund: PublicKey | string): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
     
-    let fundBytes;
-    if (fund && typeof fund.toBuffer === 'function') {
-      fundBytes = fund.toBuffer();
-    } else if (fund && typeof fund.toBytes === 'function') {
-      fundBytes = fund.toBytes();
-    } else if (fund && fund.toBase58) {
-      fundBytes = buffer.from(fund.toBase58(), 'base58');
+    // Convert string to PublicKey if needed
+    let fundPubkey: PublicKey;
+    if (typeof fund === 'string') {
+      fundPubkey = new PublicKey(fund);
     } else {
-      throw new Error(`Invalid fund type: ${typeof fund}`);
+      fundPubkey = fund;
     }
     
     return PublicKey.findProgramAddressSync(
-      [buffer.from('vault'), fundBytes],
+      [buffer.from('vault'), fundPubkey.toBytes()],
       FUNDR_PROGRAM_ID
     );
   }
 
   // Generate user stake PDA
-  static findUserStakeAddress(fund: PublicKey, user: PublicKey): [PublicKey, number] {
+  static findUserStakeAddress(fund: PublicKey | string, user: PublicKey | string): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
     
-    let fundBytes, userBytes;
+    // Convert strings to PublicKey if needed
+    let fundPubkey: PublicKey;
+    let userPubkey: PublicKey;
     
-    if (fund && typeof fund.toBuffer === 'function') {
-      fundBytes = fund.toBuffer();
-    } else if (fund && typeof fund.toBytes === 'function') {
-      fundBytes = fund.toBytes();
-    } else if (fund && fund.toBase58) {
-      fundBytes = buffer.from(fund.toBase58(), 'base58');
+    if (typeof fund === 'string') {
+      fundPubkey = new PublicKey(fund);
     } else {
-      throw new Error(`Invalid fund type: ${typeof fund}`);
+      fundPubkey = fund;
     }
     
-    if (user && typeof user.toBuffer === 'function') {
-      userBytes = user.toBuffer();
-    } else if (user && typeof user.toBytes === 'function') {
-      userBytes = user.toBytes();
-    } else if (user && user.toBase58) {
-      userBytes = buffer.from(user.toBase58(), 'base58');
+    if (typeof user === 'string') {
+      userPubkey = new PublicKey(user);
     } else {
-      throw new Error(`Invalid user type: ${typeof user}`);
+      userPubkey = user;
     }
     
     return PublicKey.findProgramAddressSync(
-      [buffer.from('stake'), fundBytes, userBytes],
+      [buffer.from('stake'), fundPubkey.toBytes(), userPubkey.toBytes()],
       FUNDR_PROGRAM_ID
     );
   }
@@ -201,6 +186,7 @@ export class FundrService {
     }
 
     const manager = this.provider.wallet.publicKey;
+    console.log('Manager wallet publicKey:', manager, typeof manager);
     const [fundPDA, fundBump] = FundrService.findFundAddress(manager);
     const [vaultPDA, vaultBump] = FundrService.findFundVaultAddress(fundPDA);
     
