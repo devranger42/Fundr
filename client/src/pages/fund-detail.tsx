@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import FeeCalculator from "@/components/fee-calculator";
 import { useState } from "react";
 import { ArrowLeft, TrendingUp, Users, DollarSign, Calendar, Award } from "lucide-react";
 import { Link } from "wouter";
@@ -247,7 +248,7 @@ export default function FundDetail() {
                     Deposit SOL
                   </Button>
                   <p className="text-xs text-gray-500">
-                    1% deposit fee + {fundData.fee} profit fee (only on gains)
+                    1% deposit fee (burns $FUND) + {fundData.fee} profit fee (only on gains)
                   </p>
                 </CardContent>
               </Card>
@@ -280,7 +281,7 @@ export default function FundDetail() {
                     Withdraw SOL
                   </Button>
                   <p className="text-xs text-gray-500">
-                    Instant withdrawal, 1% platform fee
+                    1% withdrawal fee (to treasury) + {fundData.fee} of profits only
                   </p>
                 </CardContent>
               </Card>
@@ -304,11 +305,11 @@ export default function FundDetail() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Deposit Fee:</span>
-                    <span className="font-medium">1%</span>
+                    <span className="font-medium">1% (burns $FUND)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Withdrawal Fee:</span>
-                    <span className="font-medium">1%</span>
+                    <span className="font-medium">1% (to treasury)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Min Deposit:</span>
@@ -320,6 +321,9 @@ export default function FundDetail() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Fee Calculator */}
+              <FeeCalculator managerFee={parseFloat(fundData.fee.replace('%', ''))} />
             </div>
           </div>
         </div>

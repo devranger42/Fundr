@@ -115,8 +115,8 @@ The project structure supports both development and production environments with
 - Real-time fund performance calculations
 
 ### Platform Mechanics
-- 1% fee on deposits for $FUND token buy/burn
-- 1% fee on withdrawals for $FUND token buy/burn
-- Manager profit fees only on investor gains
-- Noncustodial withdrawal system
-- On-chain fund state verification
+- 1% fee on deposits goes to $FUND token buy/burn (deflationary)
+- 1% fee on withdrawals goes to platform treasury (operations)
+- Manager profit fees (0-20%) only taken from investor gains
+- Noncustodial withdrawal system with instant liquidity
+- On-chain fund state verification and transparency

@@ -186,18 +186,18 @@ export default function CreateFund() {
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Deposit Fee:</span>
-                    <span className="font-semibold">1%</span>
+                    <span className="font-semibold">1% (burns $FUND)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Withdrawal Fee:</span>
-                    <span className="font-semibold">1%</span>
+                    <span className="font-semibold">1% (to treasury)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Your Profit Fee:</span>
                     <span className="font-semibold text-bonk">{profitFee[0]}%</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Platform fees go toward $FUND token buy/burn mechanism
+                    Deposit fees burn $FUND tokens, withdrawal fees fund platform operations
                   </p>
                 </CardContent>
               </Card>
