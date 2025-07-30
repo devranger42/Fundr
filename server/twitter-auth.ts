@@ -1,5 +1,5 @@
 import passport from "passport";
-import { Strategy as TwitterStrategy } from "passport-twitter";
+import { Strategy as OAuth2Strategy } from "passport-oauth2";
 import { storage } from "./storage";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -53,24 +53,43 @@ export function setupTwitterAuth(app: Express) {
     }
   });
 
-  // Configure Twitter strategy
-  passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY || 'dummy-key',
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET || 'dummy-secret',
-    callbackURL: "/api/auth/twitter/callback"
+  // Configure Twitter OAuth 2.0 strategy
+  passport.use('twitter-oauth2', new OAuth2Strategy({
+    authorizationURL: 'https://twitter.com/i/oauth2/authorize',
+    tokenURL: 'https://api.twitter.com/2/oauth2/token',
+    clientID: process.env.TWITTER_CLIENT_ID || 'dummy-id',
+    clientSecret: process.env.TWITTER_CLIENT_SECRET || 'dummy-secret',
+    callbackURL: "/api/auth/twitter/callback",
+    scope: 'tweet.read users.read offline.access',
+    state: true
   },
-  async (token, tokenSecret, profile, done) => {
+  async (accessToken: string, refreshToken: string, profile: any, done: any) => {
     try {
-      // Upsert user with Twitter data
-      const user = await storage.upsertUser({
-        twitterId: profile.id,
-        twitterUsername: profile.username,
-        twitterDisplayName: profile.displayName,
-        twitterProfileImage: profile.photos?.[0]?.value,
-        displayName: profile.displayName
+      // Fetch user profile from Twitter API v2
+      const response = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,public_metrics', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'User-Agent': 'Fundr/1.0'
+        }
       });
       
-      return done(null, user);
+      if (!response.ok) {
+        throw new Error('Failed to fetch Twitter profile');
+      }
+      
+      const data = await response.json();
+      const user = data.data;
+      
+      // Upsert user with Twitter data
+      const savedUser = await storage.upsertUser({
+        twitterId: user.id,
+        twitterUsername: user.username,
+        twitterDisplayName: user.name,
+        twitterProfileImage: user.profile_image_url,
+        displayName: user.name
+      });
+      
+      return done(null, savedUser);
     } catch (error) {
       return done(error, null);
     }
@@ -78,11 +97,11 @@ export function setupTwitterAuth(app: Express) {
 
   // Twitter auth routes
   app.get('/api/auth/twitter', 
-    passport.authenticate('twitter')
+    passport.authenticate('twitter-oauth2')
   );
 
   app.get('/api/auth/twitter/callback',
-    passport.authenticate('twitter', { failureRedirect: '/' }),
+    passport.authenticate('twitter-oauth2', { failureRedirect: '/' }),
     (req, res) => {
       // Successful authentication
       res.redirect('/');
