@@ -47,7 +47,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check for user ID in session or user object
       const userId = (req as any).user?.id || (req.session as any).userId;
+      const twitterId = (req.session as any).twitterId;
+      const authenticated = (req.session as any).authenticated;
       console.log('Extracted user ID:', userId);
+      console.log('Twitter ID in session:', twitterId);
+      console.log('Authenticated flag:', authenticated);
       
       if (userId) {
         console.log('Looking up user with ID:', userId);

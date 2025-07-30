@@ -360,19 +360,38 @@ export function setupTwitterAuth(app: Express) {
       // Find the saved user and set up session properly
       const savedUser = await storage.getUserByTwitterId(twitterData.id);
       if (savedUser) {
-        // Set up user session for authenticated Twitter user
-        (req as any).user = savedUser;
+        console.log('Setting up session for user:', savedUser.id);
         
-        // Save user ID in session for persistence using the database user ID
-        (req.session as any).userId = savedUser.id;
-        
-        // Force session save
-        req.session.save((err) => {
+        // Regenerate session to ensure clean state
+        req.session.regenerate((err) => {
           if (err) {
-            console.error('Session save error:', err);
-          } else {
-            console.log('Session saved successfully');
+            console.error('Session regeneration error:', err);
+            // Continue with existing session
           }
+          
+          // Set up user session for authenticated Twitter user
+          (req as any).user = savedUser;
+          
+          // Save user ID in session for persistence using the database user ID
+          (req.session as any).userId = savedUser.id;
+          (req.session as any).twitterId = savedUser.twitterId;
+          (req.session as any).authenticated = true;
+          
+          console.log('Session data set:', {
+            userId: (req.session as any).userId,
+            twitterId: (req.session as any).twitterId,
+            authenticated: (req.session as any).authenticated,
+            sessionId: req.sessionID
+          });
+          
+          // Force session save
+          req.session.save((saveErr) => {
+            if (saveErr) {
+              console.error('Session save error:', saveErr);
+            } else {
+              console.log('✅ Session saved successfully with user data');
+            }
+          });
         });
         
         console.log('✅ User session established:', {
@@ -388,11 +407,17 @@ export function setupTwitterAuth(app: Express) {
       delete req.session.oauthState;
       delete req.session.codeVerifier;
       
-      // Add explicit session save before redirect
-      req.session.save(() => {
-        console.log('Final session saved before redirect');
-        res.redirect('/profile?twitter=success');
-      });
+      // Add explicit session save before redirect with delay
+      setTimeout(() => {
+        req.session.save((finalErr) => {
+          if (finalErr) {
+            console.error('Final session save error:', finalErr);
+          } else {
+            console.log('Final session saved before redirect - User ID:', (req.session as any).userId);
+          }
+          res.redirect('/profile?twitter=success');
+        });
+      }, 100); // Small delay to ensure session operations complete
       
     } catch (error: any) {
       console.error('OAuth callback error:', error);
