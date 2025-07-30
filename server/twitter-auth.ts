@@ -266,7 +266,7 @@ export function setupTwitterAuth(app: Express) {
       // For now, proceed with a generic OAuth flow (no wallet linking)
       // This allows the OAuth to complete even if session is lost
       req.session.isLinking = false;
-      req.session.walletToLink = null;
+      req.session.walletToLink = undefined;
       
       // Use the state parameter as code verifier for PKCE plain method
       // Since we're using 'plain' method, the verifier should match the challenge
@@ -333,7 +333,6 @@ export function setupTwitterAuth(app: Express) {
         const existingUser = await storage.getUserByWallet(req.session.walletToLink);
         if (existingUser) {
           const updatedUser = await storage.upsertUser({
-            id: existingUser.id,
             walletAddress: existingUser.walletAddress,
             twitterId: twitterData.id,
             twitterUsername: twitterData.username,
@@ -395,7 +394,7 @@ export function setupTwitterAuth(app: Express) {
       });
       
       // Save session explicitly with retry
-      req.session.save((err) => {
+      req.session.save((err: any) => {
         if (err) {
           console.error('Session save error:', err);
           return res.status(500).json({ error: 'Session save failed' });
@@ -473,7 +472,7 @@ export function setupTwitterAuth(app: Express) {
       console.error('Status check error:', error);
       res.status(500).json({ 
         error: 'Failed to check Twitter app status',
-        details: error.message 
+        details: (error as Error).message 
       });
     }
   });
