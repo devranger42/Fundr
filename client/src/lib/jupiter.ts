@@ -139,17 +139,30 @@ export class JupiterService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(swapRequest),
+      }).catch((fetchError) => {
+        console.warn('Jupiter swap API network error:', fetchError);
+        throw new Error('Network error connecting to Jupiter API');
       });
 
       if (!response.ok) {
-        throw new Error(`Jupiter swap API error: ${response.statusText}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.warn(`Jupiter swap API returned ${response.status}: ${errorText}`);
+        throw new Error(`Jupiter swap API error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json().catch((parseError) => {
+        console.warn('Error parsing Jupiter swap response:', parseError);
+        throw new Error('Invalid response from Jupiter API');
+      });
+      
       return data;
     } catch (error) {
-      console.error('Error getting swap transaction:', error);
-      return null;
+      console.warn('Error getting swap transaction:', error);
+      // Re-throw with a more user-friendly message
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to get swap transaction from Jupiter');
     }
   }
 

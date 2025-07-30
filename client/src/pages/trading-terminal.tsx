@@ -183,20 +183,29 @@ export default function TradingTerminal() {
       const swapTransaction = await jupiterService.getSwapTransaction(
         quote,
         publicKey.toString()
-      );
+      ).catch((error) => {
+        console.error("Swap transaction error:", error);
+        return null;
+      });
       
       if (swapTransaction) {
         // Here we would normally submit the transaction to the blockchain
         toast({
-          title: "Swap Initiated",
-          description: `Swapping ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol}`,
+          title: "Swap Simulation",
+          description: `Would swap ${fromAmount} ${fromToken.symbol} for ~${toAmount} ${toToken.symbol}`,
+        });
+      } else {
+        toast({
+          title: "Swap Unavailable",
+          description: "Jupiter swap service is currently unavailable",
+          variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Swap error:", error);
       toast({
         title: "Swap Failed",
-        description: "Failed to execute swap",
+        description: error instanceof Error ? error.message : "Failed to execute swap",
         variant: "destructive",
       });
     }
