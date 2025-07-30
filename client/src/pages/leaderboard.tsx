@@ -10,6 +10,7 @@ const leaderboardData = [
     rank: 1,
     manager: "@blknoiz06",
     title: "Ansem's Fund",
+    displayName: "Zion Thomas",
     roi: "+142.7%",
     aum: "$2.4M",
     investors: 234,
@@ -19,8 +20,9 @@ const leaderboardData = [
   },
   {
     rank: 2,
-    manager: "@thisisdjen", 
-    title: "Djen's Fund",
+    manager: "@CryptoCred", 
+    title: "Cred's Technical Fund",
+    displayName: "CryptoCred",
     roi: "+124.6%",
     aum: "$967K",
     investors: 156,
@@ -30,8 +32,9 @@ const leaderboardData = [
   },
   {
     rank: 3,
-    manager: "@slingshot",
-    title: "Slingshot's Fund", 
+    manager: "@CryptoTony_",
+    title: "Tony's Alpha Fund", 
+    displayName: "Crypto Tony",
     roi: "+98.4%",
     aum: "$1.8M",
     investors: 187,
@@ -41,8 +44,9 @@ const leaderboardData = [
   },
   {
     rank: 4,
-    manager: "@gotripod",
-    title: "Tripod's Fund",
+    manager: "@SmartContracter",
+    title: "Smart Contract Fund",
+    displayName: "Smart Contractor",
     roi: "+76.2%",
     aum: "$3.1M", 
     investors: 298,
@@ -52,8 +56,9 @@ const leaderboardData = [
   },
   {
     rank: 5,
-    manager: "@zonedegen",
-    title: "Zone's Fund",
+    manager: "@KoroushAK",
+    title: "Koroush's Zero Complex Fund",
+    displayName: "Koroush AK",
     roi: "+67.3%",
     aum: "$1.2M",
     investors: 142,
@@ -64,7 +69,8 @@ const leaderboardData = [
   {
     rank: 6,
     manager: "@cobie",
-    title: "Cobie's Fund",
+    title: "Cobie's Macro Fund",
+    displayName: "Jordan Fish",
     roi: "+54.8%",
     aum: "$267K",
     investors: 34,
@@ -170,7 +176,12 @@ export default function Leaderboard() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-bold text-gray-900">{fund.manager}</div>
+                          <div className="text-sm font-bold text-gray-900">
+                            {fund.manager}
+                            {fund.displayName && (
+                              <span className="text-gray-500 ml-1 font-normal">({fund.displayName})</span>
+                            )}
+                          </div>
                           <div className="text-sm text-gray-600">{fund.title}</div>
                         </div>
                       </td>

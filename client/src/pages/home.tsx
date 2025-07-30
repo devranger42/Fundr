@@ -9,12 +9,14 @@ const mockFunds = [
   {
     manager: "@blknoiz06",
     title: "Ansem's Fund",
+    displayName: "Zion Thomas", 
     roi: "+142.7%",
     aum: "$2.4M",
     fee: "20%",
     investors: 234,
     icon: "crown",
     verified: true,
+
     allocations: [
       { name: "WIF", percentage: 35, color: "#8B5CF6" },
       { name: "BONK", percentage: 30, color: "#FF9233" },
@@ -23,14 +25,16 @@ const mockFunds = [
     ],
   },
   {
-    manager: "@slingshot",
-    title: "Slingshot's Fund",
+    manager: "@CryptoTony_",
+    title: "Tony's Alpha Fund",
+    displayName: "Crypto Tony",
     roi: "+98.4%",
-    aum: "$1.8M",
+    aum: "$1.8M", 
     fee: "20%",
     investors: 187,
     icon: "rocket",
     verified: true,
+
     allocations: [
       { name: "FWOG", percentage: 40, color: "#F97316" },
       { name: "GOAT", percentage: 30, color: "#06B6D4" },
@@ -38,14 +42,16 @@ const mockFunds = [
     ],
   },
   {
-    manager: "@gotripod",
-    title: "Tripod's Fund",
+    manager: "@SmartContracter",
+    title: "Smart Contract Fund",
+    displayName: "Smart Contractor",
     roi: "+76.2%",
     aum: "$3.1M",
     fee: "15%",
     investors: 298,
     icon: "trending",
     verified: true,
+
     allocations: [
       { name: "JUP", percentage: 40, color: "#3B82F6" },
       { name: "RAY", percentage: 30, color: "#10B981" },
@@ -54,14 +60,16 @@ const mockFunds = [
     ],
   },
   {
-    manager: "@thisisdjen",
-    title: "Djen's Fund",
+    manager: "@CryptoCred",
+    title: "Cred's Technical Fund",
+    displayName: "CryptoCred",
     roi: "+124.6%",
     aum: "$967K",
     fee: "20%",
     investors: 156,
     icon: "gem",
     verified: true,
+
     allocations: [
       { name: "PEPE", percentage: 35, color: "#EAB308" },
       { name: "WIF", percentage: 25, color: "#8B5CF6" },
@@ -71,13 +79,15 @@ const mockFunds = [
   },
   {
     manager: "@cobie",
-    title: "Cobie's Fund",
+    title: "Cobie's Macro Fund",
+    displayName: "Jordan Fish",
     roi: "+54.8%",
     aum: "$267K",
     fee: "4.0%",
     investors: 34,
     icon: "zap",
     verified: true,
+
     allocations: [
       { name: "FWOG", percentage: 55, color: "#F97316" },
       { name: "GOAT", percentage: 30, color: "#06B6D4" },
@@ -85,14 +95,16 @@ const mockFunds = [
     ],
   },
   {
-    manager: "@zonedegen",
-    title: "Zone's Fund",
+    manager: "@KoroushAK",
+    title: "Koroush's Zero Complex Fund",
+    displayName: "Koroush AK",
     roi: "+67.3%",
     aum: "$1.2M",
     fee: "18%",
     investors: 142,
     icon: "shield",
     verified: true,
+
     allocations: [
       { name: "JUP", percentage: 35, color: "#3B82F6" },
       { name: "RAY", percentage: 30, color: "#10B981" },

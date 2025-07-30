@@ -7,6 +7,8 @@ import { DepositWithdrawModal } from "@/components/deposit-withdraw-modal";
 interface MockFund {
   manager: string;
   title: string;
+  displayName?: string;
+  profileImage?: string;
   roi: string;
   aum: string;
   fee: string;
@@ -60,14 +62,36 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
         <div className="cursor-pointer">
           <div className="flex items-center justify-between mb-4 gap-3">
             <div className="flex items-center space-x-3 min-w-0 flex-1">
-              <div className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0`}>
+              {fund.profileImage ? (
+                <img 
+                  src={fund.profileImage} 
+                  alt={fund.displayName || fund.manager}
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
+                  onError={(e) => {
+                    // Fallback to icon if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const nextElement = target.nextElementSibling as HTMLElement;
+                    if (nextElement) nextElement.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div 
+                className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0 ${fund.profileImage ? 'hidden' : ''}`}
+                style={{ display: fund.profileImage ? 'none' : 'flex' }}
+              >
                 <IconComponent className="text-white w-4 h-4 md:w-5 md:h-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="font-bold text-dark truncate">{fund.title}</h3>
                 <div className="flex items-center space-x-1 min-w-0">
                   <p className="text-xs md:text-sm text-gray-500 flex-shrink-0">Managed by</p>
-                  <span className="text-xs md:text-sm font-medium text-gray-700 truncate">{fund.manager}</span>
+                  <span className="text-xs md:text-sm font-medium text-gray-700 truncate">
+                    {fund.manager}
+                    {fund.displayName && (
+                      <span className="text-gray-500 ml-1">({fund.displayName})</span>
+                    )}
+                  </span>
                   {fund.verified && (
                     <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-blue-500 flex-shrink-0" fill="currentColor" />
                   )}
