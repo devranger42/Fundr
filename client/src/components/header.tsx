@@ -72,7 +72,15 @@ export default function Header() {
                 isActive('/manager-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
-              Dashboard
+              Manager
+            </Link>
+            <Link 
+              href="/investor-dashboard"
+              className={`font-medium transition-colors duration-200 ${
+                isActive('/investor-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
+              }`}
+            >
+              Investor
             </Link>
             <Link 
               href="/profile"

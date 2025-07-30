@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Crown, Rocket, TrendingUp, Gem, Zap, Shield } from "lucide-react";
+import { Crown, Rocket, TrendingUp, Gem, Zap, Shield, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
+import { DepositWithdrawModal } from "@/components/deposit-withdraw-modal";
 import type { FundWithAllocations } from "@/hooks/use-funds";
 
 interface FundCardProps {
@@ -17,8 +19,10 @@ const iconMap = {
 };
 
 export default function FundCard({ fund }: FundCardProps) {
+  const [depositModalOpen, setDepositModalOpen] = useState(false);
+
   const handleDeposit = () => {
-    console.log(`Deposit to fund: ${fund.id}`);
+    setDepositModalOpen(true);
   };
 
   // Calculate basic metrics from the fund data  
@@ -138,8 +142,18 @@ export default function FundCard({ fund }: FundCardProps) {
         onClick={handleDeposit}
         className="w-full bg-bonk hover:bg-bonk-hover text-white py-3 font-semibold transition-all duration-200 transform hover:scale-105"
       >
+        <ArrowUpRight className="w-4 h-4 mr-2" />
         Deposit SOL
       </Button>
+      
+      <DepositWithdrawModal
+        isOpen={depositModalOpen}
+        onClose={() => setDepositModalOpen(false)}
+        type="deposit"
+        fundName={fund.name}
+        fundId={fund.id}
+        sharePrice={0.00008}
+      />
     </div>
   );
 }
