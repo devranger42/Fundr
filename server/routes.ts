@@ -39,8 +39,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/auth/user', async (req, res) => {
     try {
+      console.log('=== AUTH USER REQUEST ===');
+      console.log('Session ID:', req.sessionID);
+      console.log('Session data:', JSON.stringify(req.session, null, 2));
+      console.log('User object:', (req as any).user);
+      console.log('Cookie header:', req.headers.cookie);
+      
       // Check for user ID in session or user object
       const userId = (req as any).user?.id || (req.session as any).userId;
+      console.log('Extracted user ID:', userId);
       
       if (userId) {
         console.log('Looking up user with ID:', userId);
@@ -57,12 +64,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         if (user) {
+          console.log('Returning user:', user.twitterUsername || user.id);
           res.json(user);
         } else {
           console.log('No user found for ID:', userId);
           res.status(401).json({ error: 'User not found' });
         }
       } else {
+        console.log('No user ID in session or user object');
         res.status(401).json({ error: 'Not authenticated' });
       }
     } catch (error) {

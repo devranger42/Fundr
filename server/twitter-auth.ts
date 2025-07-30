@@ -48,9 +48,9 @@ export function setupTwitterAuth(app: Express) {
     saveUninitialized: true, // Save empty sessions for OAuth
     cookie: {
       httpOnly: true,
-      secure: false, // Disable secure for deployment testing
+      secure: true, // Enable secure for production HTTPS
       maxAge: sessionTtl,
-      sameSite: 'none' // Allow cross-site for OAuth redirect
+      sameSite: 'lax' // More permissive for OAuth redirects
     },
     name: 'fundr.sid' // Custom session name
   }));
@@ -384,11 +384,15 @@ export function setupTwitterAuth(app: Express) {
         console.error('❌ Failed to find saved user after creation');
       }
       
-      // Clear OAuth session data
+      // Clear OAuth session data but keep user session
       delete req.session.oauthState;
       delete req.session.codeVerifier;
       
-      res.redirect('/profile?twitter=success');
+      // Add explicit session save before redirect
+      req.session.save(() => {
+        console.log('Final session saved before redirect');
+        res.redirect('/profile?twitter=success');
+      });
       
     } catch (error: any) {
       console.error('OAuth callback error:', error);
