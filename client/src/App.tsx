@@ -18,6 +18,7 @@ import ManagerDashboard from "@/pages/manager-dashboard";
 import InvestorDashboard from "@/pages/investor-dashboard";
 import PlatformFunds from "@/pages/platform-funds";
 import FundSettings from "@/pages/fund-settings";
+import Whitepaper from "@/pages/whitepaper";
 
 function Router() {
   return (
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/manager-dashboard" component={ManagerDashboard} />
       <Route path="/investor-dashboard" component={InvestorDashboard} />
       <Route path="/platform-funds" component={PlatformFunds} />
+      <Route path="/whitepaper" component={Whitepaper} />
       <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>

@@ -74,6 +74,14 @@ export default function Header() {
             >
               Dashboard
             </Link>
+            <Link 
+              href="/whitepaper"
+              className={`font-medium transition-colors duration-200 ${
+                isActive('/whitepaper') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
+              }`}
+            >
+              Whitepaper
+            </Link>
           </nav>
           
           {/* Action Buttons */}
