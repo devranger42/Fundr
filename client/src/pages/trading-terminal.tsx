@@ -85,23 +85,11 @@ export default function TradingTerminal() {
     new JupiterService(new Connection("https://api.mainnet-beta.solana.com"))
   );
 
-  // Fetch token prices on mount
+  // Disable token price fetching temporarily to avoid unhandled promise rejections
   useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const tokenMints = POPULAR_TOKENS.map(token => token.mint);
-        const prices = await jupiterService.getTokenPrices(tokenMints);
-        setTokenPrices(prices);
-      } catch (error) {
-        console.error("Error fetching token prices:", error);
-        // Don't show toast for price fetch errors to avoid spam
-      }
-    };
-    
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, [jupiterService]);
+    // Price fetching disabled for stability
+    setTokenPrices({});
+  }, []);
 
   // Get quote when amounts change (disabled for now to avoid API issues)
   useEffect(() => {
@@ -115,34 +103,11 @@ export default function TradingTerminal() {
       // Temporarily disabled to avoid API errors
       // Will implement with proper error handling later
       return;
-
-      setIsGettingQuote(true);
-      try {
-        const amount = parseFloat(fromAmount) * Math.pow(10, fromToken.decimals);
-        const quoteResponse = await jupiterService.getSwapQuote(
-          fromToken.mint,
-          toToken.mint,
-          Math.floor(amount),
-          Math.floor(slippage * 100)
-        );
-        
-        if (quoteResponse) {
-          setQuote(quoteResponse);
-          const outAmount = parseInt(quoteResponse.outAmount) / Math.pow(10, toToken.decimals);
-          setToAmount(outAmount.toFixed(6));
-        }
-      } catch (error) {
-        console.warn("Quote unavailable:", error);
-        setQuote(null);
-        setToAmount("");
-      } finally {
-        setIsGettingQuote(false);
-      }
     };
 
     const debounce = setTimeout(getQuote, 500);
     return () => clearTimeout(debounce);
-  }, [fromAmount, fromToken, toToken, slippage, jupiterService, toast]);
+  }, [fromAmount, fromToken, toToken, slippage, jupiterService]);
 
   const handleSwapTokens = () => {
     const tempToken = fromToken;
