@@ -183,9 +183,10 @@ The project structure supports both development and production environments with
 
 ### Fee Structure Simplification (July 30, 2025)
 ✓ Removed management fees entirely - only performance fees charged to investors
-✓ Updated fund creation form to show only performance fee selection (0-30%)
+✓ Updated fund creation form to show only performance fee selection (0-20%)
 ✓ Clarified that managers only earn when investors profit above high water mark
 ✓ Platform fees remain: 1% on deposits (buy/burn), 1% on withdrawals (treasury)
+✓ Reduced performance fee cap from 30% to 20% for better user experience
 
 ### Advanced Fund Creation Features (July 30, 2025)
 ✓ Implemented Jupiter Strict List token restriction for enhanced security

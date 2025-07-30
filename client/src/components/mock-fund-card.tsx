@@ -139,7 +139,7 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
       <DepositWithdrawModal
         fundId="mock"
         fundName={fund.title}
-        open={depositModalOpen}
+        isOpen={depositModalOpen}
         onClose={() => setDepositModalOpen(false)}
       />
     </div>

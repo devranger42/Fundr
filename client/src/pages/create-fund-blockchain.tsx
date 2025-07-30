@@ -272,7 +272,7 @@ export default function CreateFundBlockchain() {
                   <Slider
                     value={[formData.performanceFee]}
                     onValueChange={(value) => handleInputChange('performanceFee', value[0])}
-                    max={30}
+                    max={20}
                     min={0}
                     step={1}
                     className="w-full"
@@ -280,7 +280,7 @@ export default function CreateFundBlockchain() {
                 </div>
                 <div className="flex justify-between text-sm text-gray-500 mt-1">
                   <span>0%</span>
-                  <span>30%</span>
+                  <span>20%</span>
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
                   Charged only on profits above high water mark. No management fees - you only earn when your investors profit.
