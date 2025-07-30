@@ -16,7 +16,9 @@ import {
 } from "lucide-react";
 import { useWallet } from "@/hooks/use-wallet";
 import { useWalletBalance } from "@/hooks/use-wallet-balance";
+import { useFundrProgram } from "@/hooks/use-fundr-program";
 import { useToast } from "@/hooks/use-toast";
+import { PublicKey } from "@solana/web3.js";
 
 interface DepositWithdrawModalProps {
   isOpen: boolean;
@@ -41,6 +43,7 @@ export function DepositWithdrawModal({
   const [isProcessing, setIsProcessing] = useState(false);
   const { connected, publicKey } = useWallet();
   const walletBalance = useWalletBalance();
+  const { depositToFund, withdrawFromFund, connected: programConnected } = useFundrProgram();
   const { toast } = useToast();
 
   const solAmount = parseFloat(amount) || 0;
@@ -52,10 +55,10 @@ export function DepositWithdrawModal({
   const netAmount = type === "deposit" ? solAmount - platformFee : solAmount;
 
   const handleTransaction = async () => {
-    if (!connected || !publicKey) {
+    if (!connected || !publicKey || !programConnected) {
       toast({
         title: "Wallet Not Connected",
-        description: "Please connect your wallet to continue",
+        description: "Please connect your wallet and wait for program initialization",
         variant: "destructive",
       });
       return;
@@ -82,20 +85,33 @@ export function DepositWithdrawModal({
     setIsProcessing(true);
 
     try {
-      // Simulate transaction processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: `${type === "deposit" ? "Deposit" : "Withdrawal"} Successful`,
-        description: `${type === "deposit" ? "Deposited" : "Withdrawn"} ${solAmount} SOL ${type === "deposit" ? "to" : "from"} ${fundName}`,
-      });
-      
+      const fundPubkey = new PublicKey(fundId);
+      let signature: string;
+
+      if (type === "deposit") {
+        signature = await depositToFund(fundPubkey, solAmount);
+        toast({
+          title: "Deposit Successful",
+          description: `Deposited ${solAmount} SOL to ${fundName}`,
+        });
+      } else {
+        // Convert shares for withdrawal (shares = amount / sharePrice)
+        const sharesToWithdraw = solAmount / sharePrice;
+        signature = await withdrawFromFund(fundPubkey, sharesToWithdraw);
+        toast({
+          title: "Withdrawal Successful", 
+          description: `Withdrawn ${solAmount} SOL from ${fundName}`,
+        });
+      }
+
+      console.log(`Transaction signature: ${signature}`);
       onClose();
       setAmount("");
-    } catch (error) {
+    } catch (error: any) {
+      console.error(`${type} transaction failed:`, error);
       toast({
         title: "Transaction Failed",
-        description: "Please try again later",
+        description: error.message || "Please try again later",
         variant: "destructive",
       });
     } finally {

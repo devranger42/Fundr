@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home.tsx";
 import Leaderboard from "@/pages/leaderboard";
 import CreateFund from "@/pages/create-fund";
+import CreateFundBlockchain from "@/pages/create-fund-blockchain";
 import FundDetail from "@/pages/fund-detail";
 import Profile from "@/pages/profile";
 import TradingTerminal from "@/pages/trading-terminal";
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/leaderboard" component={Leaderboard} />
       <Route path="/create-fund" component={CreateFund} />
+      <Route path="/create-fund-blockchain" component={CreateFundBlockchain} />
       <Route path="/fund/:id" component={FundDetail} />
       <Route path="/fund/:id/trading" component={TradingTerminal} />
       <Route path="/manager-dashboard" component={ManagerDashboard} />

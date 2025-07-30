@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
+    "@coral-xyz/anchor-cli": "^0.31.2",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@jup-ag/api": "^6.0.44",

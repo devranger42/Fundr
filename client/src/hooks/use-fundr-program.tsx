@@ -1,0 +1,135 @@
+import { useState, useEffect, useCallback } from 'react';
+import { useWallet } from './use-wallet';
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { FundrService, FUNDR_PROGRAM_ID } from '@/lib/fundr-program';
+
+// Solana RPC endpoint
+const SOLANA_RPC_URL = 'https://api.devnet.solana.com';
+
+export function useFundrProgram() {
+  const { connected, publicKey } = useWallet();
+  const [fundrService, setFundrService] = useState<FundrService | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
+    const service = new FundrService(connection);
+    setFundrService(service);
+
+    if (connected && publicKey) {
+      const wallet = {
+        publicKey,
+        signTransaction: async (tx: any) => {
+          // Mock transaction signing for development
+          return tx;
+        },
+        signAllTransactions: async (txs: any[]) => {
+          return txs;
+        }
+      };
+
+      service.initialize(wallet).then(() => {
+        setIsInitialized(true);
+      }).catch(error => {
+        console.error('Failed to initialize Fundr program:', error);
+      });
+    } else {
+      setIsInitialized(false);
+    }
+  }, [connected, publicKey]);
+
+  const createFund = useCallback(async (
+    name: string,
+    description: string,
+    managementFee: number,
+    performanceFee: number,
+    minDeposit: number
+  ) => {
+    if (!fundrService || !isInitialized) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.createFund(
+      name,
+      description,
+      managementFee,
+      performanceFee,
+      minDeposit
+    );
+  }, [fundrService, isInitialized]);
+
+  const depositToFund = useCallback(async (
+    fundAddress: PublicKey,
+    amount: number
+  ) => {
+    if (!fundrService || !isInitialized) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.deposit(fundAddress, amount);
+  }, [fundrService, isInitialized]);
+
+  const withdrawFromFund = useCallback(async (
+    fundAddress: PublicKey,
+    shareAmount: number
+  ) => {
+    if (!fundrService || !isInitialized) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.withdraw(fundAddress, shareAmount);
+  }, [fundrService, isInitialized]);
+
+  const getFundData = useCallback(async (fundAddress: PublicKey) => {
+    if (!fundrService) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.getFundData(fundAddress);
+  }, [fundrService]);
+
+  const getUserStake = useCallback(async (
+    fundAddress: PublicKey,
+    userAddress: PublicKey
+  ) => {
+    if (!fundrService) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.getUserStake(fundAddress, userAddress);
+  }, [fundrService]);
+
+  const rebalanceFund = useCallback(async (
+    fundAddress: PublicKey,
+    tokenInMint: PublicKey,
+    tokenOutMint: PublicKey,
+    amount: number,
+    slippageBps: number = 50
+  ) => {
+    if (!fundrService || !isInitialized) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    const { BN } = await import('@coral-xyz/anchor');
+    return await fundrService.rebalance(
+      fundAddress,
+      tokenInMint,
+      tokenOutMint,
+      new BN(amount),
+      slippageBps
+    );
+  }, [fundrService, isInitialized]);
+
+  return {
+    fundrService,
+    isInitialized,
+    connected: connected && isInitialized,
+    programId: FUNDR_PROGRAM_ID,
+    createFund,
+    depositToFund,
+    withdrawFromFund,
+    getFundData,
+    getUserStake,
+    rebalanceFund,
+  };
+}

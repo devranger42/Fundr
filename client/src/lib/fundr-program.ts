@@ -2,7 +2,7 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 import { AnchorProvider, Program, web3, BN, Idl } from '@coral-xyz/anchor';
 
 // Fundr program ID (placeholder - will be updated after deployment)
-export const FUNDR_PROGRAM_ID = new PublicKey('FundrProgram11111111111111111111111111111111');
+export const FUNDR_PROGRAM_ID = new PublicKey('2piYLB18NnQZXurPztppdtz9R4CuCK8vMPtqTHcog9ZS');
 
 // Program IDL interface (generated from Anchor)
 export interface FundrProgram {
@@ -183,7 +183,7 @@ export class FundrService {
     return await this.provider.sendAndConfirm(transaction);
   }
 
-  async withdraw(fundAddress: PublicKey, shares: BN): Promise<string> {
+  async withdraw(fundAddress: PublicKey, shares: number | BN): Promise<string> {
     if (!this.provider?.wallet.publicKey) {
       throw new Error('Wallet not connected');
     }
@@ -191,6 +191,8 @@ export class FundrService {
     const user = this.provider.wallet.publicKey;
     const [userStakePDA] = FundrService.findUserStakeAddress(fundAddress, user);
     const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
+    
+    const sharesBN = typeof shares === 'number' ? new BN(shares) : shares;
 
     // Create withdrawal transaction
     const transaction = new Transaction();

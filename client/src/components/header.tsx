@@ -59,9 +59,9 @@ export default function Header() {
               Leaderboard
             </Link>
             <Link 
-              href="/create-fund"
+              href="/create-fund-blockchain"
               className={`font-medium transition-colors duration-200 ${
-                isActive('/create-fund') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
+                isActive('/create-fund-blockchain') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
               Create Fund
