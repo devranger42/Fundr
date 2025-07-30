@@ -54,19 +54,16 @@ export function setupTwitterAuth(app: Express) {
     }
   });
 
-  // Configure Twitter OAuth 2.0 strategy with better error handling
+  // Configure Twitter OAuth 2.0 strategy with minimal scopes
   passport.use('twitter-oauth2', new OAuth2Strategy({
     authorizationURL: 'https://twitter.com/i/oauth2/authorize',
     tokenURL: 'https://api.twitter.com/2/oauth2/token',
     clientID: process.env.TWITTER_CLIENT_ID!,
     clientSecret: process.env.TWITTER_CLIENT_SECRET!,
     callbackURL: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
-    scope: ['tweet.read', 'users.read', 'offline.access'],
+    scope: ['users.read', 'tweet.read'],
     state: true,
-    pkce: true,
-    customHeaders: {
-      'User-Agent': 'FundrApp/1.0'
-    }
+    pkce: true
   },
   async (accessToken: string, refreshToken: string, profile: any, done: any) => {
     try {
