@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupTwitterAuth } from "./twitter-auth";
 import { registerFundRoutes } from "./fund-routes";
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Twitter authentication
@@ -89,18 +91,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin endpoint to clear all funds
+  app.delete('/api/admin/clear-funds', async (req, res) => {
+    try {
+      console.log("Admin: Clearing all funds and related data");
+      // Use direct SQL for complete cleanup
+      await db.execute(sql`DELETE FROM transactions`);
+      await db.execute(sql`DELETE FROM stakes`);
+      await db.execute(sql`DELETE FROM allocations`);
+      await db.execute(sql`DELETE FROM funds`);
+      console.log("Admin: All funds cleared successfully");
+      res.json({ success: true, message: "All funds and related data cleared" });
+    } catch (error) {
+      console.error('Admin clear funds error:', error);
+      res.status(500).json({ error: 'Failed to clear funds' });
+    }
+  });
+
   const httpServer = createServer(app);
   
-  // Platform funds initialization disabled - using authentic funds only
-  // setTimeout(async () => {
-  //   try {
-  //     const { createPlatformFunds } = await import("./platform-funds");
-  //     await createPlatformFunds();
-  //     console.log("Platform funds initialization completed");
-  //   } catch (error) {
-  //     console.error('Failed to initialize platform funds:', error);
-  //   }
-  // }, 3000);
+  // Platform funds initialization completely disabled
+  console.log("Platform funds initialization disabled - clean slate mode");
   
   return httpServer;
 }
