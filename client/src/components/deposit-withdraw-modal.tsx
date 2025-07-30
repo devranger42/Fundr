@@ -138,7 +138,7 @@ export function DepositWithdrawModal({
           <DialogDescription>
             {type === "deposit" 
               ? "Add SOL to this fund and receive shares based on current NAV"
-              : "Withdraw your investment by redeeming shares for SOL"
+              : "Withdraw your investment by redeeming shares. Tokens are automatically sold proportionally and you receive SOL."
             }
           </DialogDescription>
         </DialogHeader>

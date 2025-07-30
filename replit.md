@@ -173,11 +173,13 @@ The project structure supports both development and production environments with
 ### Fund Modes Implementation (July 30, 2025)
 ✓ Added comprehensive fund mode selection to smart contract and database schema
 ✓ Implemented Manual Allocation Mode - deposits accumulate as SOL for discretionary trading
-✓ Implemented Auto Allocation Mode - deposits/withdrawals mirror current token ratios automatically
+✓ Implemented Auto Allocation Mode - deposits automatically buy tokens per current ratios
+✓ Universal withdrawal behavior: Both modes automatically sell tokens proportionally and return SOL
 ✓ Updated fund creation form with detailed mode explanations and radio button selection
 ✓ Enhanced smart contract FundMode enum with proper serialization support
 ✓ Updated FundrService to handle fund mode parameter in createFund operations
 ✓ Database schema migration completed with fundMode field added to funds table
+✓ Added dynamic fund mode toggling with backend API and blockchain integration
 
 ### Portfolio Rebalancing System (July 30, 2025)
 ✓ Restored comprehensive portfolio allocation tracking with current vs target percentages

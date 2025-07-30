@@ -319,7 +319,7 @@ export default function CreateFundBlockchain() {
                     </Label>
                     <p className="text-sm text-gray-600 mt-1">
                       All deposits accumulate as SOL. You manually allocate tokens using the trading terminal. 
-                      Withdrawals require sufficient SOL balance in the fund.
+                      Withdrawals automatically sell tokens proportionally and return SOL.
                     </p>
                     <div className="mt-2 text-xs text-gray-500">
                       <strong>Best for:</strong> Active trading, discretionary strategies, hands-on management

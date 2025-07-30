@@ -679,7 +679,7 @@ export default function TradingTerminal() {
                       <div className="flex-1">
                         <h4 className="font-medium text-sm mb-1">Manual Allocation</h4>
                         <p className="text-xs text-gray-600">
-                          Deposits accumulate as SOL. You manually allocate using trades.
+                          Deposits accumulate as SOL. You manually allocate using trades. Withdrawals automatically sell tokens proportionally and return SOL.
                         </p>
                       </div>
                       <Button
@@ -722,7 +722,7 @@ export default function TradingTerminal() {
                       <div className="flex-1">
                         <h4 className="font-medium text-sm mb-1">Auto Allocation</h4>
                         <p className="text-xs text-gray-600">
-                          Deposits/withdrawals automatically mirror current ratios.
+                          Deposits automatically buy tokens per current ratios. Withdrawals automatically sell tokens proportionally and return SOL.
                         </p>
                       </div>
                       <Button
@@ -761,8 +761,7 @@ export default function TradingTerminal() {
 
                 <div className="pt-2 border-t">
                   <div className="text-xs text-gray-500">
-                    <strong>Note:</strong> Mode changes take effect for new deposits/withdrawals. 
-                    Existing holdings are not automatically rebalanced.
+                    <strong>Note:</strong> Mode changes affect new deposits only. All withdrawals automatically sell tokens proportionally and return SOL regardless of mode.
                   </div>
                 </div>
               </CardContent>
