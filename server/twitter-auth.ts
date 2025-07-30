@@ -48,8 +48,9 @@ export function setupTwitterAuth(app: Express) {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // Set to true in production with HTTPS
+      secure: 'auto', // Auto-detect HTTPS
       maxAge: sessionTtl,
+      sameSite: 'lax' // Allow cross-site for OAuth
     },
   }));
 
@@ -132,24 +133,32 @@ export function setupTwitterAuth(app: Express) {
     res.json({ status: 'Twitter can reach this endpoint', query: req.query });
   });
 
-  // Test different OAuth approaches based on X documentation
+  // Dynamic OAuth implementation that detects the correct domain
   app.get('/api/auth/twitter', (req, res) => {
     console.log('Twitter auth route accessed');
     console.log('Session ID at start:', req.sessionID);
-    console.log('Callback URL configured:', `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`);
+    console.log('Request host:', req.get('host'));
+    console.log('Request protocol:', req.protocol);
     
-    // Try the approach without PKCE first (plain method as suggested in docs)
+    // Determine the correct callback URL based on the request
+    const currentDomain = req.get('host');
+    const callbackUrl = `${req.protocol}://${currentDomain}/api/auth/twitter/callback`;
+    
+    console.log('Dynamic callback URL:', callbackUrl);
+    
+    // Generate OAuth parameters
     const state = generateRandomString(32);
-    const codeVerifier = generateRandomString(43); // Shorter verifier
+    const codeVerifier = generateRandomString(43);
     
-    // Store state and code verifier in session
+    // Store in session
     req.session.oauthState = state;
     req.session.codeVerifier = codeVerifier;
     
     console.log('Storing in session:', {
       sessionId: req.sessionID,
       state: state,
-      codeVerifier: codeVerifier.substring(0, 10) + '...'
+      codeVerifier: codeVerifier.substring(0, 10) + '...',
+      callbackUrl: callbackUrl
     });
     
     // Save session before redirect
@@ -159,11 +168,11 @@ export function setupTwitterAuth(app: Express) {
         return res.status(500).send('Session save failed');
       }
       
-      // Use plain code challenge method as per X docs
+      // Build OAuth URL with correct callback
       const params = new URLSearchParams({
         response_type: 'code',
         client_id: process.env.TWITTER_CLIENT_ID!,
-        redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+        redirect_uri: callbackUrl,
         scope: 'users.read tweet.read',
         state: state,
         code_challenge: codeVerifier,
@@ -171,7 +180,7 @@ export function setupTwitterAuth(app: Express) {
       });
       
       const authURL = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
-      console.log('Generated OAuth URL with plain PKCE:', authURL);
+      console.log('Generated OAuth URL:', authURL);
       
       res.redirect(authURL);
     });
