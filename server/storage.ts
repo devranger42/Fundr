@@ -175,10 +175,6 @@ export class DatabaseStorage implements IStorage {
     return allocation;
   }
 
-  async getAllFunds(): Promise<Fund[]> {
-    return await db.select().from(funds).orderBy(desc(funds.createdAt));
-  }
-
   async getAllUsers(): Promise<User[]> {
     return await db.select().from(users);
   }
@@ -212,24 +208,22 @@ export class DatabaseStorage implements IStorage {
     for (const stake of stakes) {
       if (stake.shares > 0) {
         // Calculate withdrawal amount based on current fund value
-        const withdrawalAmount = stake.solAmount; // Simplified - would be calculated based on current fund value
+        const withdrawalAmount = stake.currentValue || stake.initialInvestment; // Use current value or initial investment
         
         // Create withdrawal transaction record
         await this.createTransaction({
-          id: crypto.randomUUID(),
           fundId: id,
           userId: stake.investorId,
           type: 'withdrawal',
           amount: withdrawalAmount,
-          sharePrice: 1.0, // Simplified
           shares: stake.shares,
-          signature: 'fund_deletion_withdrawal_' + Date.now(),
+          txSignature: 'fund_deletion_withdrawal_' + Date.now(),
         });
         
         // Zero out the stake
         await this.updateInvestorStake(stake.id, {
           shares: 0,
-          solAmount: 0,
+          currentValue: 0,
         });
         
         withdrawnInvestors++;
