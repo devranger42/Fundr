@@ -69,7 +69,8 @@ function PlatformFundCard({ fund }: { fund: PlatformFund }) {
             </div>
             <div>
               <CardTitle className="text-lg">{fund.name}</CardTitle>
-              <div className="flex items-center space-x-2 mt-1">
+              <p className="text-sm text-gray-500 mb-2">Managed by Fundr</p>
+              <div className="flex items-center space-x-2">
                 <Badge variant="outline" className="text-xs">
                   Platform Fund
                 </Badge>
