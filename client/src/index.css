@@ -29,8 +29,9 @@
   --bonk-hover: #e6822e;
   --pump: #00FFB2;
   --pump-hover: #00e6a0;
-  --dark: #1f2937;
-  --darker: #111827;
+  --dark: #0f172a;
+  --darker: #020617;
+  --darkest: #000000;
 }
 
 .dark {
@@ -101,6 +102,10 @@
   
   .bg-darker {
     background-color: var(--darker);
+  }
+  
+  .bg-darkest {
+    background-color: var(--darkest);
   }
   
   /* Ensure proper contrast */
