@@ -9,28 +9,16 @@ export default function FundrLogo({ className = "", size = "md" }: FundrLogoProp
   const logoSizes = {
     sm: "h-8",
     md: "h-12", 
-    lg: "h-16"
-  };
-
-  const textSizes = {
-    sm: "text-lg",
-    md: "text-2xl",
-    lg: "text-4xl"
+    lg: "h-20"
   };
 
   return (
-    <div className={`flex items-center space-x-3 ${className}`}>
+    <div className={className}>
       <img 
         src={logoImagePath}
         alt="Fundr Logo"
         className={`${logoSizes[size]} w-auto object-contain`}
       />
-      
-      <span className={`font-bold ${
-        className.includes("text-white") ? "text-white" : "text-gray-900"
-      } ${textSizes[size]}`}>
-        Fundr
-      </span>
     </div>
   );
 }
