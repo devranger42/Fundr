@@ -121,40 +121,49 @@ export function setupTwitterAuth(app: Express) {
     failureRedirect: '/?twitter=error&reason=auth_failed'
   }));
 
-  app.get('/api/auth/twitter/callback',
-    passport.authenticate('twitter-oauth2', { 
-      failureRedirect: '/?twitter=error&reason=callback_failed' 
-    }),
-    async (req: any, res) => {
-      try {
+  app.get('/api/auth/twitter/callback', (req, res, next) => {
+    console.log('Twitter callback received');
+    console.log('Query params:', req.query);
+    console.log('Session data:', req.session);
+    
+    passport.authenticate('twitter-oauth2', (err, user, info) => {
+      console.log('Passport authentication result:');
+      console.log('Error:', err);
+      console.log('User:', user);
+      console.log('Info:', info);
+      
+      if (err) {
+        console.error('Authentication error:', err);
+        return res.redirect('/?twitter=error&reason=auth_error');
+      }
+      
+      if (!user) {
+        console.error('No user returned from authentication');
+        return res.redirect('/?twitter=error&reason=no_user');
+      }
+      
+      req.logIn(user, (loginErr) => {
+        if (loginErr) {
+          console.error('Login error:', loginErr);
+          return res.redirect('/?twitter=error&reason=login_failed');
+        }
+        
+        console.log('User successfully logged in:', user);
+        
         // Check if this is a linking request
         if (req.session.isLinking && req.session.walletToLink) {
-          const walletAddress = req.session.walletToLink;
-          const twitterUser = req.user;
-          
-          // Link Twitter to existing wallet user
-          await storage.linkTwitterToWallet(walletAddress, {
-            twitterId: twitterUser.twitterId,
-            twitterUsername: twitterUser.twitterUsername,
-            twitterDisplayName: twitterUser.twitterDisplayName,
-            twitterProfileImage: twitterUser.twitterProfileImage,
-          });
-          
+          console.log('Linking Twitter to wallet:', req.session.walletToLink);
           // Clear linking session data
           req.session.isLinking = false;
           req.session.walletToLink = undefined;
-          
           res.redirect('/?twitter=linked');
         } else {
           // Regular Twitter authentication
-          res.redirect('/');
+          res.redirect('/?twitter=success');
         }
-      } catch (error) {
-        console.error('Twitter callback error:', error);
-        res.redirect('/?twitter=error');
-      }
-    }
-  );
+      });
+    })(req, res, next);
+  });
 
   // Link Twitter to existing wallet user
   app.post('/api/auth/link-twitter', async (req: any, res) => {
