@@ -125,4 +125,25 @@
   .text-readable-light {
     color: hsl(0, 0%, 95%);
   }
+  
+  /* Fix light text on light background issues */
+  .text-gray-500 {
+    color: hsl(220, 13%, 35%) !important; /* Darker gray for better contrast */
+  }
+  
+  .text-gray-600 {
+    color: hsl(220, 13%, 25%) !important; /* Even darker for body text */
+  }
+  
+  .text-gray-700 {
+    color: hsl(220, 13%, 20%) !important; /* Dark gray for headings */
+  }
+  
+  .text-gray-800 {
+    color: hsl(220, 13%, 15%) !important; /* Very dark for primary text */
+  }
+  
+  .text-gray-900 {
+    color: hsl(220, 13%, 10%) !important; /* Almost black for headings */
+  }
 }

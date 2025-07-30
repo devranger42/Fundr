@@ -77,12 +77,12 @@ export default function FundCard({ fund }: FundCardProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="font-bold text-dark truncate">{fund.name}</h3>
-                <p className="text-xs md:text-sm text-gray-500">Fund Manager</p>
+                <p className="text-xs md:text-sm text-gray-600">Fund Manager</p>
               </div>
             </div>
             <div className="text-right flex-shrink-0">
               <div className="text-lg md:text-2xl font-bold text-pump whitespace-nowrap">+12.5%</div>
-              <div className="text-xs md:text-sm text-gray-500 whitespace-nowrap">30D ROI</div>
+              <div className="text-xs md:text-sm text-gray-600 whitespace-nowrap">30D ROI</div>
             </div>
           </div>
         </div>
@@ -126,15 +126,15 @@ export default function FundCard({ fund }: FundCardProps) {
       <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
         <div className="text-center">
           <div className="font-bold text-dark">{totalAssetsSOL} SOL</div>
-          <div className="text-xs text-gray-500">AUM</div>
+          <div className="text-xs text-gray-600">AUM</div>
         </div>
         <div className="text-center">
           <div className="font-bold text-dark">{managementFeePercent}%</div>
-          <div className="text-xs text-gray-500">Fee</div>
+          <div className="text-xs text-gray-600">Fee</div>
         </div>
         <div className="text-center">
           <div className="font-bold text-dark">0</div>
-          <div className="text-xs text-gray-500">Investors</div>
+          <div className="text-xs text-gray-600">Investors</div>
         </div>
       </div>
       

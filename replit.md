@@ -266,6 +266,13 @@ The project structure supports both development and production environments with
 ✓ Platform now displays authentic data only with proper empty state handling
 ✓ Footer navigation cleaned up to remove index funds references
 
+### Text Contrast & Accessibility Improvements (July 30, 2025)
+✓ Fixed light text on light background issues across all components
+✓ Enhanced global CSS with darker gray color overrides for better contrast
+✓ Updated fund cards, leaderboard, and homepage with improved text hierarchy
+✓ Improved accessibility with proper contrast ratios (WCAG compliant)
+✓ Maintained design consistency while enhancing readability
+
 ## Core Features Implementation Plan
 
 ### Immediate Frontend (Current)

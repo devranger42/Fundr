@@ -74,11 +74,11 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
               <div className="min-w-0 flex-1">
                 <h3 className="font-bold text-dark truncate">{fund.title}</h3>
                 <div className="flex items-center space-x-1 min-w-0">
-                  <p className="text-xs md:text-sm text-gray-500 flex-shrink-0">Managed by</p>
-                  <span className="text-xs md:text-sm font-medium text-gray-700 truncate">
+                  <p className="text-xs md:text-sm text-gray-600 flex-shrink-0">Managed by</p>
+                  <span className="text-xs md:text-sm font-medium text-gray-800 truncate">
                     {fund.manager}
                     {fund.displayName && !fund.comingSoon && (
-                      <span className="text-gray-500 ml-1">({fund.displayName})</span>
+                      <span className="text-gray-600 ml-1">({fund.displayName})</span>
                     )}
                   </span>
                   {fund.verified && (
@@ -99,7 +99,7 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
             </div>
             <div className="text-right flex-shrink-0">
               <div className={`text-lg md:text-2xl font-bold whitespace-nowrap ${fund.comingSoon ? 'text-gray-400' : 'text-pump'}`}>{fund.roi}</div>
-              <div className="text-xs md:text-sm text-gray-500 whitespace-nowrap">30D ROI</div>
+              <div className="text-xs md:text-sm text-gray-600 whitespace-nowrap">30D ROI</div>
             </div>
           </div>
         </div>
@@ -139,15 +139,15 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
       <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
         <div className="text-center">
           <div className={`font-bold ${fund.comingSoon ? 'text-gray-400' : 'text-dark'}`}>{fund.aum}</div>
-          <div className="text-xs text-gray-500">AUM</div>
+          <div className="text-xs text-gray-600">AUM</div>
         </div>
         <div className="text-center">
           <div className="font-bold text-dark">{fund.fee}</div>
-          <div className="text-xs text-gray-500">Fee</div>
+          <div className="text-xs text-gray-600">Fee</div>
         </div>
         <div className="text-center">
           <div className={`font-bold ${fund.comingSoon ? 'text-gray-400' : 'text-dark'}`}>{fund.comingSoon ? '-' : fund.investors}</div>
-          <div className="text-xs text-gray-500">Investors</div>
+          <div className="text-xs text-gray-600">Investors</div>
         </div>
       </div>
       
