@@ -91,16 +91,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   
-  // Initialize platform funds after server starts
-  setTimeout(async () => {
-    try {
-      const { createPlatformFunds } = await import("./platform-funds");
-      await createPlatformFunds();
-      console.log("Platform funds initialization completed");
-    } catch (error) {
-      console.error('Failed to initialize platform funds:', error);
-    }
-  }, 3000);
+  // Platform funds initialization disabled - using authentic funds only
+  // setTimeout(async () => {
+  //   try {
+  //     const { createPlatformFunds } = await import("./platform-funds");
+  //     await createPlatformFunds();
+  //     console.log("Platform funds initialization completed");
+  //   } catch (error) {
+  //     console.error('Failed to initialize platform funds:', error);
+  //   }
+  // }, 3000);
   
   return httpServer;
 }
