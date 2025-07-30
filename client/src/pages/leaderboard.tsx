@@ -32,6 +32,7 @@ const leaderboardData = [
     fee: "20%",
     streak: 8,
     winRate: "84%",
+    isSample: true,
   },
   {
     rank: 3,
@@ -58,6 +59,7 @@ const leaderboardData = [
     fee: "20%",
     streak: 7,
     winRate: "78%",
+    isSample: true,
   },
   {
     rank: 5,
@@ -70,6 +72,7 @@ const leaderboardData = [
     fee: "15%",
     streak: 4,
     winRate: "71%",
+    isSample: true,
   },
   {
     rank: 6,
@@ -183,10 +186,25 @@ export default function Leaderboard() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-bold text-gray-900">
-                            {fund.manager}
-                            {fund.displayName && (
+                          <div className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                            <span>{fund.manager}</span>
+                            {fund.displayName && !fund.comingSoon && (
                               <span className="text-gray-500 ml-1 font-normal">({fund.displayName})</span>
+                            )}
+                            {fund.isPlatform && (
+                              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
+                                Platform
+                              </Badge>
+                            )}
+                            {fund.comingSoon && (
+                              <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800">
+                                Coming Soon
+                              </Badge>
+                            )}
+                            {fund.isSample && !fund.comingSoon && (
+                              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+                                Sample
+                              </Badge>
                             )}
                           </div>
                           <div className="text-sm text-gray-600">{fund.title}</div>

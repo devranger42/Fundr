@@ -17,6 +17,7 @@ interface MockFund {
   verified?: boolean;
   isPlatform?: boolean;
   comingSoon?: boolean;
+  isSample?: boolean;
   allocations: {
     name: string;
     percentage: number;
@@ -101,6 +102,11 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
                   {fund.comingSoon && (
                     <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium ml-1">
                       Coming Soon
+                    </span>
+                  )}
+                  {fund.isSample && !fund.comingSoon && (
+                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium ml-1">
+                      Sample
                     </span>
                   )}
                 </div>

@@ -260,6 +260,14 @@ The project structure supports both development and production environments with
 ✓ Verified all crypto personalities as authentic, active Twitter accounts with significant followings
 ✓ Enhanced platform fund identification with "Managed by Fundr" labeling
 
+### Clear Fund Categorization (July 30, 2025)
+✓ Added "Sample" tags to all crypto Twitter manager funds for clear identification
+✓ Platform index funds marked as "Coming Soon" with grayed-out metrics
+✓ Sample funds show blue "Sample" badges on both fund cards and leaderboard
+✓ Clear distinction between available sample funds and future platform features
+✓ Updated MockFundCard component to handle both "Sample" and "Coming Soon" badges
+✓ Leaderboard displays appropriate badges for fund categories
+
 ### Footer Functionality & Simplified Documentation (July 30, 2025)
 ✓ Fixed all footer navigation buttons with proper Link components and external URLs
 ✓ Added comprehensive Terms of Service page with risk disclosure and legal information

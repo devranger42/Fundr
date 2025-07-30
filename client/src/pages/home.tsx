@@ -17,7 +17,7 @@ const mockFunds = [
     investors: 234,
     icon: "crown",
     verified: true,
-
+    isSample: true,
     allocations: [
       { name: "WIF", percentage: 35, color: "#8B5CF6" },
       { name: "BONK", percentage: 30, color: "#FF9233" },
@@ -114,6 +114,7 @@ const mockFunds = [
     investors: 298,
     icon: "zap",
     verified: true,
+    isSample: true,
     allocations: [
       { name: "ETH", percentage: 40, color: "#627EEA" },
       { name: "SOL", percentage: 30, color: "#9945FF" },
@@ -131,6 +132,7 @@ const mockFunds = [
     investors: 167,
     icon: "rocket",
     verified: true,
+    isSample: true,
     allocations: [
       { name: "BONK", percentage: 70, color: "#FF9233" },
       { name: "WIF", percentage: 20, color: "#8B5CF6" },
