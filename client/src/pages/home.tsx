@@ -7,24 +7,6 @@ import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 const mockFunds = [
-  {
-    manager: "@blknoiz06",
-    title: "Ansem's Fund",
-    displayName: "Zion Thomas", 
-    roi: "+142.7%",
-    aum: "$2.4M",
-    fee: "20%",
-    investors: 234,
-    icon: "crown",
-    verified: true,
-    isSample: true,
-    allocations: [
-      { name: "WIF", percentage: 35, color: "#8B5CF6" },
-      { name: "BONK", percentage: 30, color: "#FF9233" },
-      { name: "POPCAT", percentage: 20, color: "#EC4899" },
-      { name: "JUP", percentage: 15, color: "#3B82F6" },
-    ],
-  },
   // Platform Index Funds (Coming Soon)
   {
     manager: "Managed by Fundr",
@@ -86,7 +68,7 @@ const mockFunds = [
       { name: "MYRO", percentage: 15, color: "#EF4444" },
     ],
   },
-  // Crypto Twitter Managers
+  // Single Sample Fund for demonstration
   {
     manager: "@blknoiz06",
     title: "Ansem's Fund",
@@ -95,48 +77,14 @@ const mockFunds = [
     aum: "$2.4M",
     fee: "20%",
     investors: 234,
-    icon: "crown",
+    icon: "trending",
     verified: true,
+    isSample: true,
     allocations: [
       { name: "WIF", percentage: 35, color: "#8B5CF6" },
       { name: "BONK", percentage: 30, color: "#FF9233" },
       { name: "POPCAT", percentage: 20, color: "#EC4899" },
       { name: "JUP", percentage: 15, color: "#3B82F6" },
-    ],
-  },
-  {
-    manager: "@rasmr_eth",
-    title: "Rasmr's Alpha Fund",
-    displayName: "Rasmr",
-    roi: "+89.3%",
-    aum: "$1.8M",
-    fee: "15%",
-    investors: 298,
-    icon: "zap",
-    verified: true,
-    isSample: true,
-    allocations: [
-      { name: "ETH", percentage: 40, color: "#627EEA" },
-      { name: "SOL", percentage: 30, color: "#9945FF" },
-      { name: "JUP", percentage: 20, color: "#3B82F6" },
-      { name: "BONK", percentage: 10, color: "#FF9233" },
-    ],
-  },
-  {
-    manager: "@theunipcs",
-    title: "Bonk Guy's Fund",
-    displayName: "Unipcs",
-    roi: "+198.4%",
-    aum: "$1.6M",
-    fee: "20%",
-    investors: 167,
-    icon: "rocket",
-    verified: true,
-    isSample: true,
-    allocations: [
-      { name: "BONK", percentage: 70, color: "#FF9233" },
-      { name: "WIF", percentage: 20, color: "#8B5CF6" },
-      { name: "POPCAT", percentage: 10, color: "#EC4899" },
     ],
   },
 ];

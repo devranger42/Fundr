@@ -6,11 +6,11 @@ import { Link } from "wouter";
 import FundrLogo from "@/components/fundr-logo";
 
 const leaderboardData = [
-  // Platform Index Funds (Top performers)
+  // Platform Index Funds (Coming Soon)
   {
     rank: 1,
     manager: "Managed by Fundr",
-    title: "BONK 10 Index",
+    title: "SOL 50 Index",
     displayName: "Coming Soon",
     roi: "Coming Soon",
     aum: "Coming Soon",
@@ -23,19 +23,6 @@ const leaderboardData = [
   },
   {
     rank: 2,
-    manager: "@theunipcs",
-    title: "Bonk Guy's Fund",
-    displayName: "Unipcs",
-    roi: "+198.4%",
-    aum: "$1.6M",
-    investors: 167,
-    fee: "20%",
-    streak: 8,
-    winRate: "84%",
-    isSample: true,
-  },
-  {
-    rank: 3,
     manager: "Managed by Fundr",
     title: "Meme 25 Index",
     displayName: "Coming Soon",
@@ -49,6 +36,21 @@ const leaderboardData = [
     comingSoon: true,
   },
   {
+    rank: 3,
+    manager: "Managed by Fundr",
+    title: "BONK 10 Index",
+    displayName: "Coming Soon",
+    roi: "Coming Soon",
+    aum: "Coming Soon",
+    investors: 0,
+    fee: "0%",
+    streak: 0,
+    winRate: "Coming Soon",
+    isPlatform: true,
+    comingSoon: true,
+  },
+  // Single Sample Fund
+  {
     rank: 4,
     manager: "@blknoiz06",
     title: "Ansem's Fund",
@@ -60,33 +62,6 @@ const leaderboardData = [
     streak: 7,
     winRate: "78%",
     isSample: true,
-  },
-  {
-    rank: 5,
-    manager: "@rasmr_eth",
-    title: "Rasmr's Alpha Fund",
-    displayName: "Rasmr",
-    roi: "+89.3%",
-    aum: "$1.8M",
-    investors: 298,
-    fee: "15%",
-    streak: 4,
-    winRate: "71%",
-    isSample: true,
-  },
-  {
-    rank: 6,
-    manager: "Managed by Fundr",
-    title: "SOL 50 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    investors: 0,
-    fee: "0%",
-    streak: 0,
-    winRate: "Coming Soon",
-    isPlatform: true,
-    comingSoon: true,
   },
 ];
 
