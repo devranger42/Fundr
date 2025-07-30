@@ -1,6 +1,6 @@
 import Header from "@/components/header";
 import FundCard from "@/components/fund-card";
-
+import { Button } from "@/components/ui/button";
 import FundrLogo from "@/components/fundr-logo";
 import { useFunds } from "@/hooks/use-funds";
 import { Loader2 } from "lucide-react";
@@ -31,15 +31,15 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-8 justify-center">
             <div className="text-center">
-              <div className="text-3xl font-bold text-pump">$2.4M</div>
+              <div className="text-3xl font-bold text-pump">$0</div>
               <div className="text-gray-400">Total Value Locked</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-bonk">156</div>
+              <div className="text-3xl font-bold text-bonk">{funds?.length || 0}</div>
               <div className="text-gray-400">Active Funds</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-white">8.2K</div>
+              <div className="text-3xl font-bold text-white">0</div>
               <div className="text-gray-400">Investors</div>
             </div>
           </div>
