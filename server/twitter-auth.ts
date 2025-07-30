@@ -176,11 +176,14 @@ export function setupTwitterAuth(app: Express) {
         req.session.save(() => {
           console.log('✅ Double session save completed');
           
-          // Build OAuth URL with correct callback
+          // Build OAuth URL with correct callback - force HTTPS
+          const httpsCallbackUrl = callbackUrl.replace(/^http:/, 'https:');
+          console.log('OAuth URL callback URL (forced HTTPS):', httpsCallbackUrl);
+          
           const params = new URLSearchParams({
             response_type: 'code',
             client_id: process.env.TWITTER_CLIENT_ID!,
-            redirect_uri: callbackUrl,
+            redirect_uri: httpsCallbackUrl,
             scope: 'users.read tweet.read',
             state: state,
             code_challenge: codeVerifier,
@@ -299,6 +302,10 @@ export function setupTwitterAuth(app: Express) {
       const codeVerifier = req.session.codeVerifier || state;
       console.log('Using code verifier:', codeVerifier.substring(0, 8) + '...');
       
+      // Force HTTPS for callback URL in token exchange
+      const httpsCallbackUrl = `https://${req.get('host')}/api/auth/twitter/callback`;
+      console.log('Token exchange callback URL (forced HTTPS):', httpsCallbackUrl);
+      
       // Exchange code for access token using the correct X API endpoint
       const tokenResponse = await fetch('https://api.x.com/2/oauth2/token', {
         method: 'POST',
@@ -309,7 +316,7 @@ export function setupTwitterAuth(app: Express) {
         body: new URLSearchParams({
           grant_type: 'authorization_code',
           code: code as string,
-          redirect_uri: callbackUrl,
+          redirect_uri: httpsCallbackUrl,
           code_verifier: codeVerifier
         })
       });
