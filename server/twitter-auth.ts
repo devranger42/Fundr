@@ -141,11 +141,9 @@ export function setupTwitterAuth(app: Express) {
     console.log('Request host:', req.get('host'));
     console.log('Request protocol:', req.protocol);
     
-    // Determine the correct callback URL based on the request
+    // Force HTTPS for all production deployments
     const currentDomain = req.get('host');
-    // Force HTTPS for production deployment
-    const protocol = currentDomain.includes('replit.app') ? 'https' : req.protocol;
-    const callbackUrl = `${protocol}://${currentDomain}/api/auth/twitter/callback`;
+    const callbackUrl = `https://${currentDomain}/api/auth/twitter/callback`;
     
     console.log('Dynamic callback URL:', callbackUrl);
     
@@ -176,14 +174,12 @@ export function setupTwitterAuth(app: Express) {
         req.session.save(() => {
           console.log('✅ Double session save completed');
           
-          // Build OAuth URL with correct callback - force HTTPS
-          const httpsCallbackUrl = callbackUrl.replace(/^http:/, 'https:');
-          console.log('OAuth URL callback URL (forced HTTPS):', httpsCallbackUrl);
+          console.log('OAuth URL callback URL:', callbackUrl);
           
           const params = new URLSearchParams({
             response_type: 'code',
             client_id: process.env.TWITTER_CLIENT_ID!,
-            redirect_uri: httpsCallbackUrl,
+            redirect_uri: callbackUrl,
             scope: 'users.read tweet.read',
             state: state,
             code_challenge: codeVerifier,
@@ -302,9 +298,9 @@ export function setupTwitterAuth(app: Express) {
       const codeVerifier = req.session.codeVerifier || state;
       console.log('Using code verifier:', codeVerifier.substring(0, 8) + '...');
       
-      // Force HTTPS for callback URL in token exchange
-      const httpsCallbackUrl = `https://${req.get('host')}/api/auth/twitter/callback`;
-      console.log('Token exchange callback URL (forced HTTPS):', httpsCallbackUrl);
+      // Use same callback URL for token exchange
+      const callbackUrl = `https://${req.get('host')}/api/auth/twitter/callback`;
+      console.log('Token exchange callback URL:', callbackUrl);
       
       // Exchange code for access token using the correct X API endpoint
       const tokenResponse = await fetch('https://api.x.com/2/oauth2/token', {
@@ -316,7 +312,7 @@ export function setupTwitterAuth(app: Express) {
         body: new URLSearchParams({
           grant_type: 'authorization_code',
           code: code as string,
-          redirect_uri: httpsCallbackUrl,
+          redirect_uri: callbackUrl,
           code_verifier: codeVerifier
         })
       });
