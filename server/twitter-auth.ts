@@ -284,18 +284,64 @@ export function setupTwitterAuth(app: Express) {
 
 
 
-  // Twitter configuration status endpoint
-  app.get('/api/auth/twitter/status', (req, res) => {
+  // Comprehensive Twitter app diagnostic endpoint
+  app.get('/api/auth/twitter/status', async (req, res) => {
     console.log('Twitter status route handler called');
     const callbackUrl = `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`;
-    const response = {
-      configured: !!(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET),
-      callbackUrl,
-      clientId: process.env.TWITTER_CLIENT_ID ? 'Set' : 'Missing',
-      clientSecret: process.env.TWITTER_CLIENT_SECRET ? 'Set' : 'Missing',
-      instructions: `Register this callback URL in your Twitter app settings: ${callbackUrl}`
-    };
-    console.log('Sending response:', response);
-    res.json(response);
+    
+    try {
+      // Test app-only authentication to verify credentials
+      console.log('Testing app credentials...');
+      const authHeader = `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`;
+      
+      const bearerResponse = await fetch('https://api.x.com/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'grant_type=client_credentials'
+      });
+      
+      const credentialsValid = bearerResponse.ok;
+      let errorDetails = null;
+      
+      if (!credentialsValid) {
+        errorDetails = {
+          status: bearerResponse.status,
+          statusText: bearerResponse.statusText,
+          body: await bearerResponse.text()
+        };
+        console.log('Credentials test failed:', errorDetails);
+      } else {
+        console.log('✅ App credentials are valid');
+      }
+      
+      const response = {
+        configured: !!(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET),
+        callbackUrl,
+        clientId: process.env.TWITTER_CLIENT_ID ? `Set (${process.env.TWITTER_CLIENT_ID.substring(0, 10)}...)` : 'Missing',
+        clientSecret: process.env.TWITTER_CLIENT_SECRET ? 'Set' : 'Missing',
+        credentialsValid,
+        errorDetails,
+        instructions: [
+          `1. Register this callback URL: ${callbackUrl}`,
+          '2. Ensure app type is "Web App, Automated App or Bot"',
+          '3. Enable OAuth 2.0 in User Authentication Settings',
+          '4. Set permissions to "Read and write"',
+          '5. Make sure OAuth 2.0 is enabled (not just OAuth 1.0a)'
+        ],
+        oauthUrl: `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.TWITTER_CLIENT_ID}&redirect_uri=${encodeURIComponent(callbackUrl)}&scope=users.read+tweet.read&state=test&code_challenge=test&code_challenge_method=plain`
+      };
+      
+      console.log('Sending detailed status response');
+      res.json(response);
+    } catch (error) {
+      console.error('Status check error:', error);
+      res.status(500).json({ 
+        error: 'Failed to check Twitter app status',
+        details: error.message 
+      });
+    }
   });
 }
