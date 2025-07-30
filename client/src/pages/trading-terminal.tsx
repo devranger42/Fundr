@@ -548,7 +548,7 @@ export default function TradingTerminal() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Management Fee</span>
-                    <span className="font-medium">{fund.managementFee}%</span>
+                    <span className="font-medium">{(fund.managementFee / 100).toFixed(1)}%</span>
                   </div>
                 </div>
               </CardContent>
