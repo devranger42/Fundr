@@ -227,6 +227,7 @@ The project structure supports both development and production environments with
 ✓ Updated fund naming to use Twitter personalities' actual names (e.g., "Ansem's Fund")
 ✓ Added verified Twitter badges (blue checkmarks) for all crypto Twitter managers
 ✓ Enhanced user experience with clear "Managed by @handle" display format
+✓ Updated leaderboard to feature the same real crypto Twitter personalities for consistency
 
 ### Portfolio Rebalancing System (July 30, 2025)
 ✓ Restored comprehensive portfolio allocation tracking with current vs target percentages
