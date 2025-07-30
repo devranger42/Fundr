@@ -112,6 +112,13 @@ export function setupTwitterAuth(app: Express) {
     }
   }));
 
+  // Test callback endpoint to see if Twitter is reaching us
+  app.get('/api/auth/twitter/test', (req, res) => {
+    console.log('Test callback hit - Twitter can reach our server');
+    console.log('Query params:', req.query);
+    res.json({ status: 'Twitter can reach this endpoint', query: req.query });
+  });
+
   // Twitter auth routes
   app.get('/api/auth/twitter', (req, res, next) => {
     console.log('Twitter auth route accessed');
