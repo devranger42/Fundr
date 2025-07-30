@@ -56,11 +56,15 @@ export function useFundrProgram() {
     console.log('Creating fund with hook:', { name, description, managementFee, performanceFee, minDeposit });
 
     try {
+      // Convert percentages to basis points for the service call
+      const managementFeeBasisPoints = managementFee * 100;
+      const performanceFeeBasisPoints = performanceFee * 100;
+      
       const result = await fundrService.createFund(
         name,
         description,
-        managementFee,
-        performanceFee,
+        managementFeeBasisPoints,
+        performanceFeeBasisPoints,
         minDeposit
       );
       
@@ -68,6 +72,7 @@ export function useFundrProgram() {
       return result;
     } catch (error) {
       console.error('Fund creation failed in hook:', error);
+      console.error('Error details:', error.message || 'Unknown error');
       throw error;
     }
   }, [fundrService, connected, publicKey]);
