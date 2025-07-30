@@ -1,0 +1,124 @@
+Here is your **detailed concept outline** for the **Fundr** DApp — clean, specific, and stripped of anything unnecessary:
+
+---
+
+## 🧠 **Concept Name**: Fundr
+
+### 🎯 **Core Idea**
+
+A decentralized, noncustodial platform on Solana where anyone can create or invest in user-managed **on-chain funds**.
+
+---
+
+## 👤 **User Roles**
+
+### 1. **Fund Managers**
+
+* Create a fund
+* Set a profit fee (0–20%)
+* Allocate deposits into any Solana token using Jupiter
+* Can rebalance portfolio anytime
+
+### 2. **Investors**
+
+* Browse funds
+* Deposit SOL into a selected fund
+* Withdraw anytime, receiving proportional value
+* See ROI, token allocations, and fund manager history
+
+---
+
+## ⚙️ **How It Works**
+
+### ✅ **Deposit**
+
+* Investor deposits SOL into a fund
+* 1% platform fee is deducted (goes to buy/burn of \$FUND token)
+* Remaining SOL is converted to fund tokens per current allocation
+* Shares are tracked in the contract (no LP token minted)
+
+### 🔄 **Rebalancing**
+
+* Fund manager calls a rebalance function
+* Trades assets using Jupiter routing
+* Fund state is updated on-chain
+
+### 💸 **Withdraw**
+
+* Investor withdraws any time
+* Portfolio is sold proportionally across fund holdings
+* Proceeds returned in SOL
+* Manager profit fee is taken **only if there's a gain since deposit**
+
+---
+
+## 🔐 **Trust Model**
+
+* Entire system is noncustodial and on-chain
+* No lockups
+* Fund balances and performance are provable
+* Managers can’t rug or misappropriate funds
+
+---
+
+## 📊 **Token**
+
+* Optional native token: `$FUND`
+* 1% platform fee is used to buy and burn `$FUND`
+* Token can be launched later via bonding curve (e.g. Let’s Bonk)
+
+---
+
+## 🧩 **Architecture Overview**
+
+| Component      | Tech                                                    |
+| -------------- | ------------------------------------------------------- |
+| Smart Contract | Anchor (Solana), written in Rust                        |
+| Token Swaps    | Jupiter (for asset allocation and withdrawal)           |
+| Frontend       | Vite + React + Tailwind                                 |
+| State Tracking | PDA-based fund and user stake accounts                  |
+| Optional       | Integrate with Supabase or on-chain indexer for display |
+
+---
+
+## 🖥️ **Frontend Pages**
+
+### Home
+
+* List of trending funds
+* Filters: ROI, manager, volatility, etc.
+* Deposit CTA on each card
+
+### Leaderboard
+
+* Sortable fund ranking by ROI
+* Manager handles and performance metrics
+
+### Fund Detail Page
+
+* Fund allocations
+* Deposit/Withdraw form
+* Chart of historical ROI
+
+### Create Fund
+
+* Name, description
+* Set profit fee %
+* Launch new fund
+
+---
+
+## 🎨 **Branding**
+
+* Name: **Fundr**
+* Colors:
+
+  * BONK orange: `#FF9233`
+  * PumpFun green: `#00FFB2`
+  * Accent: black/white
+* Vibe: simple, meme-native, Solana-forward
+* No finance jargon — gamified, transparent, self-directed
+
+---
+
+Let me know which part you’d like to build, refine, or prompt AI tools with next.
