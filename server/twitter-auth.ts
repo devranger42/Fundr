@@ -206,21 +206,6 @@ export function setupTwitterAuth(app: Express) {
     });
   });
 
-  // Catch-all for any Twitter callback attempts
-  app.all('/api/auth/twitter/*', (req, res) => {
-    console.log('=== TWITTER AUTH WILDCARD HIT ===');
-    console.log('Method:', req.method);
-    console.log('Path:', req.path);
-    console.log('Query:', req.query);
-    console.log('Body:', req.body);
-    res.json({ 
-      message: 'Twitter auth wildcard endpoint',
-      method: req.method,
-      path: req.path,
-      query: req.query
-    });
-  });
-
   // Direct OAuth callback handler with stateless fallback
   app.get('/api/auth/twitter/callback', async (req, res) => {
     console.log('🎯 TWITTER CALLBACK RECEIVED!');
@@ -391,6 +376,21 @@ export function setupTwitterAuth(app: Express) {
       console.error('OAuth callback error:', error);
       res.redirect(`/?twitter=error&reason=callback_exception&details=${encodeURIComponent(error.message || 'unknown')}`);
     }
+  });
+
+  // Catch-all for any Twitter callback attempts (after specific handler)
+  app.all('/api/auth/twitter/*', (req, res) => {
+    console.log('=== TWITTER AUTH WILDCARD HIT ===');
+    console.log('Method:', req.method);
+    console.log('Path:', req.path);
+    console.log('Query:', req.query);
+    console.log('Body:', req.body);
+    res.json({ 
+      message: 'Twitter auth wildcard endpoint',
+      method: req.method,
+      path: req.path,
+      query: req.query
+    });
   });
 
   // Link Twitter to existing wallet user
