@@ -1,6 +1,8 @@
 import Header from "@/components/header";
 import FundCard from "@/components/fund-card";
 import FundrLogo from "@/components/fundr-logo";
+import { useFunds } from "@/hooks/use-funds";
+import { Loader2 } from "lucide-react";
 
 const mockFunds = [
   {
@@ -90,6 +92,8 @@ const mockFunds = [
 ];
 
 export default function Home() {
+  const { data: funds, isLoading, error } = useFunds();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -133,11 +137,34 @@ export default function Home() {
             <p className="text-gray-600 text-lg">Choose from our curated selection of high-performing funds</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockFunds.map((fund, index) => (
-              <FundCard key={index} fund={fund} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-bonk" />
+              <span className="ml-2 text-gray-600">Loading funds...</span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-20">
+              <p className="text-gray-600 mb-4">Unable to load funds at the moment</p>
+              <p className="text-sm text-gray-500">Please try again later</p>
+            </div>
+          ) : funds && funds.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {funds.map((fund) => (
+                <FundCard key={fund.id} fund={fund} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <h3 className="text-xl font-semibold text-dark mb-2">No funds available</h3>
+              <p className="text-gray-600 mb-6">Be the first to create a fund on Fundr!</p>
+              <a 
+                href="/create-fund" 
+                className="inline-flex items-center px-6 py-3 bg-bonk hover:bg-bonk-hover text-white font-semibold rounded-lg transition-colors"
+              >
+                Create First Fund
+              </a>
+            </div>
+          )}
         </div>
       </section>
 

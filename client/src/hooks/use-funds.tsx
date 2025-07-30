@@ -61,23 +61,56 @@ export function useCreateFund() {
         targetPercentage: number;
       }[];
     }) => {
-      const response = await fetch('/api/funds', {
+      const response = await apiRequest('/api/funds', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fundData),
+        body: fundData,
       });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return response.json();
+      return response;
     },
     onSuccess: () => {
       // Invalidate funds list to refetch
       queryClient.invalidateQueries({ queryKey: ['/api/funds'] });
+    },
+  });
+}
+
+// Hook to deposit to a fund
+export function useDeposit() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (data: { fundId: string; amount: number }) => {
+      const response = await apiRequest(`/api/funds/${data.fundId}/deposit`, {
+        method: 'POST',
+        body: { amount: Math.round(data.amount * 1e9) }, // Convert SOL to lamports
+      });
+      return response;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/funds'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/funds', variables.fundId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/user/stakes'] });
+    },
+  });
+}
+
+// Hook to withdraw from a fund
+export function useWithdraw() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (data: { fundId: string; amount: number }) => {
+      const response = await apiRequest(`/api/funds/${data.fundId}/withdraw`, {
+        method: 'POST',
+        body: { amount: Math.round(data.amount * 1e9) }, // Convert SOL to lamports
+      });
+      return response;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/funds'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/funds', variables.fundId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/user/stakes'] });
     },
   });
 }
@@ -98,19 +131,12 @@ export function useUpdateAllocations() {
         targetPercentage: number;
       }[];
     }) => {
-      const response = await fetch(`/api/funds/${fundId}/allocations`, {
+      const response = await apiRequest(`/api/funds/${fundId}/allocations`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ allocations }),
+        body: { allocations },
       });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return response.json();
+      return response;
     },
     onSuccess: (_, variables) => {
       // Invalidate specific fund and funds list

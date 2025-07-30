@@ -6,22 +6,78 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
-import { PlusCircle, Info, Rocket } from "lucide-react";
+import { PlusCircle, Info, Rocket, Loader2 } from "lucide-react";
 import FundrLogo from "@/components/fundr-logo";
+import { useCreateFund } from "@/hooks/use-funds";
+import { useAuth } from "@/hooks/use-auth";
+import { useWallet } from "@/hooks/use-wallet";
+import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 export default function CreateFund() {
   const [fundName, setFundName] = useState("");
   const [description, setDescription] = useState("");
   const [profitFee, setProfitFee] = useState([2.5]);
   const [minDeposit, setMinDeposit] = useState("");
+  
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { publicKey, connected } = useWallet();
+  const createFund = useCreateFund();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
-  const handleCreateFund = () => {
-    console.log("Creating fund:", {
-      name: fundName,
-      description,
-      profitFee: profitFee[0],
-      minDeposit,
-    });
+  const handleCreateFund = async () => {
+    if (!isAuthenticated || !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to create a fund",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!connected || !publicKey) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet to create a fund",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!fundName.trim() || !description.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const fund = await createFund.mutateAsync({
+        name: fundName.trim(),
+        description: description.trim(),
+        managementFee: Math.round(profitFee[0] * 100), // Convert to basis points
+        publicKey: publicKey.toString(),
+        managerId: user.id,
+      });
+
+      toast({
+        title: "Fund Created!",
+        description: `${fundName} has been successfully created`,
+      });
+
+      // Redirect to the new fund's detail page
+      setLocation(`/fund/${fund.id}`);
+    } catch (error) {
+      console.error("Error creating fund:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create fund. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -112,11 +168,20 @@ export default function CreateFund() {
 
                   <Button 
                     onClick={handleCreateFund}
-                    className="w-full bg-bonk hover:bg-bonk-hover text-white py-3 font-semibold text-lg"
-                    disabled={!fundName || !description}
+                    disabled={createFund.isPending || !isAuthenticated || !connected || !fundName || !description}
+                    className="w-full bg-bonk hover:bg-bonk-hover text-white py-3 font-semibold text-lg disabled:opacity-50"
                   >
-                    <PlusCircle className="w-5 h-5 mr-2" />
-                    Create Fund
+                    {createFund.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Creating Fund...
+                      </>
+                    ) : (
+                      <>
+                        <PlusCircle className="w-5 h-5 mr-2" />
+                        Create Fund
+                      </>
+                    )}
                   </Button>
                 </CardContent>
               </Card>

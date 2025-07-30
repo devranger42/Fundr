@@ -1,57 +1,161 @@
 import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import FeeCalculator from "@/components/fee-calculator";
 import { useState } from "react";
-import { ArrowLeft, TrendingUp, Users, DollarSign, Calendar, Award } from "lucide-react";
-import { Link } from "wouter";
+import { ArrowLeft, TrendingUp, Users, DollarSign, PieChart, Plus, Minus, Loader2 } from "lucide-react";
+import { Link, useParams } from "wouter";
 import FundrLogo from "@/components/fundr-logo";
-
-// Mock fund data - would come from route params in real app
-const fundData = {
-  manager: "@solanaking",
-  title: "Premium Trader",
-  description: "A conservative-aggressive fund focusing on established Solana ecosystem tokens with proven track records. 5+ years of trading experience in both traditional and crypto markets.",
-  roi: "+45.2%",
-  aum: "$324K",
-  fee: "2.5%",
-  investors: 89,
-  minDeposit: "0.1 SOL",
-  inception: "Dec 2024",
-  winRate: "73%",
-  maxDrawdown: "-12.4%",
-  allocations: [
-    { name: "BONK", percentage: 50, color: "#FF9233", value: "$162K" },
-    { name: "WIF", percentage: 30, color: "#8B5CF6", value: "$97K" },
-    { name: "JUP", percentage: 20, color: "#3B82F6", value: "$65K" },
-  ],
-  performance: [
-    { period: "1D", roi: "+2.1%" },
-    { period: "7D", roi: "+8.7%" },
-    { period: "30D", roi: "+45.2%" },
-    { period: "All", roi: "+68.9%" },
-  ],
-  recentTrades: [
-    { action: "Buy", token: "BONK", amount: "15K SOL", price: "$0.000032", time: "2h ago" },
-    { action: "Sell", token: "RAY", amount: "8K SOL", price: "$4.21", time: "1d ago" },
-    { action: "Buy", token: "WIF", amount: "12K SOL", price: "$2.18", time: "3d ago" },
-  ],
-};
+import { useFund, useDeposit, useWithdraw } from "@/hooks/use-funds";
+import { useAuth } from "@/hooks/use-auth";
+import { useWallet } from "@/hooks/use-wallet";
+import { useToast } from "@/hooks/use-toast";
 
 export default function FundDetail() {
+  const { id } = useParams();
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  
+  const { data: fund, isLoading, error } = useFund(id!);
+  const { user, isAuthenticated } = useAuth();
+  const { publicKey, connected } = useWallet();
+  const deposit = useDeposit();
+  const withdraw = useWithdraw();
+  const { toast } = useToast();
 
-  const handleDeposit = () => {
-    console.log(`Depositing ${depositAmount} SOL to ${fundData.manager}`);
+  const handleDeposit = async () => {
+    if (!isAuthenticated || !connected || !publicKey) {
+      toast({
+        title: "Authentication Required",
+        description: "Please connect your wallet and log in",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!depositAmount || parseFloat(depositAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid deposit amount",
+        variant: "destructive", 
+      });
+      return;
+    }
+
+    try {
+      await deposit.mutateAsync({
+        fundId: id!,
+        amount: parseFloat(depositAmount),
+      });
+      
+      toast({
+        title: "Deposit Successful",
+        description: `Deposited ${depositAmount} SOL to the fund`,
+      });
+      
+      setDepositAmount("");
+    } catch (error) {
+      console.error("Deposit error:", error);
+      toast({
+        title: "Deposit Failed",
+        description: "Failed to deposit. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleWithdraw = () => {
-    console.log(`Withdrawing ${withdrawAmount} SOL from ${fundData.manager}`);
+  const handleWithdraw = async () => {
+    if (!isAuthenticated || !connected || !publicKey) {
+      toast({
+        title: "Authentication Required", 
+        description: "Please connect your wallet and log in",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid withdrawal amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await withdraw.mutateAsync({
+        fundId: id!,
+        amount: parseFloat(withdrawAmount),
+      });
+      
+      toast({
+        title: "Withdrawal Successful",
+        description: `Withdrew ${withdrawAmount} SOL from the fund`,
+      });
+      
+      setWithdrawAmount("");
+    } catch (error) {
+      console.error("Withdraw error:", error);
+      toast({
+        title: "Withdrawal Failed",
+        description: "Failed to withdraw. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-bonk" />
+          <span className="ml-2 text-gray-600">Loading fund details...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !fund) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="text-center py-20">
+          <h2 className="text-2xl font-bold text-dark mb-4">Fund Not Found</h2>
+          <p className="text-gray-600 mb-6">The fund you're looking for doesn't exist.</p>
+          <Link href="/">
+            <Button className="bg-bonk hover:bg-bonk-hover text-white">
+              Back to Homepage
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const totalAssetsSOL = fund.totalAssets ? (fund.totalAssets / 1e9).toFixed(2) : '0.00';
+  const managementFeePercent = (fund.managementFee / 100).toFixed(1);
+  
+  // Generate allocation colors
+  const getTokenColor = (symbol: string) => {
+    const colors = {
+      'BONK': '#FF9233',
+      'SOL': '#00FFB2', 
+      'USDC': '#2775CA',
+      'JUP': '#3B82F6',
+      'RAY': '#10B981',
+      'WIF': '#8B5CF6',
+      'PEPE': '#EAB308',
+      'MYRO': '#EF4444',
+      'ORCA': '#9333EA',
+      'POPCAT': '#EC4899',
+      'FWOG': '#F97316',
+      'GOAT': '#06B6D4',
+    };
+    return colors[symbol as keyof typeof colors] || '#6B7280';
   };
 
   return (
@@ -59,11 +163,11 @@ export default function FundDetail() {
       <Header />
       
       {/* Fund Header */}
-      <section className="bg-gradient-to-br from-dark to-darker text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-br from-dark to-darker text-white py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center mb-6">
             <Link href="/">
-              <Button variant="ghost" className="text-white hover:bg-white/20 mr-4">
+              <Button variant="ghost" className="text-white hover:text-bonk mr-4">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Back to Funds
               </Button>
@@ -72,259 +176,242 @@ export default function FundDetail() {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h1 className="text-4xl font-bold mb-2">{fundData.manager}</h1>
-              <p className="text-xl text-gray-300 mb-4">{fundData.title}</p>
-              <p className="text-gray-300 max-w-lg">{fundData.description}</p>
+              <h1 className="text-4xl font-bold mb-4">{fund.name}</h1>
+              <p className="text-xl text-gray-300 mb-6">{fund.description}</p>
               
-              <div className="flex flex-wrap gap-4 mt-6">
-                <Badge className="bg-pump text-black px-3 py-1">
-                  <TrendingUp className="w-4 h-4 mr-1" />
-                  {fundData.roi} ROI
-                </Badge>
-                <Badge className="bg-bonk text-white px-3 py-1">
-                  <DollarSign className="w-4 h-4 mr-1" />
-                  {fundData.aum} AUM
-                </Badge>
-                <Badge className="bg-white text-dark px-3 py-1">
-                  <Users className="w-4 h-4 mr-1" />
-                  {fundData.investors} Investors
-                </Badge>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-pump">+12.5%</div>
+                  <div className="text-gray-400">30D ROI</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-bonk">{totalAssetsSOL} SOL</div>
+                  <div className="text-gray-400">Total Assets</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">{managementFeePercent}%</div>
+                  <div className="text-gray-400">Management Fee</div>
+                </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-pump">{fundData.winRate}</div>
-                  <div className="text-sm text-gray-300">Win Rate</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-white">{fundData.fee}</div>
-                  <div className="text-sm text-gray-300">Profit Fee</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-red-400">{fundData.maxDrawdown}</div>
-                  <div className="text-sm text-gray-300">Max Drawdown</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/10 border-white/20">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-300">{fundData.inception}</div>
-                  <div className="text-sm text-gray-300">Inception</div>
-                </CardContent>
-              </Card>
+            <div className="flex justify-center">
+              <FundrLogo size="xl" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Fund Details */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-              
-              {/* Performance Chart */}
+            {/* Fund Allocation */}
+            <div className="lg:col-span-2">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-dark">Performance Overview</CardTitle>
-                  <CardDescription>Fund performance across different time periods</CardDescription>
+                  <CardTitle className="flex items-center text-2xl text-dark">
+                    <PieChart className="w-6 h-6 mr-2 text-pump" />
+                    Portfolio Allocation
+                  </CardTitle>
+                  <CardDescription>
+                    Current token distribution in this fund
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-4 gap-4 mb-6">
-                    {fundData.performance.map((perf, index) => (
-                      <div key={index} className="text-center p-3 bg-gray-50 rounded-lg">
-                        <div className="text-sm text-gray-600">{perf.period}</div>
-                        <div className="text-lg font-bold text-pump">{perf.roi}</div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Placeholder for chart */}
-                  <div className="h-64 bg-gradient-to-r from-pump/20 to-bonk/20 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <TrendingUp className="w-12 h-12 text-pump mx-auto mb-2" />
-                      <p className="text-gray-600">Performance chart coming soon</p>
+                  {fund.allocations.length > 0 ? (
+                    <div className="space-y-6">
+                      {fund.allocations.map((allocation) => {
+                        const color = getTokenColor(allocation.tokenSymbol);
+                        const percentage = (allocation.targetPercentage / 100);
+                        return (
+                          <div key={allocation.id}>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center space-x-3">
+                                <div 
+                                  className="w-8 h-8 rounded-full"
+                                  style={{ backgroundColor: color }}
+                                ></div>
+                                <div>
+                                  <div className="font-semibold text-dark">{allocation.tokenSymbol}</div>
+                                  <div className="text-sm text-gray-500">{allocation.tokenMint.slice(0, 8)}...</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="font-bold text-dark">{percentage}%</div>
+                                <div className="text-sm text-gray-500">Target</div>
+                              </div>
+                            </div>
+                            <Progress value={percentage} className="h-3" />
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">No allocations set yet</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
-              {/* Fund Allocation */}
-              <Card className="shadow-lg">
+              {/* Recent Transactions */}
+              <Card className="shadow-lg mt-8">
                 <CardHeader>
-                  <CardTitle className="text-dark">Current Allocation</CardTitle>
-                  <CardDescription>How the fund's capital is currently distributed</CardDescription>
+                  <CardTitle className="flex items-center text-2xl text-dark">
+                    <TrendingUp className="w-6 h-6 mr-2 text-pump" />
+                    Recent Activity
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {fundData.allocations.map((allocation, index) => (
-                      <div key={index}>
-                        <div className="flex items-center justify-between mb-2">
+                  {fund.transactions.length > 0 ? (
+                    <div className="space-y-4">
+                      {fund.transactions.slice(0, 5).map((tx) => (
+                        <div key={tx.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                           <div className="flex items-center space-x-3">
-                            <div 
-                              className="w-4 h-4 rounded-full"
-                              style={{ backgroundColor: allocation.color }}
-                            ></div>
-                            <span className="font-medium">{allocation.name}</span>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              tx.type === 'deposit' ? 'bg-green-100 text-green-600' : 
+                              tx.type === 'withdraw' ? 'bg-red-100 text-red-600' : 
+                              'bg-blue-100 text-blue-600'
+                            }`}>
+                              {tx.type === 'deposit' ? <Plus className="w-4 h-4" /> : 
+                               tx.type === 'withdraw' ? <Minus className="w-4 h-4" /> : 
+                               <TrendingUp className="w-4 h-4" />}
+                            </div>
+                            <div>
+                              <div className="font-medium capitalize">{tx.type}</div>
+                              <div className="text-sm text-gray-500">
+                                {new Date(tx.createdAt).toLocaleDateString()}
+                              </div>
+                            </div>
                           </div>
                           <div className="text-right">
-                            <div className="font-bold">{allocation.percentage}%</div>
-                            <div className="text-sm text-gray-500">{allocation.value}</div>
+                            <div className="font-bold">{(tx.amount / 1e9).toFixed(2)} SOL</div>
+                            <div className="text-sm text-gray-500 capitalize">{tx.status}</div>
                           </div>
                         </div>
-                        <Progress value={allocation.percentage} className="h-2" />
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Recent Trades */}
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-dark">Recent Activity</CardTitle>
-                  <CardDescription>Latest trades and portfolio changes</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {fundData.recentTrades.map((trade, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <Badge 
-                            variant={trade.action === "Buy" ? "default" : "secondary"}
-                            className={trade.action === "Buy" ? "bg-pump text-white" : "bg-red-500 text-white"}
-                          >
-                            {trade.action}
-                          </Badge>
-                          <div>
-                            <div className="font-medium">{trade.token}</div>
-                            <div className="text-sm text-gray-500">{trade.amount}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-medium">{trade.price}</div>
-                          <div className="text-sm text-gray-500">{trade.time}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">No transactions yet</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
 
-            {/* Sidebar */}
+            {/* Deposit/Withdraw Panel */}
             <div className="space-y-6">
-              
-              {/* Deposit Form */}
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-dark">Invest in Fund</CardTitle>
-                  <CardDescription>
-                    Minimum deposit: {fundData.minDeposit}
-                  </CardDescription>
+                  <CardTitle className="flex items-center text-xl text-dark">
+                    <DollarSign className="w-5 h-5 mr-2 text-pump" />
+                    Deposit Funds
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="deposit">Amount (SOL)</Label>
+                    <Label htmlFor="deposit-amount">Amount (SOL)</Label>
                     <Input
-                      id="deposit"
+                      id="deposit-amount"
                       type="number"
-                      placeholder="0.1"
+                      placeholder="0.0"
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
+                      min="0"
+                      step="0.01"
                     />
                   </div>
                   <Button 
                     onClick={handleDeposit}
-                    className="w-full bg-bonk hover:bg-bonk-hover text-white"
-                    disabled={!depositAmount}
+                    disabled={deposit.isPending || !isAuthenticated || !connected}
+                    className="w-full bg-pump hover:bg-pump/90 text-white"
                   >
-                    Deposit SOL
+                    {deposit.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Depositing...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Deposit SOL
+                      </>
+                    )}
                   </Button>
-                  <p className="text-xs text-gray-500">
-                    1% deposit fee (burns $FUND) + {fundData.fee} profit fee (only on gains)
-                  </p>
                 </CardContent>
               </Card>
 
-              {/* Withdraw Form */}
-              <Card className="shadow-lg border-red-200">
+              <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-dark">Withdraw Funds</CardTitle>
-                  <CardDescription>
-                    Your current position: 2.5 SOL
-                  </CardDescription>
+                  <CardTitle className="flex items-center text-xl text-dark">
+                    <Users className="w-5 h-5 mr-2 text-bonk" />
+                    Withdraw Funds  
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="withdraw">Amount (SOL)</Label>
+                    <Label htmlFor="withdraw-amount">Amount (SOL)</Label>
                     <Input
-                      id="withdraw"
+                      id="withdraw-amount"
                       type="number"
                       placeholder="0.0"
                       value={withdrawAmount}
                       onChange={(e) => setWithdrawAmount(e.target.value)}
+                      min="0"
+                      step="0.01"
                     />
                   </div>
                   <Button 
                     onClick={handleWithdraw}
-                    variant="outline"
-                    className="w-full border-red-300 text-red-600 hover:bg-red-50"
-                    disabled={!withdrawAmount}
+                    disabled={withdraw.isPending || !isAuthenticated || !connected}
+                    className="w-full bg-bonk hover:bg-bonk-hover text-white"
                   >
-                    Withdraw SOL
+                    {withdraw.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Withdrawing...
+                      </>
+                    ) : (
+                      <>
+                        <Minus className="w-4 h-4 mr-2" />
+                        Withdraw SOL
+                      </>
+                    )}
                   </Button>
-                  <p className="text-xs text-gray-500">
-                    1% withdrawal fee (to treasury) + {fundData.fee} of profits only
-                  </p>
                 </CardContent>
               </Card>
 
-              {/* Fund Info */}
+              {/* Fund Stats */}
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-dark flex items-center">
-                    <Award className="w-5 h-5 mr-2 text-bonk" />
-                    Fund Info
-                  </CardTitle>
+                  <CardTitle className="text-lg text-dark">Fund Statistics</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 text-sm">
+                <CardContent className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Management Fee:</span>
-                    <span className="font-medium">0%</span>
+                    <span className="text-gray-600">Total Shares</span>
+                    <span className="font-bold">{fund.totalShares}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Profit Fee:</span>
-                    <span className="font-medium">{fundData.fee}</span>
+                    <span className="text-gray-600">Investors</span>
+                    <span className="font-bold">{fund.stakes.length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Deposit Fee:</span>
-                    <span className="font-medium">1% (burns $FUND)</span>
+                    <span className="text-gray-600">Status</span>
+                    <span className={`font-bold ${fund.isActive ? 'text-green-600' : 'text-red-600'}`}>
+                      {fund.isActive ? 'Active' : 'Inactive'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Withdrawal Fee:</span>
-                    <span className="font-medium">1% (to treasury)</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Min Deposit:</span>
-                    <span className="font-medium">{fundData.minDeposit}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Lockup Period:</span>
-                    <span className="font-medium text-pump">None</span>
+                    <span className="text-gray-600">Created</span>
+                    <span className="font-bold">
+                      {new Date(fund.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Fee Calculator */}
-              <FeeCalculator managerFee={parseFloat(fundData.fee.replace('%', ''))} />
             </div>
           </div>
         </div>
