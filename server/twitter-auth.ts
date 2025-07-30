@@ -59,9 +59,13 @@ export function setupTwitterAuth(app: Express) {
     tokenURL: 'https://api.twitter.com/2/oauth2/token',
     clientID: process.env.TWITTER_CLIENT_ID || 'dummy-id',
     clientSecret: process.env.TWITTER_CLIENT_SECRET || 'dummy-secret',
-    callbackURL: "/api/auth/twitter/callback",
+    callbackURL: "https://devranger42-workspace.replit.app/api/auth/twitter/callback",
     scope: 'tweet.read users.read offline.access',
-    state: true
+    state: true,
+    pkce: true,
+    customHeaders: {
+      'User-Agent': 'Fundr/1.0'
+    }
   },
   async (accessToken: string, refreshToken: string, profile: any, done: any) => {
     try {
@@ -97,7 +101,9 @@ export function setupTwitterAuth(app: Express) {
 
   // Twitter auth routes
   app.get('/api/auth/twitter', 
-    passport.authenticate('twitter-oauth2')
+    passport.authenticate('twitter-oauth2', {
+      scope: 'tweet.read users.read offline.access'
+    })
   );
 
   app.get('/api/auth/twitter/callback',

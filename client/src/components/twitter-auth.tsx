@@ -82,11 +82,11 @@ export function TwitterAuth({ compact = false }: TwitterAuthProps) {
       <Button
         variant="outline"
         size="sm"
-        onClick={handleLinkTwitter}
-        disabled={isLinking}
+        disabled={true}
+        title="Twitter authentication setup required"
       >
         <Twitter className="h-4 w-4 mr-2" />
-        Connect Twitter
+        Setup Required
       </Button>
     );
   }
@@ -135,14 +135,18 @@ export function TwitterAuth({ compact = false }: TwitterAuthProps) {
             </Button>
           </div>
         ) : (
-          <Button
-            onClick={handleLinkTwitter}
-            disabled={isLinking}
-            className="w-full"
-          >
-            <Link2 className="h-4 w-4 mr-2" />
-            Connect Twitter Account
-          </Button>
+          <div className="text-center py-6">
+            <Twitter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 mb-4">Twitter authentication requires app configuration</p>
+            <Button 
+              disabled={true}
+              className="bg-gray-400 text-gray-600 cursor-not-allowed w-full"
+              title="Twitter app configuration required"
+            >
+              <Twitter className="w-4 h-4 mr-2" />
+              Setup Required
+            </Button>
+          </div>
         )}
       </CardContent>
     </Card>
