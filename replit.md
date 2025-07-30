@@ -181,12 +181,13 @@ The project structure supports both development and production environments with
 ✓ Database schema migration completed with fundMode field added to funds table
 ✓ Added dynamic fund mode toggling with backend API and blockchain integration
 
-### Fee Structure Simplification (July 30, 2025)
-✓ Removed management fees entirely - only performance fees charged to investors
-✓ Updated fund creation form to show only performance fee selection (0-20%)
-✓ Clarified that managers only earn when investors profit above high water mark
-✓ Platform fees remain: 1% on deposits (buy/burn), 1% on withdrawals (treasury)
-✓ Reduced performance fee cap from 30% to 20% for better user experience
+### Fee Structure - Traditional 2/20 Model (July 30, 2025)
+✓ Implemented traditional hedge fund "2 and 20" fee structure with transparency
+✓ Platform fees: 1% deposits + 1% withdrawals = 2% annual management equivalent  
+✓ Performance fees: 0-20% charged only on profits above high water mark
+✓ More transparent than traditional hedge funds - no hidden annual management fees
+✓ Platform fees support $FUND token buy/burn (deflationary) and treasury operations
+✓ Manager performance fees capped at 20% for competitive positioning
 
 ### Advanced Fund Creation Features (July 30, 2025)
 ✓ Implemented Jupiter Strict List token restriction for enhanced security
@@ -251,10 +252,12 @@ The project structure supports both development and production environments with
 - Test fund creation, deposits, withdrawals, and rebalancing on devnet
 - Deploy to mainnet after thorough testing and security audit
 
-### Platform Mechanics (Updated July 30, 2025)
-- 1% fee on deposits goes to $FUND token buy/burn (deflationary)
-- 1% fee on withdrawals goes to platform treasury (operations)
-- NO management fees - only performance fees charged to investors
-- Manager performance fees (0-30%) only taken from investor gains above high water mark
+### Platform Mechanics - 2/20 Fee Structure (Updated July 30, 2025)
+- Traditional "2 and 20" hedge fund model implemented transparently:
+  - 1% fee on deposits goes to $FUND token buy/burn (deflationary)
+  - 1% fee on withdrawals goes to platform treasury (operations)
+  - Combined 2% equivalent replaces traditional annual management fees
+- Manager performance fees (0-20%) only taken from investor gains above high water mark
+- More transparent than traditional hedge funds - no hidden recurring management fees
 - Noncustodial withdrawal system with instant liquidity
 - On-chain fund state verification and transparency
