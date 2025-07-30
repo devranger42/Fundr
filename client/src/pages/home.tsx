@@ -144,7 +144,7 @@ export default function Home() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-dark mb-4">Top Performing Funds</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Top Performing Funds</h2>
             <p className="text-gray-600 text-lg">Choose from our curated selection of high-performing funds</p>
           </div>
           
@@ -171,7 +171,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-20">
-              <h3 className="text-xl font-semibold text-dark mb-2">No funds available</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No funds available</h3>
               <p className="text-gray-600 mb-6">Be the first to create a fund on Fundr!</p>
               <a 
                 href="/create-fund" 

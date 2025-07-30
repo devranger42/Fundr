@@ -271,7 +271,7 @@ export default function InvestorDashboard() {
               <Card className="shadow-lg">
                 <CardContent className="text-center py-12">
                   <PieChart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-dark mb-2">No Investments Yet</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">No Investments Yet</h3>
                   <p className="text-gray-600 mb-6">
                     Start investing in funds to see your portfolio here
                   </p>

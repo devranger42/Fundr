@@ -192,7 +192,7 @@ export default function Whitepaper() {
       {/* Table of Contents */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-dark mb-8 text-center">Document Structure</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Document Structure</h2>
           
           <div className="grid md:grid-cols-2 gap-6">
             {sections.map((section, index) => (
@@ -203,7 +203,7 @@ export default function Whitepaper() {
                       {section.icon}
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-dark mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         {index + 1}. {section.title}
                       </h3>
                       <p className="text-gray-600 text-sm">{section.description}</p>
@@ -219,7 +219,7 @@ export default function Whitepaper() {
       {/* Key Features */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-dark mb-8 text-center">Key Innovations</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Key Innovations</h2>
           
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="shadow-lg">
@@ -232,19 +232,19 @@ export default function Whitepaper() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Smart Contracts</span>
-                  <span className="font-medium">Anchor Framework</span>
+                  <span className="font-medium text-gray-900">Anchor Framework</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">DEX Integration</span>
-                  <span className="font-medium">Jupiter Aggregator</span>
+                  <span className="font-medium text-gray-900">Jupiter Aggregator</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Transaction Speed</span>
-                  <span className="font-medium">Sub-second Settlement</span>
+                  <span className="font-medium text-gray-900">Sub-second Settlement</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Gas Costs</span>
-                  <span className="font-medium">Sub-penny Fees</span>
+                  <span className="font-medium text-gray-900">Sub-penny Fees</span>
                 </div>
               </CardContent>
             </Card>
@@ -259,19 +259,19 @@ export default function Whitepaper() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Management Fee</span>
-                  <span className="font-medium">2% Annual Equivalent</span>
+                  <span className="font-medium text-gray-900">2% Annual Equivalent</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Performance Fee</span>
-                  <span className="font-medium">0-20% on Profits</span>
+                  <span className="font-medium text-gray-900">0-20% on Profits</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Fee Distribution</span>
-                  <span className="font-medium">50% Token Burn</span>
+                  <span className="font-medium text-gray-900">50% Token Burn</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Governance Token</span>
-                  <span className="font-medium">$FUND Utility</span>
+                  <span className="font-medium text-gray-900">$FUND Utility</span>
                 </div>
               </CardContent>
             </Card>
@@ -286,19 +286,19 @@ export default function Whitepaper() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Asset Custody</span>
-                  <span className="font-medium">Non-Custodial</span>
+                  <span className="font-medium text-gray-900">Non-Custodial</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Smart Contract Audits</span>
-                  <span className="font-medium">Multi-Stage</span>
+                  <span className="font-medium text-gray-900">Multi-Stage</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Token Verification</span>
-                  <span className="font-medium">Jupiter Strict List</span>
+                  <span className="font-medium text-gray-900">Jupiter Strict List</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Emergency Controls</span>
-                  <span className="font-medium">Circuit Breakers</span>
+                  <span className="font-medium text-gray-900">Circuit Breakers</span>
                 </div>
               </CardContent>
             </Card>
@@ -309,7 +309,7 @@ export default function Whitepaper() {
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-pump/10 to-bonk/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-dark mb-4">Ready to Explore Fundr?</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Explore Fundr?</h2>
           <p className="text-lg text-gray-600 mb-8">
             Join the future of decentralized fund management with professional-grade tools 
             and complete transparency.

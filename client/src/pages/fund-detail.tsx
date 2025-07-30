@@ -233,7 +233,7 @@ export default function FundDetail() {
             <div className="lg:col-span-2">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-2xl text-dark">
+                  <CardTitle className="flex items-center text-2xl text-gray-900">
                     <PieChart className="w-6 h-6 mr-2 text-pump" />
                     Portfolio Allocation
                   </CardTitle>
@@ -256,12 +256,12 @@ export default function FundDetail() {
                                   style={{ backgroundColor: color }}
                                 ></div>
                                 <div>
-                                  <div className="font-semibold text-dark">{allocation.tokenSymbol}</div>
+                                  <div className="font-semibold text-gray-900">{allocation.tokenSymbol}</div>
                                   <div className="text-sm text-gray-500">{allocation.tokenMint.slice(0, 8)}...</div>
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="font-bold text-dark">{percentage}%</div>
+                                <div className="font-bold text-gray-900">{percentage}%</div>
                                 <div className="text-sm text-gray-500">Target</div>
                               </div>
                             </div>
@@ -281,7 +281,7 @@ export default function FundDetail() {
               {/* Recent Transactions */}
               <Card className="shadow-lg mt-8">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-2xl text-dark">
+                  <CardTitle className="flex items-center text-2xl text-gray-900">
                     <TrendingUp className="w-6 h-6 mr-2 text-pump" />
                     Recent Activity
                   </CardTitle>
@@ -328,7 +328,7 @@ export default function FundDetail() {
             <div className="space-y-6">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-xl text-dark">
+                  <CardTitle className="flex items-center text-xl text-gray-900">
                     <DollarSign className="w-5 h-5 mr-2 text-pump" />
                     Deposit Funds
                   </CardTitle>
@@ -368,7 +368,7 @@ export default function FundDetail() {
 
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center text-xl text-dark">
+                  <CardTitle className="flex items-center text-xl text-gray-900">
                     <Users className="w-5 h-5 mr-2 text-bonk" />
                     Withdraw Funds  
                   </CardTitle>

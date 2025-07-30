@@ -170,8 +170,8 @@ export default function Leaderboard() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-bold text-dark">{fund.manager}</div>
-                          <div className="text-sm text-gray-700">{fund.title}</div>
+                          <div className="text-sm font-bold text-gray-900">{fund.manager}</div>
+                          <div className="text-sm text-gray-600">{fund.title}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -180,13 +180,13 @@ export default function Leaderboard() {
                           <span className="text-lg font-bold text-pump">{fund.roi}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-dark">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {fund.aum}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-dark font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
                         {fund.investors}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-dark font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
                         {fund.fee}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

@@ -175,7 +175,7 @@ export default function PlatformFunds() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Building2 className="w-8 h-8 text-bonk" />
-            <h1 className="text-4xl font-bold text-dark">Platform Index Funds</h1>
+            <h1 className="text-4xl font-bold text-gray-900">Platform Index Funds</h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Official Fundr index funds offering passive exposure to popular Solana sectors. 
@@ -186,17 +186,17 @@ export default function PlatformFunds() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 max-w-4xl mx-auto">
             <div className="text-center p-4 bg-white rounded-lg shadow-sm">
               <Shield className="w-6 h-6 text-bonk mx-auto mb-2" />
-              <h3 className="font-semibold text-dark">Non-Custodial</h3>
+              <h3 className="font-semibold text-gray-900">Non-Custodial</h3>
               <p className="text-sm text-gray-600">Your funds remain secure on-chain</p>
             </div>
             <div className="text-center p-4 bg-white rounded-lg shadow-sm">
               <Zap className="w-6 h-6 text-pump mx-auto mb-2" />
-              <h3 className="font-semibold text-dark">Auto Rebalancing</h3>
+              <h3 className="font-semibold text-gray-900">Auto Rebalancing</h3>
               <p className="text-sm text-gray-600">Dynamic allocation adjustments</p>
             </div>
             <div className="text-center p-4 bg-white rounded-lg shadow-sm">
               <DollarSign className="w-6 h-6 text-bonk mx-auto mb-2" />
-              <h3 className="font-semibold text-dark">Low Fees</h3>
+              <h3 className="font-semibold text-gray-900">Low Fees</h3>
               <p className="text-sm text-gray-600">Only 1% platform fee on transactions</p>
             </div>
           </div>
