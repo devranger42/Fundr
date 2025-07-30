@@ -15,6 +15,7 @@ interface MockFund {
   investors: number;
   icon: string;
   verified?: boolean;
+  isPlatform?: boolean;
   allocations: {
     name: string;
     percentage: number;
