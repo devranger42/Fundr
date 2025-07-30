@@ -17,7 +17,7 @@ export default function FundrLogo({ className = "", size = "md" }: FundrLogoProp
     <img
       src={logoPath}
       alt="Fundr Logo"
-      className={`${sizeClasses[size]} ${className} bg-white rounded-full`}
+      className={`${sizeClasses[size]} ${className}`}
       style={{ objectFit: 'contain' }}
     />
   );
