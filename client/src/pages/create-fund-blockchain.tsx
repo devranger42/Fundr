@@ -18,6 +18,7 @@ import {
   Settings,
   Cog
 } from "lucide-react";
+import { TokenSelector } from "@/components/token-selector";
 import { useLocation } from "wouter";
 import Header from "@/components/header";
 import { useFundrProgram } from "@/hooks/use-fundr-program";
@@ -27,6 +28,7 @@ import { useToast } from "@/hooks/use-toast";
 interface AllocationTarget {
   id: string;
   tokenSymbol: string;
+  tokenAddress?: string;
   targetPercentage: number;
 }
 
@@ -46,9 +48,9 @@ export default function CreateFundBlockchain() {
   });
   
   const [allocations, setAllocations] = useState<AllocationTarget[]>([
-    { id: "1", tokenSymbol: "SOL", targetPercentage: 50 },
-    { id: "2", tokenSymbol: "USDC", targetPercentage: 30 },
-    { id: "3", tokenSymbol: "BONK", targetPercentage: 20 }
+    { id: "1", tokenSymbol: "SOL", tokenAddress: "So11111111111111111111111111111111111111112", targetPercentage: 50 },
+    { id: "2", tokenSymbol: "USDC", tokenAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", targetPercentage: 30 },
+    { id: "3", tokenSymbol: "BONK", tokenAddress: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", targetPercentage: 20 }
   ]);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,7 +69,7 @@ export default function CreateFundBlockchain() {
     const newId = (allocations.length + 1).toString();
     setAllocations(prev => [
       ...prev,
-      { id: newId, tokenSymbol: "", targetPercentage: 0 }
+      { id: newId, tokenSymbol: "", tokenAddress: "", targetPercentage: 0 }
     ]);
   };
 
@@ -351,10 +353,18 @@ export default function CreateFundBlockchain() {
               {allocations.map((allocation) => (
                 <div key={allocation.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1">
-                    <Input
-                      placeholder="Token Symbol (e.g., SOL)"
+                    <TokenSelector
                       value={allocation.tokenSymbol}
-                      onChange={(e) => updateAllocation(allocation.id, 'tokenSymbol', e.target.value)}
+                      onChange={(token) => {
+                        if (typeof token === 'string') {
+                          updateAllocation(allocation.id, 'tokenSymbol', token);
+                          updateAllocation(allocation.id, 'tokenAddress', token);
+                        } else {
+                          updateAllocation(allocation.id, 'tokenSymbol', token.symbol);
+                          updateAllocation(allocation.id, 'tokenAddress', token.address);
+                        }
+                      }}
+                      placeholder="Search token or paste address"
                     />
                   </div>
                   <div className="flex-1">

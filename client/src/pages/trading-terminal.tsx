@@ -43,6 +43,7 @@ import { PriceChart } from "@/components/trading/price-chart";
 
 
 import { TransactionHistory } from "@/components/trading/transaction-history";
+import { TokenSelector } from "@/components/token-selector";
 
 
 // Popular tokens for trading
@@ -306,28 +307,26 @@ export default function TradingTerminal() {
                 {/* From Token */}
                 <div className="space-y-2">
                   <Label>You're Selling</Label>
-                  <div className="flex space-x-2">
-                    <Select value={fromToken.mint} onValueChange={(value) => {
-                      const token = POPULAR_TOKENS.find(t => t.mint === value);
-                      if (token) setFromToken(token);
-                    }}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {POPULAR_TOKENS.map((token) => (
-                          <SelectItem key={token.mint} value={token.mint}>
-                            {token.symbol}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-3 gap-2">
+                    <TokenSelector
+                      value={fromToken.symbol}
+                      onChange={(token) => {
+                        if (typeof token === 'string') {
+                          // Handle custom address
+                          setFromToken({ symbol: token, mint: token, name: token, decimals: 9 });
+                        } else {
+                          setFromToken({ symbol: token.symbol, mint: token.address, name: token.name, decimals: token.decimals });
+                        }
+                      }}
+                      placeholder="Select token"
+                      className="col-span-1"
+                    />
                     <Input
                       type="number"
                       placeholder="0.0"
                       value={fromAmount}
                       onChange={(e) => setFromAmount(e.target.value)}
-                      className="flex-1"
+                      className="col-span-2"
                     />
                   </div>
                   {tokenPrices[fromToken.mint] && (
@@ -357,29 +356,27 @@ export default function TradingTerminal() {
                 {/* To Token */}
                 <div className="space-y-2">
                   <Label>You're Buying</Label>
-                  <div className="flex space-x-2">
-                    <Select value={toToken.mint} onValueChange={(value) => {
-                      const token = POPULAR_TOKENS.find(t => t.mint === value);
-                      if (token) setToToken(token);
-                    }}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {POPULAR_TOKENS.map((token) => (
-                          <SelectItem key={token.mint} value={token.mint}>
-                            {token.symbol}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-3 gap-2">
+                    <TokenSelector
+                      value={toToken.symbol}
+                      onChange={(token) => {
+                        if (typeof token === 'string') {
+                          // Handle custom address
+                          setToToken({ symbol: token, mint: token, name: token, decimals: 9 });
+                        } else {
+                          setToToken({ symbol: token.symbol, mint: token.address, name: token.name, decimals: token.decimals });
+                        }
+                      }}
+                      placeholder="Select token"
+                      className="col-span-1"
+                    />
                     <Input
                       type="number"
                       placeholder="0.0"
                       value={isGettingQuote ? "..." : toAmount}
                       readOnly={isMarketOrder}
                       onChange={(e) => !isMarketOrder && setToAmount(e.target.value)}
-                      className="flex-1"
+                      className="col-span-2"
                     />
                   </div>
                   {tokenPrices[toToken.mint] && (
