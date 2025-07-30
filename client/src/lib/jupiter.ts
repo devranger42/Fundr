@@ -62,14 +62,21 @@ export class JupiterService {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
+      }).catch((fetchError) => {
+        console.warn('Jupiter price API network error:', fetchError);
+        return null;
       });
       
-      if (!response.ok) {
-        console.warn(`Jupiter price API returned ${response.status}: ${response.statusText}`);
+      if (!response || !response.ok) {
+        console.warn('Jupiter price API unavailable, using fallback data');
         return {};
       }
 
-      const data = await response.json();
+      const data = await response.json().catch((parseError) => {
+        console.warn('Error parsing Jupiter price response:', parseError);
+        return { data: {} };
+      });
+      
       return data.data || {};
     } catch (error) {
       console.warn('Jupiter price API unavailable, using fallback data');
@@ -100,14 +107,21 @@ export class JupiterService {
         headers: {
           'Accept': 'application/json',
         },
+      }).catch((fetchError) => {
+        console.warn('Jupiter quote API network error:', fetchError);
+        return null;
       });
       
-      if (!response.ok) {
-        console.warn(`Jupiter quote API returned ${response.status}: ${response.statusText}`);
+      if (!response || !response.ok) {
+        console.warn('Jupiter quote API unavailable');
         return null;
       }
 
-      const data = await response.json();
+      const data = await response.json().catch((parseError) => {
+        console.warn('Error parsing Jupiter quote response:', parseError);
+        return null;
+      });
+      
       return data;
     } catch (error) {
       console.warn('Jupiter quote API unavailable');

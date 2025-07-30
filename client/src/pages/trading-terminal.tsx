@@ -90,22 +90,21 @@ export default function TradingTerminal() {
     const fetchPrices = async () => {
       try {
         const tokenMints = POPULAR_TOKENS.map(token => token.mint);
-        const prices = await jupiterService.getTokenPrices(tokenMints);
+        const prices = await jupiterService.getTokenPrices(tokenMints).catch(() => ({}));
         setTokenPrices(prices);
       } catch (error) {
-        // Silently handle price fetch errors
         setTokenPrices({});
       }
     };
     
-    fetchPrices().catch(() => {
-      // Prevent unhandled promise rejection
+    // Initial fetch with promise rejection handling
+    Promise.resolve(fetchPrices()).catch(() => {
       setTokenPrices({});
     });
     
     const interval = setInterval(() => {
-      fetchPrices().catch(() => {
-        // Prevent unhandled promise rejection
+      Promise.resolve(fetchPrices()).catch(() => {
+        // Silently handle periodic fetch errors
       });
     }, 30000);
     
@@ -149,8 +148,7 @@ export default function TradingTerminal() {
     };
 
     const debounce = setTimeout(() => {
-      getQuote().catch(() => {
-        // Prevent unhandled promise rejection
+      Promise.resolve(getQuote()).catch(() => {
         setQuote(null);
         setToAmount("");
         setIsGettingQuote(false);
