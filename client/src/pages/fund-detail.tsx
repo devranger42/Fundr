@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { ArrowLeft, TrendingUp, Users, DollarSign, PieChart, Plus, Minus, Loader2 } from "lucide-react";
+import { ArrowLeft, TrendingUp, Users, DollarSign, PieChart, Plus, Minus, Loader2, BarChart3 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import FundrLogo from "@/components/fundr-logo";
 import { useFund, useDeposit, useWithdraw } from "@/hooks/use-funds";
@@ -19,7 +19,8 @@ export default function FundDetail() {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   
   const { data: fund, isLoading, error } = useFund(id!);
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
   const { publicKey, connected } = useWallet();
   const deposit = useDeposit();
   const withdraw = useWithdraw();
@@ -179,7 +180,7 @@ export default function FundDetail() {
               <h1 className="text-4xl font-bold mb-4">{fund.name}</h1>
               <p className="text-xl text-gray-300 mb-6">{fund.description}</p>
               
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-pump">+12.5%</div>
                   <div className="text-gray-400">30D ROI</div>
@@ -193,6 +194,16 @@ export default function FundDetail() {
                   <div className="text-gray-400">Management Fee</div>
                 </div>
               </div>
+              
+              {/* Trading Terminal Button for Fund Managers */}
+              {isAuthenticated && user?.id === fund.managerId && (
+                <Link href={`/fund/${id}/trading`}>
+                  <Button className="bg-bonk hover:bg-bonk-hover text-white">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Open Trading Terminal
+                  </Button>
+                </Link>
+              )}
             </div>
             
             <div className="flex justify-center">
@@ -282,7 +293,7 @@ export default function FundDetail() {
                             <div>
                               <div className="font-medium capitalize">{tx.type}</div>
                               <div className="text-sm text-gray-500">
-                                {new Date(tx.createdAt).toLocaleDateString()}
+                                {tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : 'N/A'}
                               </div>
                             </div>
                           </div>
@@ -407,7 +418,7 @@ export default function FundDetail() {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Created</span>
                     <span className="font-bold">
-                      {new Date(fund.createdAt).toLocaleDateString()}
+                      {fund.createdAt ? new Date(fund.createdAt).toLocaleDateString() : 'N/A'}
                     </span>
                   </div>
                 </CardContent>
