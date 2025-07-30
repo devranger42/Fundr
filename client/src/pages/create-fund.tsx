@@ -250,11 +250,11 @@ export default function CreateFund() {
                 <CardContent className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Deposit Fee:</span>
-                    <span className="font-semibold">1% (burns $FUND)</span>
+                    <span className="font-semibold">1% (buy/burn)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Withdrawal Fee:</span>
-                    <span className="font-semibold">1% (ttreasury)</span>
+                    <span className="font-semibold">1% (treasury)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Your Profit Fee:</span>
