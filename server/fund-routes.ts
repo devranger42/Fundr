@@ -74,7 +74,10 @@ export function registerFundRoutes(app: Express) {
       // Set initial allocations if provided
       if (req.body.allocations && req.body.allocations.length > 0) {
         const validatedAllocations = req.body.allocations.map((allocation: any) =>
-          insertFundAllocationSchema.parse(allocation)
+          insertFundAllocationSchema.parse({
+            ...allocation,
+            fundId: fund.id
+          })
         );
         
         await storage.setFundAllocations(fund.id, validatedAllocations);
