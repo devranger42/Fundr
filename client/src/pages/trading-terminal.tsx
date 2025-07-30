@@ -512,13 +512,139 @@ export default function TradingTerminal() {
             </Card>
           </div>
 
-          {/* Price Chart */}
+          {/* Price Chart and Portfolio */}
           <div className="xl:col-span-5 space-y-6">
             <PriceChart 
               tokenSymbol={fromToken.symbol}
               tokenMint={fromToken.mint}
               currentPrice={tokenPrices[fromToken.mint]?.price}
             />
+            
+            {/* Portfolio Allocation & Rebalancing */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Target className="w-5 h-5 mr-2 text-bonk" />
+                    Portfolio Allocation
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant={rebalanceMode ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setRebalanceMode(!rebalanceMode)}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      {rebalanceMode ? "Exit Rebalance" : "Rebalance"}
+                    </Button>
+                  </div>
+                </CardTitle>
+                <CardDescription>
+                  Current vs target allocation for your fund
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Mock allocation data - this would come from fund state */}
+                {[
+                  { symbol: "SOL", current: 45, target: 50, value: 4500, drift: -5 },
+                  { symbol: "USDC", current: 35, target: 30, value: 3500, drift: +5 },
+                  { symbol: "BONK", current: 20, target: 20, value: 2000, drift: 0 }
+                ].map((allocation) => (
+                  <div key={allocation.symbol} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">{allocation.symbol}</span>
+                        <Badge 
+                          variant={allocation.drift === 0 ? "default" : "secondary"}
+                          className={allocation.drift > 0 ? "bg-pump/20 text-pump" : 
+                                   allocation.drift < 0 ? "bg-red-100 text-red-700" : ""}
+                        >
+                          {allocation.drift > 0 ? "+" : ""}{allocation.drift}% drift
+                        </Badge>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-medium">${allocation.value.toLocaleString()}</div>
+                        <div className="text-sm text-gray-500">
+                          {allocation.current}% → {allocation.target}%
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>Current</span>
+                        <span>Target</span>
+                      </div>
+                      <div className="relative">
+                        <Progress value={allocation.current} className="h-2" />
+                        <div 
+                          className="absolute top-0 h-2 border-r-2 border-bonk" 
+                          style={{ left: `${allocation.target}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {rebalanceMode && allocation.drift !== 0 && (
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm">
+                          {allocation.drift > 0 ? "Sell" : "Buy"} {Math.abs(allocation.drift)}% 
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            // Set up swap to rebalance this token
+                            if (allocation.drift > 0) {
+                              // Need to sell this token
+                              const sellToken = POPULAR_TOKENS.find(t => t.symbol === allocation.symbol);
+                              if (sellToken) {
+                                setFromToken(sellToken);
+                                setToToken(POPULAR_TOKENS[1]); // USDC
+                                const sellAmount = (allocation.value * Math.abs(allocation.drift) / 100 / (tokenPrices[sellToken.mint]?.price || 1));
+                                setFromAmount(sellAmount.toFixed(4));
+                              }
+                            } else {
+                              // Need to buy this token
+                              const buyToken = POPULAR_TOKENS.find(t => t.symbol === allocation.symbol);
+                              if (buyToken) {
+                                setFromToken(POPULAR_TOKENS[1]); // USDC
+                                setToToken(buyToken);
+                                const buyAmountUSD = allocation.value * Math.abs(allocation.drift) / 100;
+                                setFromAmount(buyAmountUSD.toFixed(2));
+                              }
+                            }
+                            toast({
+                              title: "Rebalance Trade Set",
+                              description: `Prepared swap to rebalance ${allocation.symbol}`,
+                            });
+                          }}
+                        >
+                          Auto-Fill Trade
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {rebalanceMode && (
+                  <div className="pt-4 border-t">
+                    <Button 
+                      className="w-full bg-pump hover:bg-pump-hover text-white"
+                      onClick={() => {
+                        toast({
+                          title: "Portfolio Rebalanced",
+                          description: "All allocations have been adjusted to target percentages",
+                        });
+                        setRebalanceMode(false);
+                      }}
+                    >
+                      <Target className="w-4 h-4 mr-2" />
+                      Execute Full Rebalance
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
             
             {/* Transaction History */}
             <TransactionHistory fundId={id!} />

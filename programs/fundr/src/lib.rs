@@ -16,6 +16,7 @@ pub mod fundr {
         management_fee: u16, // in basis points (e.g., 100 = 1%)
         performance_fee: u16, // in basis points (e.g., 2000 = 20%)
         min_deposit: u64,
+        fund_mode: FundMode, // manual or auto allocation mode
     ) -> Result<()> {
         let fund = &mut ctx.accounts.fund;
         fund.authority = ctx.accounts.manager.key();
@@ -24,6 +25,7 @@ pub mod fundr {
         fund.management_fee = management_fee;
         fund.performance_fee = performance_fee;
         fund.min_deposit = min_deposit;
+        fund.fund_mode = fund_mode;
         fund.total_shares = 0;
         fund.total_assets = 0;
         fund.bump = ctx.bumps.fund;
@@ -368,6 +370,7 @@ pub struct Fund {
     pub management_fee: u16,    // Annual management fee in basis points
     pub performance_fee: u16,   // Performance fee in basis points
     pub min_deposit: u64,       // Minimum deposit amount in lamports
+    pub fund_mode: FundMode,    // Manual or auto allocation mode
     pub total_shares: u64,      // Total shares outstanding
     pub total_assets: u64,      // Total assets under management (lamports)
     pub investor_count: u32,    // Number of investors
@@ -375,6 +378,12 @@ pub struct Fund {
     pub created_at: i64,        // Unix timestamp of creation
     pub last_fee_collection: i64, // Last fee collection timestamp
     pub high_water_mark: u64,   // High water mark for performance fees (fixed point)
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
+pub enum FundMode {
+    Manual, // Manager manually allocates deposits (SOL accumulates)
+    Auto,   // Deposits auto-allocate to current token ratios
 }
 
 #[account]

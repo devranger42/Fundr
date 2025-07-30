@@ -170,6 +170,24 @@ The project structure supports both development and production environments with
 ✓ Established foundation for Jupiter swap integration within fund rebalancing
 ✓ Platform ready for devnet deployment and real blockchain operations
 
+### Fund Modes Implementation (July 30, 2025)
+✓ Added comprehensive fund mode selection to smart contract and database schema
+✓ Implemented Manual Allocation Mode - deposits accumulate as SOL for discretionary trading
+✓ Implemented Auto Allocation Mode - deposits/withdrawals mirror current token ratios automatically
+✓ Updated fund creation form with detailed mode explanations and radio button selection
+✓ Enhanced smart contract FundMode enum with proper serialization support
+✓ Updated FundrService to handle fund mode parameter in createFund operations
+✓ Database schema migration completed with fundMode field added to funds table
+
+### Portfolio Rebalancing System (July 30, 2025)
+✓ Restored comprehensive portfolio allocation tracking with current vs target percentages
+✓ Built interactive rebalancing interface with drift indicators and progress bars
+✓ Added auto-fill trade functionality to prepare swaps for rebalancing specific tokens
+✓ Implemented rebalance mode toggle with full portfolio rebalancing capabilities
+✓ Integrated allocation tracking with real-time drift calculations and visual indicators
+✓ Enhanced trading terminal with portfolio analytics section alongside price charts
+✓ Created seamless integration between rebalancing and Jupiter swap interface
+
 ## Core Features Implementation Plan
 
 ### Immediate Frontend (Current)

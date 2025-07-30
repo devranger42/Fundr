@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { 
   Loader2, 
   CheckCircle, 
@@ -14,7 +15,8 @@ import {
   Trash2,
   DollarSign,
   Target,
-  Settings
+  Settings,
+  Cog
 } from "lucide-react";
 import { useLocation } from "wouter";
 import Header from "@/components/header";
@@ -39,7 +41,8 @@ export default function CreateFundBlockchain() {
     description: "",
     managementFee: 1,    // 1%
     performanceFee: 20,  // 20%
-    minDeposit: 1        // 1 SOL
+    minDeposit: 1,       // 1 SOL
+    fundMode: "manual"   // manual or auto
   });
   
   const [allocations, setAllocations] = useState<AllocationTarget[]>([
@@ -112,7 +115,8 @@ export default function CreateFundBlockchain() {
         formData.description,
         formData.managementFee * 100, // Convert to basis points
         formData.performanceFee * 100, // Convert to basis points
-        formData.minDeposit
+        formData.minDeposit,
+        formData.fundMode
       );
 
       console.log('Fund creation result:', result);
@@ -124,6 +128,7 @@ export default function CreateFundBlockchain() {
         name: formData.name,
         description: formData.description,
         managementFee: formData.managementFee * 100, // Convert to basis points for database
+        fundMode: formData.fundMode,
         totalAssets: 0,
         totalShares: 0,
         isActive: true
@@ -286,6 +291,58 @@ export default function CreateFundBlockchain() {
                   </p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Fund Mode Selection */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Cog className="w-5 h-5 mr-2 text-pump" />
+                Fund Mode
+              </CardTitle>
+              <CardDescription>
+                Choose how deposits and withdrawals are handled
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <RadioGroup
+                value={formData.fundMode}
+                onValueChange={(value) => handleInputChange('fundMode', value)}
+                className="space-y-4"
+              >
+                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="manual" id="manual" className="mt-1" />
+                  <div className="flex-1">
+                    <Label htmlFor="manual" className="text-base font-medium cursor-pointer">
+                      Manual Allocation Mode
+                    </Label>
+                    <p className="text-sm text-gray-600 mt-1">
+                      All deposits accumulate as SOL. You manually allocate tokens using the trading terminal. 
+                      Withdrawals require sufficient SOL balance in the fund.
+                    </p>
+                    <div className="mt-2 text-xs text-gray-500">
+                      <strong>Best for:</strong> Active trading, discretionary strategies, hands-on management
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="auto" id="auto" className="mt-1" />
+                  <div className="flex-1">
+                    <Label htmlFor="auto" className="text-base font-medium cursor-pointer">
+                      Auto Allocation Mode
+                    </Label>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Deposits automatically buy tokens matching current allocation. Withdrawals automatically 
+                      sell tokens proportionally and return SOL.
+                    </p>
+                    <div className="mt-2 text-xs text-gray-500">
+                      <strong>Best for:</strong> Index funds, passive strategies, set-and-forget management
+                    </div>
+                  </div>
+                </div>
+              </RadioGroup>
             </CardContent>
           </Card>
 

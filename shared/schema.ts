@@ -69,6 +69,7 @@ export const funds = pgTable("funds", {
   name: varchar("name").notNull(),
   description: varchar("description"),
   managementFee: integer("management_fee").notNull(), // basis points (0-2000)
+  fundMode: varchar("fund_mode", { enum: ["manual", "auto"] }).notNull().default("manual"), // allocation mode
   totalAssets: bigint("total_assets", { mode: "number" }).default(0), // in lamports
   totalShares: bigint("total_shares", { mode: "number" }).default(0),
   isActive: boolean("is_active").default(true),

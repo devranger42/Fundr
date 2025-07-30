@@ -72,7 +72,8 @@ export class FundrService {
               { name: "description", type: "string" },
               { name: "managementFee", type: "u16" },
               { name: "performanceFee", type: "u16" },
-              { name: "minDeposit", type: "u64" }
+              { name: "minDeposit", type: "u64" },
+              { name: "fundMode", type: "u8" }
             ]
           }
         ],
@@ -88,6 +89,7 @@ export class FundrService {
                 { name: "managementFee", type: "u16" },
                 { name: "performanceFee", type: "u16" },
                 { name: "minDeposit", type: "u64" },
+                { name: "fundMode", type: "u8" },
                 { name: "totalShares", type: "u64" },
                 { name: "totalAssets", type: "u64" },
                 { name: "investorCount", type: "u32" },
@@ -179,7 +181,8 @@ export class FundrService {
     description: string,
     managementFee: number, // in basis points
     performanceFee: number, // in basis points
-    minDeposit: number // in SOL
+    minDeposit: number, // in SOL
+    fundMode: string = "manual" // manual or auto
   ): Promise<{ signature: string; fundAddress: PublicKey }> {
     if (!this.provider?.wallet.publicKey) {
       throw new Error('Wallet not connected');
@@ -200,6 +203,7 @@ export class FundrService {
         managementFee,
         performanceFee,
         minDeposit,
+        fundMode,
         fundPDA: fundPDA.toString(),
         vaultPDA: vaultPDA.toString()
       });
