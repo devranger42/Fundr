@@ -34,7 +34,7 @@ export default function Header() {
           <div className="flex items-center">
             <Link href="/">
               <div className="cursor-pointer hover:opacity-80 transition-opacity flex items-center space-x-3">
-                <FundrLogo size="md" />
+                <FundrLogo size="md" pieOnly={true} />
                 <span className="font-bold text-2xl text-gray-900">Fundr</span>
               </div>
             </Link>
