@@ -254,18 +254,30 @@ export default function CreateFundBlockchain() {
             </CardContent>
           </Card>
 
-          {/* Fee Structure */}
+          {/* Fee Structure - Traditional 2/20 */}
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <DollarSign className="w-5 h-5 mr-2 text-pump" />
-                Performance Fee
+                Fee Structure (2/20 Model)
               </CardTitle>
               <CardDescription>
-                Set your performance fee - the only fee charged to investors
+                Traditional hedge fund fee structure: 2% management fee + up to 20% performance fee
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* Management Fee - Fixed at 2% */}
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-base font-medium">Management Fee</Label>
+                  <span className="text-lg font-bold text-bonk">2.0%</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Annual fee charged on total assets under management. Standard hedge fund rate.
+                </p>
+              </div>
+
+              {/* Performance Fee - Adjustable up to 20% */}
               <div>
                 <Label>Performance Fee: {formData.performanceFee}%</Label>
                 <div className="mt-2">
@@ -283,7 +295,7 @@ export default function CreateFundBlockchain() {
                   <span>20%</span>
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
-                  Charged only on profits above high water mark. No management fees - you only earn when your investors profit.
+                  Charged only on profits above high water mark. Combined with 2% management fee, this follows the traditional "2 and 20" hedge fund model.
                 </p>
               </div>
             </CardContent>
