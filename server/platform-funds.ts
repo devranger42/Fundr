@@ -95,7 +95,8 @@ const MOCK_TOKEN_ALLOCATIONS = {
 };
 
 export async function createPlatformFunds() {
-  console.log("Creating platform index funds...");
+  console.log("Platform funds disabled - returning empty array");
+  return [];
   
   try {
     // Check if platform funds already exist
