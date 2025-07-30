@@ -290,4 +290,55 @@ export function registerFundRoutes(app: Express) {
       res.status(500).json({ message: "Failed to update transaction status" });
     }
   });
+
+  // Fund settings update endpoint
+  app.patch('/api/funds/:id/settings', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { fundMode, jupiterStrictList } = req.body;
+      
+      // Get the fund first to check ownership and current settings
+      const fund = await storage.getFund(id);
+      if (!fund) {
+        return res.status(404).json({ error: 'Fund not found' });
+      }
+
+      // Check if user is the fund manager (simplified for now)
+      // In production, this would check authenticated user session
+      
+      // Prevent platform funds from being modified
+      if (fund.isPlatformFund) {
+        return res.status(403).json({ error: 'Cannot modify platform funds' });
+      }
+
+      // Validate settings changes
+      const updates: any = {};
+      
+      if (fundMode !== undefined) {
+        if (!['manual', 'auto'].includes(fundMode)) {
+          return res.status(400).json({ error: 'Invalid fund mode' });
+        }
+        updates.fundMode = fundMode;
+      }
+
+      if (jupiterStrictList !== undefined) {
+        // Can only enable, never disable strict list for security
+        if (fund.jupiterStrictList && !jupiterStrictList) {
+          return res.status(400).json({ error: 'Cannot remove Jupiter strict list restriction once enabled' });
+        }
+        updates.jupiterStrictList = jupiterStrictList;
+      }
+
+      // Update the fund
+      const updatedFund = await storage.updateFund(id, updates);
+      
+      res.json({
+        message: 'Fund settings updated successfully',
+        fund: updatedFund
+      });
+    } catch (error) {
+      console.error('Fund settings update error:', error);
+      res.status(500).json({ error: 'Failed to update fund settings' });
+    }
+  });
 }

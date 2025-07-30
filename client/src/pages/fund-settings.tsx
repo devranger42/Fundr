@@ -1,0 +1,353 @@
+import { useState } from "react";
+import { useParams } from "wouter";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Header from "@/components/header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { apiRequest } from "@/lib/queryClient";
+import { 
+  Settings, 
+  Shield, 
+  AlertTriangle, 
+  CheckCircle,
+  ArrowLeft,
+  Zap,
+  Target
+} from "lucide-react";
+import { Link } from "wouter";
+
+interface Fund {
+  id: string;
+  name: string;
+  description: string;
+  managerId: string;
+  fundMode: string;
+  jupiterStrictList: boolean;
+  isPlatformFund: boolean;
+  totalAssets: number;
+  totalShares: number;
+  createdAt: string;
+}
+
+export default function FundSettings() {
+  const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Fetch fund details
+  const { data: fund, isLoading } = useQuery<Fund>({
+    queryKey: [`/api/funds/${id}`],
+    enabled: !!id,
+  });
+
+  // Update fund settings mutation
+  const updateFundMutation = useMutation({
+    mutationFn: async (updates: { fundMode?: string; jupiterStrictList?: boolean }) => {
+      const response = await fetch(`/api/funds/${id}/settings`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update settings');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/funds/${id}`] });
+      toast({
+        title: "Settings Updated",
+        description: "Fund settings have been successfully updated",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update fund settings",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleModeChange = async (newMode: string) => {
+    if (!fund || isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      await updateFundMutation.mutateAsync({ fundMode: newMode });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleStrictListToggle = async (enabled: boolean) => {
+    if (!fund || isUpdating || fund.jupiterStrictList) return; // Cannot remove once enabled
+    
+    setIsUpdating(true);
+    try {
+      await updateFundMutation.mutateAsync({ jupiterStrictList: enabled });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Check if user is the fund manager
+  const isManager = user?.id === fund?.managerId;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bonk mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading fund settings...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!fund) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <p className="text-red-600">Fund not found</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isManager) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+            <p className="text-gray-600">Only fund managers can access fund settings.</p>
+            <Link href={`/fund/${id}`}>
+              <Button className="mt-4">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Fund
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (fund.isPlatformFund) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <Shield className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Platform Fund</h2>
+            <p className="text-gray-600">Platform funds are managed by the Fundr team and cannot be modified.</p>
+            <Link href={`/fund/${id}`}>
+              <Button className="mt-4">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Fund
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center space-x-4 mb-4">
+            <Link href={`/fund/${id}`}>
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Fund
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-dark">Fund Settings</h1>
+              <p className="text-gray-600">{fund.name}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Fund Mode Settings */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Target className="w-5 h-5 mr-2 text-pump" />
+                Fund Allocation Mode
+              </CardTitle>
+              <div className="text-sm text-gray-600">
+                Control how deposits are handled in your fund
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <RadioGroup
+                value={fund.fundMode}
+                onValueChange={handleModeChange}
+                disabled={isUpdating}
+                className="space-y-4"
+              >
+                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="manual" id="manual" className="mt-1" />
+                  <div className="flex-1">
+                    <Label htmlFor="manual" className="text-base font-medium cursor-pointer flex items-center">
+                      <Settings className="w-4 h-4 mr-2 text-blue-600" />
+                      Manual Allocation
+                    </Label>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Deposits accumulate as SOL. You manually decide when and how to buy tokens via the trading terminal.
+                    </p>
+                    <div className="mt-2 text-xs text-gray-500">
+                      <strong>Best for:</strong> Active traders, discretionary management, market timing strategies
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <RadioGroupItem value="auto" id="auto" className="mt-1" />
+                  <div className="flex-1">
+                    <Label htmlFor="auto" className="text-base font-medium cursor-pointer flex items-center">
+                      <Zap className="w-4 h-4 mr-2 text-green-600" />
+                      Auto Allocation
+                    </Label>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Deposits automatically buy tokens according to your current allocation percentages. Instant diversification.
+                    </p>
+                    <div className="mt-2 text-xs text-gray-500">
+                      <strong>Best for:</strong> Index funds, passive strategies, set-and-forget management
+                    </div>
+                  </div>
+                </div>
+              </RadioGroup>
+              
+              {fund.fundMode && (
+                <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-sm text-green-800">
+                    Current mode: <strong>{fund.fundMode === 'manual' ? 'Manual Allocation' : 'Auto Allocation'}</strong>
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Token Security Settings */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Shield className="w-5 h-5 mr-2 text-bonk" />
+                Token Security
+              </CardTitle>
+              <div className="text-sm text-gray-600">
+                Enhance fund security with token restrictions
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Label className="text-base font-medium">Jupiter Strict List Only</Label>
+                    {fund.jupiterStrictList && (
+                      <Badge variant="outline" className="text-green-600 border-green-600">
+                        <Shield className="w-3 h-3 mr-1" />
+                        Enabled
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Restrict trading to Jupiter's strictly verified token list for enhanced security.
+                  </p>
+                  {fund.jupiterStrictList ? (
+                    <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-xs text-green-800">
+                      <strong>Security Active:</strong> This fund can only trade verified tokens and this restriction cannot be removed.
+                    </div>
+                  ) : (
+                    <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                      <strong>Warning:</strong> Once enabled, this restriction cannot be removed for security reasons.
+                    </div>
+                  )}
+                </div>
+                <Switch
+                  checked={fund.jupiterStrictList}
+                  onCheckedChange={handleStrictListToggle}
+                  disabled={fund.jupiterStrictList || isUpdating}
+                />
+              </div>
+              
+              {!fund.jupiterStrictList && (
+                <div className="flex items-start space-x-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <AlertTriangle className="w-4 h-4 text-blue-600 mt-0.5" />
+                  <div className="text-sm text-blue-800">
+                    <strong>Recommendation:</strong> Enable strict list restriction for institutional-grade security and investor confidence.
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Fund Information */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Settings className="w-5 h-5 mr-2 text-gray-600" />
+                Fund Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm font-medium text-gray-700">Total Value Locked</div>
+                  <div className="text-lg font-semibold">${(fund.totalAssets / 1000000).toFixed(2)}M</div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-700">Total Shares</div>
+                  <div className="text-lg font-semibold">{fund.totalShares.toLocaleString()}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-700">Created</div>
+                  <div className="text-sm text-gray-600">
+                    {new Date(fund.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-700">Fund ID</div>
+                  <div className="text-sm text-gray-600 font-mono">{fund.id.slice(0, 8)}...</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

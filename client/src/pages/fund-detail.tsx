@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { ArrowLeft, TrendingUp, Users, DollarSign, PieChart, Plus, Minus, Loader2, BarChart3 } from "lucide-react";
+import { ArrowLeft, TrendingUp, Users, DollarSign, PieChart, Plus, Minus, Loader2, BarChart3, Settings } from "lucide-react";
 import { Link, useParams } from "wouter";
 import FundrLogo from "@/components/fundr-logo";
 import { useFund, useDeposit, useWithdraw } from "@/hooks/use-funds";
@@ -195,14 +195,25 @@ export default function FundDetail() {
                 </div>
               </div>
               
-              {/* Trading Terminal Button for Fund Managers */}
+              {/* Manager Controls */}
               {isAuthenticated && user?.id === fund.managerId && (
-                <Link href={`/fund/${id}/trading`}>
-                  <Button className="bg-bonk hover:bg-bonk-hover text-white">
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Open Trading Terminal
-                  </Button>
-                </Link>
+                <div className="flex space-x-3">
+                  <Link href={`/fund/${id}/trading`}>
+                    <Button className="bg-bonk hover:bg-bonk-hover text-white">
+                      <BarChart3 className="w-4 h-4 mr-2" />
+                      Trading Terminal
+                    </Button>
+                  </Link>
+                  
+                  {!fund.isPlatformFund && (
+                    <Link href={`/fund/${id}/settings`}>
+                      <Button variant="outline" className="text-white border-white hover:bg-white hover:text-dark">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Fund Settings
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               )}
             </div>
             
