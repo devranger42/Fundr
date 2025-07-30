@@ -3,12 +3,15 @@ import { Link, useLocation } from "wouter";
 import { PlusCircle, LogOut } from "lucide-react";
 import FundrLogo from "./fundr-logo";
 import WalletModal from "./wallet-modal";
+import { TwitterAuth } from "./twitter-auth";
 import { useWallet } from "@/hooks/use-wallet";
+import { useAuth } from "@/hooks/use-auth";
 import { useState } from "react";
 
 export default function Header() {
   const [location] = useLocation();
   const { connected, publicKey, disconnect } = useWallet();
+  const { user } = useAuth();
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   
   const handleConnectWallet = () => {
@@ -62,6 +65,14 @@ export default function Header() {
             >
               Create Fund
             </Link>
+            <Link 
+              href="/profile"
+              className={`font-medium transition-colors duration-200 ${
+                isActive('/profile') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
+              }`}
+            >
+              Profile
+            </Link>
           </nav>
           
           {/* Action Buttons */}
@@ -76,13 +87,18 @@ export default function Header() {
               </Button>
             </Link>
             
+            {/* Twitter Auth - compact mode */}
+            {connected && <TwitterAuth compact />}
+            
             {connected ? (
               <div className="flex items-center space-x-3">
                 <div className="text-sm">
                   <div className="font-medium text-gray-900">
                     {publicKey && formatPublicKey(publicKey)}
                   </div>
-                  <div className="text-gray-500">Connected</div>
+                  <div className="text-gray-500">
+                    Connected {user?.twitterUsername && `• @${user.twitterUsername}`}
+                  </div>
                 </div>
                 <Button 
                   onClick={disconnect}

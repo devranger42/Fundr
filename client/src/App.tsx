@@ -4,11 +4,13 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WalletProvider } from "@/hooks/use-wallet";
+import { AuthProvider } from "@/hooks/use-auth";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home.tsx";
 import Leaderboard from "@/pages/leaderboard";
 import CreateFund from "@/pages/create-fund";
 import FundDetail from "@/pages/fund-detail";
+import Profile from "@/pages/profile";
 
 function Router() {
   return (
@@ -17,6 +19,7 @@ function Router() {
       <Route path="/leaderboard" component={Leaderboard} />
       <Route path="/create-fund" component={CreateFund} />
       <Route path="/fund/:id" component={FundDetail} />
+      <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -26,10 +29,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WalletProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </AuthProvider>
       </WalletProvider>
     </QueryClientProvider>
   );
