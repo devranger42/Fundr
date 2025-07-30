@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupTwitterAuth } from "./twitter-auth";
+import { registerFundRoutes } from "./fund-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Twitter authentication
@@ -72,6 +73,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to unlink Twitter' });
     }
   });
+
+  // Register fund management routes
+  registerFundRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;

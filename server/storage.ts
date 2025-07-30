@@ -1,6 +1,23 @@
-import { users, type User, type InsertUser, type UpsertUser } from "@shared/schema";
+import {
+  users,
+  funds,
+  fundAllocations,
+  investorStakes,
+  fundTransactions,
+  type User,
+  type InsertUser,
+  type UpsertUser,
+  type Fund,
+  type InsertFund,
+  type FundAllocation,
+  type InsertFundAllocation,
+  type InvestorStake,
+  type InsertInvestorStake,
+  type FundTransaction,
+  type InsertFundTransaction,
+} from "@shared/schema";
 import { db } from "./db";
-import { eq, or } from "drizzle-orm";
+import { eq, or, desc, and, sum } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -12,6 +29,30 @@ export interface IStorage {
   createUser(insertUser: InsertUser): Promise<User>;
   upsertUser(userData: UpsertUser): Promise<User>;
   linkTwitterToWallet(walletAddress: string, twitterData: Partial<UpsertUser>): Promise<User>;
+
+  // Fund operations
+  createFund(fundData: InsertFund): Promise<Fund>;
+  getFund(id: string): Promise<Fund | undefined>;
+  getFundByPublicKey(publicKey: string): Promise<Fund | undefined>;
+  getAllFunds(): Promise<Fund[]>;
+  getFundsByManager(managerId: string): Promise<Fund[]>;
+  updateFund(id: string, updates: Partial<Fund>): Promise<Fund>;
+  
+  // Fund allocation operations
+  setFundAllocations(fundId: string, allocations: InsertFundAllocation[]): Promise<FundAllocation[]>;
+  getFundAllocations(fundId: string): Promise<FundAllocation[]>;
+  
+  // Investor stake operations
+  createInvestorStake(stakeData: InsertInvestorStake): Promise<InvestorStake>;
+  getInvestorStakes(investorId: string): Promise<InvestorStake[]>;
+  getFundStakes(fundId: string): Promise<InvestorStake[]>;
+  updateInvestorStake(id: string, updates: Partial<InvestorStake>): Promise<InvestorStake>;
+  
+  // Transaction operations
+  createTransaction(transactionData: InsertFundTransaction): Promise<FundTransaction>;
+  getFundTransactions(fundId: string): Promise<FundTransaction[]>;
+  getUserTransactions(userId: string): Promise<FundTransaction[]>;
+  updateTransactionStatus(id: string, status: string, txSignature?: string): Promise<FundTransaction>;
 }
 
 // Database storage implementation
@@ -94,6 +135,141 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return user;
+  }
+
+  // Fund operations
+  async createFund(fundData: InsertFund): Promise<Fund> {
+    const [fund] = await db
+      .insert(funds)
+      .values(fundData)
+      .returning();
+    return fund;
+  }
+
+  async getFund(id: string): Promise<Fund | undefined> {
+    const [fund] = await db.select().from(funds).where(eq(funds.id, id));
+    return fund;
+  }
+
+  async getFundByPublicKey(publicKey: string): Promise<Fund | undefined> {
+    const [fund] = await db.select().from(funds).where(eq(funds.publicKey, publicKey));
+    return fund;
+  }
+
+  async getAllFunds(): Promise<Fund[]> {
+    return await db.select().from(funds).where(eq(funds.isActive, true)).orderBy(desc(funds.createdAt));
+  }
+
+  async getFundsByManager(managerId: string): Promise<Fund[]> {
+    return await db.select().from(funds)
+      .where(and(eq(funds.managerId, managerId), eq(funds.isActive, true)))
+      .orderBy(desc(funds.createdAt));
+  }
+
+  async updateFund(id: string, updates: Partial<Fund>): Promise<Fund> {
+    const [fund] = await db
+      .update(funds)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(funds.id, id))
+      .returning();
+    return fund;
+  }
+
+  // Fund allocation operations
+  async setFundAllocations(fundId: string, allocations: InsertFundAllocation[]): Promise<FundAllocation[]> {
+    // Delete existing allocations
+    await db.delete(fundAllocations).where(eq(fundAllocations.fundId, fundId));
+    
+    // Insert new allocations
+    if (allocations.length > 0) {
+      const allocationsWithFundId = allocations.map(allocation => ({
+        ...allocation,
+        fundId,
+      }));
+      
+      return await db
+        .insert(fundAllocations)
+        .values(allocationsWithFundId)
+        .returning();
+    }
+    
+    return [];
+  }
+
+  async getFundAllocations(fundId: string): Promise<FundAllocation[]> {
+    return await db.select().from(fundAllocations)
+      .where(eq(fundAllocations.fundId, fundId));
+  }
+
+  // Investor stake operations
+  async createInvestorStake(stakeData: InsertInvestorStake): Promise<InvestorStake> {
+    const [stake] = await db
+      .insert(investorStakes)
+      .values(stakeData)
+      .returning();
+    return stake;
+  }
+
+  async getInvestorStakes(investorId: string): Promise<InvestorStake[]> {
+    return await db.select().from(investorStakes)
+      .where(eq(investorStakes.investorId, investorId))
+      .orderBy(desc(investorStakes.depositedAt));
+  }
+
+  async getFundStakes(fundId: string): Promise<InvestorStake[]> {
+    return await db.select().from(investorStakes)
+      .where(eq(investorStakes.fundId, fundId))
+      .orderBy(desc(investorStakes.depositedAt));
+  }
+
+  async updateInvestorStake(id: string, updates: Partial<InvestorStake>): Promise<InvestorStake> {
+    const [stake] = await db
+      .update(investorStakes)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(investorStakes.id, id))
+      .returning();
+    return stake;
+  }
+
+  // Transaction operations
+  async createTransaction(transactionData: InsertFundTransaction): Promise<FundTransaction> {
+    const [transaction] = await db
+      .insert(fundTransactions)
+      .values(transactionData)
+      .returning();
+    return transaction;
+  }
+
+  async getFundTransactions(fundId: string): Promise<FundTransaction[]> {
+    return await db.select().from(fundTransactions)
+      .where(eq(fundTransactions.fundId, fundId))
+      .orderBy(desc(fundTransactions.createdAt));
+  }
+
+  async getUserTransactions(userId: string): Promise<FundTransaction[]> {
+    return await db.select().from(fundTransactions)
+      .where(eq(fundTransactions.userId, userId))
+      .orderBy(desc(fundTransactions.createdAt));
+  }
+
+  async updateTransactionStatus(id: string, status: string, txSignature?: string): Promise<FundTransaction> {
+    const updates: Partial<FundTransaction> = { status };
+    if (txSignature) {
+      updates.txSignature = txSignature;
+    }
+
+    const [transaction] = await db
+      .update(fundTransactions)
+      .set(updates)
+      .where(eq(fundTransactions.id, id))
+      .returning();
+    return transaction;
   }
 }
 
