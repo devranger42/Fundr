@@ -195,18 +195,7 @@ export function setupTwitterAuth(app: Express) {
     });
   });
 
-  // Test endpoint to verify callback reachability
-  app.get('/api/auth/twitter/callback/test', (req, res) => {
-    console.log('=== CALLBACK TEST ENDPOINT HIT ===');
-    console.log('Query params:', req.query);
-    res.json({ 
-      message: 'Callback endpoint is reachable',
-      query: req.query,
-      timestamp: new Date().toISOString()
-    });
-  });
-
-  // Direct OAuth callback handler with stateless fallback
+  // Direct OAuth callback handler with stateless fallback (MUST BE FIRST)
   app.get('/api/auth/twitter/callback', async (req, res) => {
     console.log('🎯 TWITTER CALLBACK RECEIVED!');
     console.log('Method:', req.method);
@@ -378,20 +367,18 @@ export function setupTwitterAuth(app: Express) {
     }
   });
 
-  // Catch-all for any Twitter callback attempts (after specific handler)
-  app.all('/api/auth/twitter/*', (req, res) => {
-    console.log('=== TWITTER AUTH WILDCARD HIT ===');
-    console.log('Method:', req.method);
-    console.log('Path:', req.path);
-    console.log('Query:', req.query);
-    console.log('Body:', req.body);
+  // Test endpoint to verify callback reachability
+  app.get('/api/auth/twitter/callback/test', (req, res) => {
+    console.log('=== CALLBACK TEST ENDPOINT HIT ===');
+    console.log('Query params:', req.query);
     res.json({ 
-      message: 'Twitter auth wildcard endpoint',
-      method: req.method,
-      path: req.path,
-      query: req.query
+      message: 'Callback endpoint is reachable',
+      query: req.query,
+      timestamp: new Date().toISOString()
     });
   });
+
+
 
   // Link Twitter to existing wallet user
   app.post('/api/auth/link-twitter', async (req: any, res) => {
