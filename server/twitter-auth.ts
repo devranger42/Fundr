@@ -4,12 +4,28 @@ import { storage } from "./storage";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import type { Express, Request } from "express";
+import { createHash, randomBytes } from "crypto";
+
+// Helper functions for OAuth 2.0 PKCE
+function generateRandomString(length: number): string {
+  return randomBytes(length).toString('base64url').slice(0, length);
+}
+
+function sha256(buffer: string): Buffer {
+  return createHash('sha256').update(buffer).digest();
+}
+
+function base64URLEncode(str: Buffer): string {
+  return str.toString('base64url');
+}
 
 // Extend session type
 declare module 'express-session' {
   interface SessionData {
     walletToLink?: string;
     isLinking?: boolean;
+    oauthState?: string;
+    codeVerifier?: string;
   }
 }
 
@@ -116,31 +132,133 @@ export function setupTwitterAuth(app: Express) {
     res.json({ status: 'Twitter can reach this endpoint', query: req.query });
   });
 
-  // Twitter auth routes
-  app.get('/api/auth/twitter', (req, res, next) => {
+  // Direct Twitter OAuth 2.0 implementation without Passport
+  app.get('/api/auth/twitter', (req, res) => {
     console.log('Twitter auth route accessed');
     console.log('Callback URL configured:', `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`);
-    next();
-  }, passport.authenticate('twitter-oauth2', {
-    failureRedirect: '/?twitter=error&reason=auth_failed'
-  }));
-
-  // Simple callback route to detect if Twitter is calling us
-  app.get('/api/auth/twitter/callback', (req, res) => {
-    console.log('🎯 TWITTER CALLBACK HIT! Twitter is calling our server!');
-    console.log('Query params:', req.query);
-    console.log('Headers:', req.headers);
     
-    // Simple response to verify Twitter is reaching us
-    if (req.query.code) {
-      console.log('✅ Authorization code received:', req.query.code);
-      res.redirect('/?twitter=callback_received');
-    } else if (req.query.error) {
-      console.log('❌ OAuth error received:', req.query.error);
-      res.redirect(`/?twitter=error&reason=${req.query.error}`);
-    } else {
-      console.log('❓ Unknown callback state');
-      res.redirect('/?twitter=unknown');
+    // Generate state and code verifier for PKCE
+    const state = generateRandomString(32);
+    const codeVerifier = generateRandomString(128);
+    const codeChallenge = base64URLEncode(sha256(codeVerifier));
+    
+    // Store state and code verifier in session
+    req.session.oauthState = state;
+    req.session.codeVerifier = codeVerifier;
+    
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: process.env.TWITTER_CLIENT_ID!,
+      redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+      scope: 'users.read tweet.read',
+      state: state,
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256'
+    });
+    
+    const authURL = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+    console.log('Generated OAuth URL:', authURL);
+    
+    res.redirect(authURL);
+  });
+
+  // Direct OAuth callback handler
+  app.get('/api/auth/twitter/callback', async (req, res) => {
+    console.log('Twitter callback accessed');
+    console.log('Query params:', req.query);
+    
+    const { code, state, error } = req.query;
+    
+    if (error) {
+      console.error('Twitter OAuth error:', error);
+      return res.redirect('/?twitter=error&reason=' + error);
+    }
+    
+    if (!code || !state) {
+      console.error('Missing code or state in callback');
+      return res.redirect('/?twitter=error&reason=missing_params');
+    }
+    
+    // Verify state parameter
+    if (state !== req.session.oauthState) {
+      console.error('State mismatch - possible CSRF attack');
+      return res.redirect('/?twitter=error&reason=state_mismatch');
+    }
+    
+    if (!req.session.codeVerifier) {
+      console.error('Missing code verifier in session');
+      return res.redirect('/?twitter=error&reason=missing_verifier');
+    }
+    
+    try {
+      // Exchange code for access token
+      const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          code: code as string,
+          redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+          code_verifier: req.session.codeVerifier
+        })
+      });
+      
+      if (!tokenResponse.ok) {
+        const errorText = await tokenResponse.text();
+        console.error('Token exchange failed:', tokenResponse.status, errorText);
+        return res.redirect('/?twitter=error&reason=token_exchange_failed');
+      }
+      
+      const tokens = await tokenResponse.json();
+      console.log('Token exchange successful');
+      
+      // Fetch user profile
+      const userResponse = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,public_metrics', {
+        headers: {
+          'Authorization': `Bearer ${tokens.access_token}`,
+          'User-Agent': 'FundrApp/1.0'
+        }
+      });
+      
+      if (!userResponse.ok) {
+        const errorText = await userResponse.text();
+        console.error('User fetch failed:', userResponse.status, errorText);
+        return res.redirect('/?twitter=error&reason=user_fetch_failed');
+      }
+      
+      const userData = await userResponse.json();
+      console.log('Twitter user data received:', userData);
+      
+      if (!userData.data) {
+        return res.redirect('/?twitter=error&reason=no_user_data');
+      }
+      
+      const user = userData.data;
+      
+      // Store user in database
+      await storage.upsertUser({
+        id: user.id,
+        username: user.username,
+        email: '', // Twitter doesn't provide email in basic scope
+        twitterId: user.id,
+        twitterUsername: user.username,
+        twitterProfileImage: user.profile_image_url
+      });
+      
+      console.log('User stored successfully:', user.username);
+      
+      // Clear OAuth session data
+      delete req.session.oauthState;
+      delete req.session.codeVerifier;
+      
+      res.redirect('/profile?twitter=success');
+      
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      res.redirect('/?twitter=error&reason=callback_exception');
     }
   });
 
