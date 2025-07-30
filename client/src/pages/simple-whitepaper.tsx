@@ -26,13 +26,13 @@ Auto Allocation: Deposits automatically buy tokens per current allocations
 Both modes: Withdrawals sell tokens proportionally and return SOL
 
 FEES
-Platform: 1% on deposits + 1% on withdrawals
+Platform: 1% on deposits + 1% on withdrawals (applies to all funds)
 Manager Performance: 0-20% on profits only (varies by fund)
-Platform Index Funds: 0% fees
+Platform Index Funds: No manager performance fees (0%)
 
 FUND TYPES
 User Funds: Created by any user, manager sets strategy
-Platform Index Funds: Managed by Fundr, automated rebalancing, 0% fees (Coming Soon)
+Platform Index Funds: Managed by Fundr, automated rebalancing, no manager fees (Coming Soon)
 
 TECHNOLOGY
 Built on Solana blockchain
@@ -181,7 +181,8 @@ Non-custodial - users control their funds
                   <ul className="text-sm text-gray-700 space-y-1">
                     <li>• Managed by Fundr</li>
                     <li>• Automated rebalancing</li>
-                    <li>• 0% fees</li>
+                    <li>• No manager fees (0%)</li>
+                    <li>• Platform fees still apply</li>
                     <li>• <span className="text-yellow-600 font-medium">Coming Soon</span></li>
                   </ul>
                 </div>
