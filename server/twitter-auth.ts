@@ -132,32 +132,32 @@ export function setupTwitterAuth(app: Express) {
     res.json({ status: 'Twitter can reach this endpoint', query: req.query });
   });
 
-  // Direct Twitter OAuth 2.0 implementation without Passport
+  // Test different OAuth approaches based on X documentation
   app.get('/api/auth/twitter', (req, res) => {
     console.log('Twitter auth route accessed');
     console.log('Callback URL configured:', `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`);
     
-    // Generate state and code verifier for PKCE
+    // Try the approach without PKCE first (plain method as suggested in docs)
     const state = generateRandomString(32);
-    const codeVerifier = generateRandomString(128);
-    const codeChallenge = base64URLEncode(sha256(codeVerifier));
+    const codeVerifier = generateRandomString(43); // Shorter verifier
     
     // Store state and code verifier in session
     req.session.oauthState = state;
     req.session.codeVerifier = codeVerifier;
     
+    // Use plain code challenge method as per X docs
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: process.env.TWITTER_CLIENT_ID!,
       redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
       scope: 'users.read tweet.read',
       state: state,
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256'
+      code_challenge: codeVerifier,
+      code_challenge_method: 'plain'
     });
     
     const authURL = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
-    console.log('Generated OAuth URL:', authURL);
+    console.log('Generated OAuth URL with plain PKCE:', authURL);
     
     res.redirect(authURL);
   });
@@ -191,8 +191,8 @@ export function setupTwitterAuth(app: Express) {
     }
     
     try {
-      // Exchange code for access token
-      const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
+      // Exchange code for access token using the correct X API endpoint
+      const tokenResponse = await fetch('https://api.x.com/2/oauth2/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -215,8 +215,8 @@ export function setupTwitterAuth(app: Express) {
       const tokens = await tokenResponse.json();
       console.log('Token exchange successful');
       
-      // Fetch user profile
-      const userResponse = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,public_metrics', {
+      // Fetch user profile from X API v2
+      const userResponse = await fetch('https://api.x.com/2/users/me?user.fields=profile_image_url,public_metrics', {
         headers: {
           'Authorization': `Bearer ${tokens.access_token}`,
           'User-Agent': 'FundrApp/1.0'
