@@ -247,7 +247,7 @@ export default function FundDetail() {
                     Deposit SOL
                   </Button>
                   <p className="text-xs text-gray-500">
-                    1% platform fee + {fundData.fee} profit fee (only on gains)
+                    1% deposit fee + {fundData.fee} profit fee (only on gains)
                   </p>
                 </CardContent>
               </Card>
@@ -280,7 +280,7 @@ export default function FundDetail() {
                     Withdraw SOL
                   </Button>
                   <p className="text-xs text-gray-500">
-                    Instant withdrawal, no fees or lockups
+                    Instant withdrawal, 1% platform fee
                   </p>
                 </CardContent>
               </Card>
@@ -303,7 +303,11 @@ export default function FundDetail() {
                     <span className="font-medium">{fundData.fee}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Platform Fee:</span>
+                    <span className="text-gray-600">Deposit Fee:</span>
+                    <span className="font-medium">1%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Withdrawal Fee:</span>
                     <span className="font-medium">1%</span>
                   </div>
                   <div className="flex justify-between">
