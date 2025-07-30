@@ -78,6 +78,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/auth/link-twitter-manual', async (req, res) => {
+    try {
+      const { walletAddress, twitterUsername } = req.body;
+      
+      if (!walletAddress || !twitterUsername) {
+        return res.status(400).json({ error: 'Wallet address and Twitter username required' });
+      }
+
+      // Create or update user with manual Twitter handle
+      const user = await storage.upsertUser({
+        walletAddress,
+        twitterUsername: twitterUsername.replace('@', ''),
+        twitterDisplayName: twitterUsername.replace('@', ''),
+        displayName: twitterUsername.replace('@', ''),
+      });
+
+      res.json({ success: true, user });
+    } catch (error) {
+      console.error('Manual Twitter link error:', error);
+      res.status(500).json({ error: 'Failed to link Twitter handle' });
+    }
+  });
+
   // Register fund management routes
   registerFundRoutes(app);
 

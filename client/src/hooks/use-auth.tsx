@@ -18,6 +18,7 @@ interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
   linkTwitter: () => Promise<void>;
+  linkTwitterManually: (twitterHandle: string) => Promise<void>;
   unlinkTwitter: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -91,6 +92,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const linkTwitterManually = async (twitterHandle: string) => {
+    if (!connected || !publicKey) {
+      throw new Error('Wallet must be connected to link Twitter');
+    }
+
+    try {
+      const response = await fetch('/api/auth/link-twitter-manual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          walletAddress: publicKey,
+          twitterUsername: twitterHandle 
+        })
+      });
+
+      if (response.ok) {
+        await fetchUser(); // Refresh user data
+      } else {
+        throw new Error('Failed to link Twitter handle');
+      }
+    } catch (error) {
+      console.error('Manual Twitter linking failed:', error);
+      throw error;
+    }
+  };
+
   const unlinkTwitter = async () => {
     try {
       const response = await fetch('/api/auth/unlink-twitter', {
@@ -135,6 +162,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     isLoading,
     linkTwitter,
+    linkTwitterManually,
     unlinkTwitter,
     refreshUser
   };
