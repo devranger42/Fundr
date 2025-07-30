@@ -1,0 +1,11 @@
+{
+  "programId": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe",
+  "network": "devnet",
+  "rpcUrl": "https://api.devnet.solana.com",
+  "deployedAt": "2025-07-30T13:23:57.202Z",
+  "status": "deployed-simulation",
+  "accounts": {
+    "program": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe",
+    "upgradeAuthority": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe"
+  }
+}

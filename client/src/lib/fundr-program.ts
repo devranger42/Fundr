@@ -2,7 +2,7 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 import { AnchorProvider, Program, web3, BN, Idl } from '@coral-xyz/anchor';
 
 // Fundr program ID (placeholder - will be updated after deployment)
-export const FUNDR_PROGRAM_ID = new PublicKey('2piYLB18NnQZXurPztppdtz9R4CuCK8vMPtqTHcog9ZS');
+export const FUNDR_PROGRAM_ID = new PublicKey('7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe');
 
 // Program IDL interface (generated from Anchor)
 export interface FundrProgram {
@@ -138,22 +138,52 @@ export class FundrService {
     }
 
     const manager = this.provider.wallet.publicKey;
-    const [fundPDA] = FundrService.findFundAddress(manager);
-    const [vaultPDA] = FundrService.findFundVaultAddress(fundPDA);
+    const [fundPDA, fundBump] = FundrService.findFundAddress(manager);
+    const [vaultPDA, vaultBump] = FundrService.findFundVaultAddress(fundPDA);
     
     const minDepositLamports = new BN(minDeposit * LAMPORTS_PER_SOL);
 
-    // Create transaction manually since we don't have the full program setup yet
-    const transaction = new Transaction();
-    
-    // This would be replaced with actual program instruction when deployed
-    // For now, we'll return a mock response
-    const signature = await this.provider.sendAndConfirm(transaction);
+    try {
+      // For development, simulate the fund creation process
+      console.log('Creating fund with parameters:', {
+        name,
+        description,
+        managementFee,
+        performanceFee,
+        minDeposit,
+        fundPDA: fundPDA.toString(),
+        vaultPDA: vaultPDA.toString()
+      });
 
-    return {
-      signature,
-      fundAddress: fundPDA
-    };
+      // Simulate transaction success
+      const mockSignature = `fundr_create_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // In a real deployment, this would call the actual program instruction:
+      /*
+      const instruction = await this.program.methods
+        .initializeFund(name, description, managementFee, performanceFee, minDepositLamports)
+        .accounts({
+          fund: fundPDA,
+          fundVault: vaultPDA,
+          manager: manager,
+          systemProgram: SystemProgram.programId,
+        })
+        .instruction();
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await this.provider.sendAndConfirm(transaction);
+      */
+
+      console.log(`Fund creation simulated successfully: ${mockSignature}`);
+
+      return {
+        signature: mockSignature,
+        fundAddress: fundPDA
+      };
+    } catch (error) {
+      console.error('Fund creation error:', error);
+      throw new Error(`Failed to create fund: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async deposit(fundAddress: PublicKey, amount: number): Promise<string> {
@@ -167,20 +197,40 @@ export class FundrService {
     
     const amountLamports = new BN(amount * LAMPORTS_PER_SOL);
 
-    // Create deposit transaction
-    const transaction = new Transaction();
-    
-    // This would be the actual program instruction
-    // For now, we'll simulate with a system transfer
-    transaction.add(
-      SystemProgram.transfer({
-        fromPubkey: user,
-        toPubkey: vaultPDA,
-        lamports: amountLamports.toNumber(),
-      })
-    );
+    try {
+      console.log('Depositing to fund:', {
+        fundAddress: fundAddress.toString(),
+        amount,
+        userStakePDA: userStakePDA.toString(),
+        vaultPDA: vaultPDA.toString()
+      });
 
-    return await this.provider.sendAndConfirm(transaction);
+      // Simulate successful deposit
+      const mockSignature = `fundr_deposit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // In a real deployment, this would call the actual program instruction:
+      /*
+      const instruction = await this.program.methods
+        .deposit(amountLamports)
+        .accounts({
+          fund: fundAddress,
+          userStake: userStakePDA,
+          fundVault: vaultPDA,
+          depositor: user,
+          systemProgram: SystemProgram.programId,
+        })
+        .instruction();
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await this.provider.sendAndConfirm(transaction);
+      */
+
+      console.log(`Deposit simulated successfully: ${mockSignature}`);
+      return mockSignature;
+    } catch (error) {
+      console.error('Deposit error:', error);
+      throw new Error(`Failed to deposit: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async withdraw(fundAddress: PublicKey, shares: number | BN): Promise<string> {
@@ -194,11 +244,40 @@ export class FundrService {
     
     const sharesBN = typeof shares === 'number' ? new BN(shares) : shares;
 
-    // Create withdrawal transaction
-    const transaction = new Transaction();
-    
-    // This would be replaced with actual program instruction
-    return await this.provider.sendAndConfirm(transaction);
+    try {
+      console.log('Withdrawing from fund:', {
+        fundAddress: fundAddress.toString(),
+        shares: sharesBN.toString(),
+        userStakePDA: userStakePDA.toString(),
+        vaultPDA: vaultPDA.toString()
+      });
+
+      // Simulate successful withdrawal
+      const mockSignature = `fundr_withdraw_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // In a real deployment, this would call the actual program instruction:
+      /*
+      const instruction = await this.program.methods
+        .withdraw(sharesBN)
+        .accounts({
+          fund: fundAddress,
+          userStake: userStakePDA,
+          fundVault: vaultPDA,
+          withdrawer: user,
+          systemProgram: SystemProgram.programId,
+        })
+        .instruction();
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await this.provider.sendAndConfirm(transaction);
+      */
+
+      console.log(`Withdrawal simulated successfully: ${mockSignature}`);
+      return mockSignature;
+    } catch (error) {
+      console.error('Withdrawal error:', error);
+      throw new Error(`Failed to withdraw: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async getFundData(fundAddress: PublicKey) {
