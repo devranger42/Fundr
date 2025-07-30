@@ -59,6 +59,14 @@ export default function Header() {
               Leaderboard
             </Link>
             <Link 
+              href="/platform-funds"
+              className={`font-medium transition-colors duration-200 ${
+                isActive('/platform-funds') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
+              }`}
+            >
+              Index Funds
+            </Link>
+            <Link 
               href="/manager-dashboard"
               className={`font-medium transition-colors duration-200 ${
                 isActive('/manager-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'

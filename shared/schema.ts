@@ -74,6 +74,8 @@ export const funds = pgTable("funds", {
   fundMode: varchar("fund_mode", { enum: ["manual", "auto"] }).notNull().default("manual"), // allocation mode
   allocationOption: varchar("allocation_option", { enum: ["open", "managed", "locked"] }).notNull().default("open"), // manager allocation control
   jupiterStrictList: boolean("jupiter_strict_list").notNull().default(false), // restrict to Jupiter strict list tokens
+  isPlatformFund: boolean("is_platform_fund").notNull().default(false), // platform-managed index fund
+  rebalanceFrequency: varchar("rebalance_frequency", { enum: ["daily", "weekly", "manual"] }).default("manual"), // rebalancing schedule
   totalAssets: bigint("total_assets", { mode: "number" }).default(0), // in lamports
   totalShares: bigint("total_shares", { mode: "number" }).default(0),
   isActive: boolean("is_active").default(true),

@@ -166,6 +166,23 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(funds.createdAt));
   }
 
+  async updateFundAllocation(id: string, updates: Partial<FundAllocation>): Promise<FundAllocation> {
+    const [allocation] = await db
+      .update(fundAllocations)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(fundAllocations.id, id))
+      .returning();
+    return allocation;
+  }
+
+  async getAllFunds(): Promise<Fund[]> {
+    return await db.select().from(funds).orderBy(desc(funds.createdAt));
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
   async updateFund(id: string, updates: Partial<Fund>): Promise<Fund> {
     const [fund] = await db
       .update(funds)

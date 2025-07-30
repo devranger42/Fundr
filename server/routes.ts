@@ -77,6 +77,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register fund management routes
   registerFundRoutes(app);
 
+  // Platform funds routes
+  app.get('/api/platform-funds', async (req, res) => {
+    try {
+      const allFunds = await storage.getAllFunds();
+      const platformFunds = allFunds.filter((fund: any) => fund.isPlatformFund && fund.isActive);
+      res.json(platformFunds);
+    } catch (error) {
+      console.error('Platform funds error:', error);
+      res.status(500).json({ error: 'Failed to fetch platform funds' });
+    }
+  });
+
   const httpServer = createServer(app);
+  
+  // Initialize platform funds after server starts
+  setTimeout(async () => {
+    try {
+      const { createPlatformFunds } = await import("./platform-funds");
+      await createPlatformFunds();
+      console.log("Platform funds initialization completed");
+    } catch (error) {
+      console.error('Failed to initialize platform funds:', error);
+    }
+  }, 3000);
+  
   return httpServer;
 }
