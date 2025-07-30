@@ -7,10 +7,10 @@ interface FundrLogoProps {
 
 export default function FundrLogo({ className = "", size = "md" }: FundrLogoProps) {
   const sizeClasses = {
-    sm: "w-12 h-12",
-    md: "w-16 h-16", 
-    lg: "w-24 h-24",
-    xl: "w-32 h-32"
+    sm: "w-16 h-16",
+    md: "w-20 h-20", 
+    lg: "w-28 h-28",
+    xl: "w-36 h-36"
   };
 
   return (
