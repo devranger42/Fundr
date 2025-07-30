@@ -143,7 +143,9 @@ export function setupTwitterAuth(app: Express) {
     
     // Determine the correct callback URL based on the request
     const currentDomain = req.get('host');
-    const callbackUrl = `${req.protocol}://${currentDomain}/api/auth/twitter/callback`;
+    // Force HTTPS for production deployment
+    const protocol = currentDomain.includes('replit.app') ? 'https' : req.protocol;
+    const callbackUrl = `${protocol}://${currentDomain}/api/auth/twitter/callback`;
     
     console.log('Dynamic callback URL:', callbackUrl);
     
@@ -307,7 +309,7 @@ export function setupTwitterAuth(app: Express) {
         body: new URLSearchParams({
           grant_type: 'authorization_code',
           code: code as string,
-          redirect_uri: `${req.protocol}://${req.get('host')}/api/auth/twitter/callback`,
+          redirect_uri: callbackUrl,
           code_verifier: codeVerifier
         })
       });
