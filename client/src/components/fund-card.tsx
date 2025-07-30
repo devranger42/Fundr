@@ -70,19 +70,19 @@ export default function FundCard({ fund }: FundCardProps) {
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 border border-gray-100">
       <Link href={`/fund/${fund.id}`}>
         <div className="cursor-pointer">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className={`w-12 h-12 ${getIconBgColor()} rounded-full flex items-center justify-center`}>
-                <IconComponent className="text-white text-lg w-5 h-5" />
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <div className="flex items-center space-x-3 min-w-0 flex-1">
+              <div className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0`}>
+                <IconComponent className="text-white w-4 h-4 md:w-5 md:h-5" />
               </div>
-              <div>
-                <h3 className="font-bold text-dark">{fund.name}</h3>
-                <p className="text-sm text-gray-500">Fund Manager</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-bold text-dark truncate">{fund.name}</h3>
+                <p className="text-xs md:text-sm text-gray-500">Fund Manager</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-pump">+12.5%</div>
-              <div className="text-sm text-gray-500">30D ROI</div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-lg md:text-2xl font-bold text-pump whitespace-nowrap">+12.5%</div>
+              <div className="text-xs md:text-sm text-gray-500 whitespace-nowrap">30D ROI</div>
             </div>
           </div>
         </div>

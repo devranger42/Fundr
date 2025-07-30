@@ -58,25 +58,25 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 border border-gray-100">
       <Link href={`/fund/mock`}>
         <div className="cursor-pointer">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className={`w-12 h-12 ${getIconBgColor()} rounded-full flex items-center justify-center`}>
-                <IconComponent className="text-white text-lg w-5 h-5" />
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <div className="flex items-center space-x-3 min-w-0 flex-1">
+              <div className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0`}>
+                <IconComponent className="text-white w-4 h-4 md:w-5 md:h-5" />
               </div>
-              <div>
-                <h3 className="font-bold text-dark">{fund.title}</h3>
-                <div className="flex items-center space-x-1">
-                  <p className="text-sm text-gray-500">Managed by</p>
-                  <span className="text-sm font-medium text-gray-700">{fund.manager}</span>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-bold text-dark truncate">{fund.title}</h3>
+                <div className="flex items-center space-x-1 min-w-0">
+                  <p className="text-xs md:text-sm text-gray-500 flex-shrink-0">Managed by</p>
+                  <span className="text-xs md:text-sm font-medium text-gray-700 truncate">{fund.manager}</span>
                   {fund.verified && (
-                    <CheckCircle className="w-4 h-4 text-blue-500" fill="currentColor" />
+                    <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-blue-500 flex-shrink-0" fill="currentColor" />
                   )}
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-pump">{fund.roi}</div>
-              <div className="text-sm text-gray-500">30D ROI</div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-lg md:text-2xl font-bold text-pump whitespace-nowrap">{fund.roi}</div>
+              <div className="text-xs md:text-sm text-gray-500 whitespace-nowrap">30D ROI</div>
             </div>
           </div>
         </div>
