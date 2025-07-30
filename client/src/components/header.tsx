@@ -96,7 +96,7 @@ export default function Header() {
                   <div className="font-medium text-gray-900">
                     {publicKey && formatPublicKey(publicKey)}
                   </div>
-                  <div className="text-gray-500">
+                  <div className="text-muted-foreground">
                     Connected {user?.twitterUsername && `• @${user.twitterUsername}`}
                   </div>
                 </div>
