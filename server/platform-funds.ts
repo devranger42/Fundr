@@ -12,7 +12,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "meme25",
-    name: "Meme Coin 25",
+    name: "Meme 25 Index",
     description: "Top 25 meme coins on Solana ecosystem",
     category: "meme",
     rebalanceFrequency: "daily" as const,
@@ -20,7 +20,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "utility25",
-    name: "Utility 25",
+    name: "Utility 25 Index",
     description: "Top 25 utility tokens and DeFi protocols on Solana",
     category: "utility",
     rebalanceFrequency: "weekly" as const,
@@ -28,7 +28,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "bonk10",
-    name: "BONK Launchpad 10",
+    name: "BONK Launchpad 10 Index",
     description: "Top 10 meme coins launched via BONK launchpad",
     category: "launchpad",
     rebalanceFrequency: "daily" as const,
@@ -36,7 +36,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "pump10",
-    name: "Pump.fun 10",
+    name: "Pump.fun 10 Index",
     description: "Top 10 tokens launched via Pump.fun platform",
     category: "launchpad",
     rebalanceFrequency: "daily" as const,
@@ -44,7 +44,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "jup10",
-    name: "Jupiter Launchpad 10",
+    name: "Jupiter Launchpad 10 Index",
     description: "Top 10 launchpad coins from Jupiter ecosystem",
     category: "launchpad",
     rebalanceFrequency: "weekly" as const,
@@ -52,7 +52,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "believe10",
-    name: "Believe Launchpad 10",
+    name: "Believe Launchpad 10 Index",
     description: "Top 10 tokens launched via Believe launchpad",
     category: "launchpad",
     rebalanceFrequency: "daily" as const,
@@ -60,7 +60,7 @@ export const PLATFORM_FUNDS = [
   },
   {
     id: "moby10",
-    name: "MobyScreener 10",
+    name: "MobyScreener 10 Index",
     description: "Top 10 coins tracked by MobyScreener analytics",
     category: "analytics",
     rebalanceFrequency: "weekly" as const,
