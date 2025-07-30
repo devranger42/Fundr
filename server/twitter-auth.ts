@@ -217,13 +217,14 @@ export function setupTwitterAuth(app: Express) {
     console.log('🎯 TWITTER CALLBACK RECEIVED!');
     console.log('Method:', req.method);
     console.log('URL:', req.url);
-    console.log('Headers:', req.headers);
     console.log('Query params:', req.query);
     console.log('Session ID:', req.sessionID);
-    console.log('Session data:', { 
-      oauthState: req.session.oauthState, 
-      codeVerifier: req.session.codeVerifier ? 'Present' : 'Missing',
-      allSessionKeys: Object.keys(req.session)
+    console.log('Complete session data:', req.session);
+    console.log('Linking flags:', {
+      isLinking: req.session.isLinking,
+      walletToLink: req.session.walletToLink,
+      oauthState: req.session.oauthState,
+      codeVerifier: req.session.codeVerifier ? 'Present' : 'Missing'
     });
     
     const { code, state, error, error_description } = req.query;
@@ -351,19 +352,39 @@ export function setupTwitterAuth(app: Express) {
   // Link Twitter to existing wallet user
   app.post('/api/auth/link-twitter', async (req: any, res) => {
     try {
+      console.log('🔗 LINK TWITTER REQUEST RECEIVED');
+      console.log('Session ID:', req.sessionID);
+      console.log('Request body:', req.body);
+      
       const { walletAddress } = req.body;
       
       if (!walletAddress) {
+        console.log('❌ No wallet address provided');
         return res.status(400).json({ error: 'Wallet address required' });
       }
 
       // Store wallet address in session for linking after Twitter auth
       req.session.walletToLink = walletAddress;
-      
-      // Redirect to Twitter auth with linking flag
       req.session.isLinking = true;
-      res.json({ redirectUrl: '/api/auth/twitter' });
+      
+      console.log('✅ Linking session configured:', {
+        sessionId: req.sessionID,
+        walletToLink: walletAddress,
+        isLinking: true
+      });
+      
+      // Save session explicitly
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ error: 'Session save failed' });
+        }
+        
+        console.log('✅ Session saved successfully');
+        res.json({ redirectUrl: '/api/auth/twitter' });
+      });
     } catch (error) {
+      console.error('Link Twitter error:', error);
       res.status(500).json({ error: 'Failed to initiate Twitter linking' });
     }
   });
