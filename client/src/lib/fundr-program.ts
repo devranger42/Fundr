@@ -115,8 +115,23 @@ export class FundrService {
   // Generate fund PDA
   static findFundAddress(manager: PublicKey): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
+    console.log('Manager type:', typeof manager, manager);
+    console.log('Manager methods:', Object.getOwnPropertyNames(manager));
+    
+    // Handle different possible manager types
+    let managerBytes;
+    if (manager && typeof manager.toBuffer === 'function') {
+      managerBytes = manager.toBuffer();
+    } else if (manager && typeof manager.toBytes === 'function') {
+      managerBytes = manager.toBytes();
+    } else if (manager && manager.toBase58) {
+      managerBytes = buffer.from(manager.toBase58(), 'base58');
+    } else {
+      throw new Error(`Invalid manager type: ${typeof manager}`);
+    }
+    
     return PublicKey.findProgramAddressSync(
-      [buffer.from('fund'), manager.toBuffer()],
+      [buffer.from('fund'), managerBytes],
       FUNDR_PROGRAM_ID
     );
   }
@@ -124,8 +139,20 @@ export class FundrService {
   // Generate fund vault PDA
   static findFundVaultAddress(fund: PublicKey): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
+    
+    let fundBytes;
+    if (fund && typeof fund.toBuffer === 'function') {
+      fundBytes = fund.toBuffer();
+    } else if (fund && typeof fund.toBytes === 'function') {
+      fundBytes = fund.toBytes();
+    } else if (fund && fund.toBase58) {
+      fundBytes = buffer.from(fund.toBase58(), 'base58');
+    } else {
+      throw new Error(`Invalid fund type: ${typeof fund}`);
+    }
+    
     return PublicKey.findProgramAddressSync(
-      [buffer.from('vault'), fund.toBuffer()],
+      [buffer.from('vault'), fundBytes],
       FUNDR_PROGRAM_ID
     );
   }
@@ -133,8 +160,31 @@ export class FundrService {
   // Generate user stake PDA
   static findUserStakeAddress(fund: PublicKey, user: PublicKey): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
+    
+    let fundBytes, userBytes;
+    
+    if (fund && typeof fund.toBuffer === 'function') {
+      fundBytes = fund.toBuffer();
+    } else if (fund && typeof fund.toBytes === 'function') {
+      fundBytes = fund.toBytes();
+    } else if (fund && fund.toBase58) {
+      fundBytes = buffer.from(fund.toBase58(), 'base58');
+    } else {
+      throw new Error(`Invalid fund type: ${typeof fund}`);
+    }
+    
+    if (user && typeof user.toBuffer === 'function') {
+      userBytes = user.toBuffer();
+    } else if (user && typeof user.toBytes === 'function') {
+      userBytes = user.toBytes();
+    } else if (user && user.toBase58) {
+      userBytes = buffer.from(user.toBase58(), 'base58');
+    } else {
+      throw new Error(`Invalid user type: ${typeof user}`);
+    }
+    
     return PublicKey.findProgramAddressSync(
-      [buffer.from('stake'), fund.toBuffer(), user.toBuffer()],
+      [buffer.from('stake'), fundBytes, userBytes],
       FUNDR_PROGRAM_ID
     );
   }
