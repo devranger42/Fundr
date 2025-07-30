@@ -7,9 +7,10 @@ import { Wallet, User, Settings, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import Header from "@/components/header";
 
 export default function Profile() {
-  const { user, isLoading, refetch } = useAuth();
+  const { user, isLoading, refreshUser } = useAuth();
   const { connected, publicKey, disconnect } = useWallet();
   const { toast } = useToast();
 
@@ -25,7 +26,7 @@ export default function Profile() {
         variant: "default",
       });
       // Refresh user data to show updated connection
-      refetch();
+      refreshUser();
       // Clean up URL parameters
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (twitterStatus === 'error') {
@@ -38,7 +39,7 @@ export default function Profile() {
       // Clean up URL parameters
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [toast, refetch]);
+  }, [toast, refreshUser]);
 
   if (isLoading) {
     return (
@@ -65,6 +66,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile</h1>
