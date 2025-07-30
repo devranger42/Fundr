@@ -56,16 +56,23 @@ export class JupiterService {
   async getTokenPrices(tokenMints: string[]): Promise<{ [mint: string]: TokenPrice }> {
     try {
       const ids = tokenMints.join(',');
-      const response = await fetch(`${JUPITER_PRICE_API}?ids=${ids}&vsToken=USDC`);
+      const response = await fetch(`${JUPITER_PRICE_API}?ids=${ids}&vsToken=USDC`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (!response.ok) {
-        throw new Error(`Jupiter price API error: ${response.statusText}`);
+        console.warn(`Jupiter price API returned ${response.status}: ${response.statusText}`);
+        return {};
       }
 
       const data = await response.json();
       return data.data || {};
     } catch (error) {
-      console.error('Error fetching token prices:', error);
+      console.warn('Jupiter price API unavailable, using fallback data');
       return {};
     }
   }
@@ -88,16 +95,22 @@ export class JupiterService {
         maxAccounts: '20',
       });
 
-      const response = await fetch(`${JUPITER_QUOTE_API}?${params}`);
+      const response = await fetch(`${JUPITER_QUOTE_API}?${params}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
       
       if (!response.ok) {
-        throw new Error(`Jupiter quote API error: ${response.statusText}`);
+        console.warn(`Jupiter quote API returned ${response.status}: ${response.statusText}`);
+        return null;
       }
 
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error getting swap quote:', error);
+      console.warn('Jupiter quote API unavailable');
       return null;
     }
   }

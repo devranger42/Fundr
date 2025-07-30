@@ -103,7 +103,7 @@ export default function TradingTerminal() {
     return () => clearInterval(interval);
   }, [jupiterService]);
 
-  // Get quote when amounts change
+  // Get quote when amounts change (disabled for now to avoid API issues)
   useEffect(() => {
     const getQuote = async () => {
       if (!fromAmount || !fromToken || !toToken || parseFloat(fromAmount) <= 0) {
@@ -111,6 +111,10 @@ export default function TradingTerminal() {
         setToAmount("");
         return;
       }
+
+      // Temporarily disabled to avoid API errors
+      // Will implement with proper error handling later
+      return;
 
       setIsGettingQuote(true);
       try {
@@ -128,8 +132,7 @@ export default function TradingTerminal() {
           setToAmount(outAmount.toFixed(6));
         }
       } catch (error) {
-        console.error("Error getting swap quote:", error);
-        // Don't show toast for quote errors to avoid spam
+        console.warn("Quote unavailable:", error);
         setQuote(null);
         setToAmount("");
       } finally {
