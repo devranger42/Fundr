@@ -41,10 +41,10 @@ export default function Header() {
           </div>
           
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-6">
+          <nav className="hidden md:flex space-x-4">
             <Link 
               href="/"
-              className={`font-medium transition-colors duration-200 ${
+              className={`font-medium text-sm transition-colors duration-200 ${
                 isActive('/') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
@@ -52,7 +52,7 @@ export default function Header() {
             </Link>
             <Link 
               href="/leaderboard"
-              className={`font-medium transition-colors duration-200 ${
+              className={`font-medium text-sm transition-colors duration-200 ${
                 isActive('/leaderboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
@@ -60,7 +60,7 @@ export default function Header() {
             </Link>
             <Link 
               href="/platform-funds"
-              className={`font-medium transition-colors duration-200 ${
+              className={`font-medium text-sm transition-colors duration-200 ${
                 isActive('/platform-funds') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
@@ -68,7 +68,7 @@ export default function Header() {
             </Link>
             <Link 
               href="/manager-dashboard"
-              className={`font-medium transition-colors duration-200 ${
+              className={`font-medium text-sm transition-colors duration-200 ${
                 isActive('/manager-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
@@ -76,23 +76,23 @@ export default function Header() {
             </Link>
             <Link 
               href="/whitepaper"
-              className={`font-medium transition-colors duration-200 ${
+              className={`font-medium text-sm transition-colors duration-200 ${
                 isActive('/whitepaper') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
-              Whitepaper
+              About
             </Link>
           </nav>
           
           {/* Action Buttons */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <Link href="/create-fund-blockchain">
               <Button 
                 variant="outline"
                 size="sm"
-                className="border-bonk text-bonk hover:bg-bonk hover:text-white hidden sm:flex items-center"
+                className="border-bonk text-bonk hover:bg-bonk hover:text-white hidden sm:flex items-center text-xs"
               >
-                <PlusCircle className="w-4 h-4 mr-1" />
+                <PlusCircle className="w-3 h-3 mr-1" />
                 Create
               </Button>
             </Link>
@@ -100,7 +100,7 @@ export default function Header() {
             {connected ? (
               <div className="flex items-center space-x-2">
                 <TwitterAuth compact />
-                <div className="text-sm">
+                <div className="text-xs">
                   <div className="font-medium text-gray-900">
                     {publicKey && formatPublicKey(publicKey)}
                   </div>
@@ -109,15 +109,16 @@ export default function Header() {
                   onClick={disconnect}
                   variant="outline"
                   size="sm"
-                  className="border-red-200 text-red-600 hover:bg-red-50"
+                  className="border-red-200 text-red-600 hover:bg-red-50 px-2"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3 h-3" />
                 </Button>
               </div>
             ) : (
               <Button 
                 onClick={handleConnectWallet}
-                className="bg-bonk hover:bg-bonk-hover text-white px-4 py-2 font-medium"
+                size="sm"
+                className="bg-bonk hover:bg-bonk-hover text-white font-medium text-xs"
               >
                 Connect Wallet
               </Button>
