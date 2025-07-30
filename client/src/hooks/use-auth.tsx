@@ -68,21 +68,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const linkTwitter = async () => {
+    console.log('🔗 linkTwitter called', { connected, publicKey });
+    
     if (!connected || !publicKey) {
+      console.log('❌ Wallet not connected');
       throw new Error('Wallet must be connected to link Twitter');
     }
 
     try {
+      console.log('📡 Making link-twitter request...');
       const response = await fetch('/api/auth/link-twitter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress: publicKey })
       });
 
+      console.log('📡 Response status:', response.status);
+      
       if (response.ok) {
-        const { redirectUrl } = await response.json();
+        const data = await response.json();
+        console.log('📡 Response data:', data);
+        const { redirectUrl } = data;
+        console.log('🔄 Redirecting to:', redirectUrl);
         window.location.href = redirectUrl;
       } else {
+        const errorText = await response.text();
+        console.error('❌ Response error:', errorText);
         throw new Error('Failed to initiate Twitter linking');
       }
     } catch (error) {

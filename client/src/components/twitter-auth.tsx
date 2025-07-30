@@ -17,14 +17,16 @@ export function TwitterAuth({ compact = false }: TwitterAuthProps) {
 
   const handleLinkTwitter = async () => {
     try {
+      console.log('🎯 TwitterAuth: handleLinkTwitter called');
       setIsLinking(true);
-      // Use the proper linkTwitter function from useAuth hook
+      console.log('🎯 TwitterAuth: calling linkTwitter...');
       await linkTwitter();
+      console.log('🎯 TwitterAuth: linkTwitter completed');
     } catch (error) {
-      console.error('Twitter linking error:', error);
+      console.error('🎯 TwitterAuth: linking error:', error);
       toast({
         title: "Connection Failed",
-        description: "Failed to connect to Twitter. Please try again.",
+        description: `Failed to connect to Twitter: ${error.message}`,
         variant: "destructive",
       });
     } finally {
