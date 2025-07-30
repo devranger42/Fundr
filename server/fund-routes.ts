@@ -102,6 +102,9 @@ export function registerFundRoutes(app: Express) {
   // Create new fund (requires authentication)
   app.post('/api/funds', async (req, res) => {
     try {
+      console.log('=== CREATE FUND REQUEST ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      
       // TODO: Add authentication middleware
       // const userId = req.user?.claims?.sub;
       // if (!userId) {
@@ -109,8 +112,10 @@ export function registerFundRoutes(app: Express) {
       // }
 
       const validatedData = insertFundSchema.parse(req.body);
+      console.log('Validated data:', validatedData);
       
       const fund = await storage.createFund(validatedData);
+      console.log('Created fund:', fund);
       
       // Set initial allocations if provided
       if (req.body.allocations && req.body.allocations.length > 0) {
@@ -127,7 +132,12 @@ export function registerFundRoutes(app: Express) {
       res.status(201).json(fund);
     } catch (error) {
       console.error("Error creating fund:", error);
-      res.status(500).json({ message: "Failed to create fund" });
+      console.error("Error details:", error instanceof Error ? error.message : error);
+      if (error instanceof Error && error.message.includes('validation')) {
+        res.status(400).json({ message: "Invalid fund data", details: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create fund" });
+      }
     }
   });
 

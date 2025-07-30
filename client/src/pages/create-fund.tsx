@@ -13,18 +13,24 @@ import { useAuth } from "@/hooks/use-auth";
 import { useWallet } from "@/hooks/use-wallet";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 
 export default function CreateFund() {
   const [fundName, setFundName] = useState("");
   const [description, setDescription] = useState("");
   const [profitFee, setProfitFee] = useState([2.5]);
-  const [minDeposit, setMinDeposit] = useState("");
+  const [minDeposit, setMinDeposit] = useState("0.1");
+  const [fundMode, setFundMode] = useState("manual");
+  const [jupiterStrictList, setJupiterStrictList] = useState(false);
   
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { publicKey, connected } = useWallet();
   const createFund = useCreateFund();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  
+  const isAuthenticated = !!user;
 
   const handleCreateFund = async () => {
     if (!isAuthenticated || !user) {
@@ -55,13 +61,20 @@ export default function CreateFund() {
     }
 
     try {
-      const fund = await createFund.mutateAsync({
+      const fundData = {
         name: fundName.trim(),
         description: description.trim(),
-        managementFee: Math.round(profitFee[0] * 100), // Convert to basis points
+        managementFee: 100, // 1% platform fee
+        performanceFee: Math.round(profitFee[0] * 100), // Convert to basis points
+        minDeposit: Math.round(parseFloat(minDeposit) * 1000000000), // Convert SOL to lamports
+        fundMode: fundMode as "manual" | "auto",
+        jupiterStrictList,
         publicKey: publicKey.toString(),
         managerId: user.id,
-      });
+      };
+
+      console.log('Creating fund with data:', fundData);
+      const response = await createFund.mutateAsync(fundData);
 
       toast({
         title: "Fund Created!",
@@ -69,7 +82,11 @@ export default function CreateFund() {
       });
 
       // Redirect to the new fund's detail page
-      setLocation(`/fund/${fund.id}`);
+      if (response && typeof response === 'object' && 'id' in response) {
+        setLocation(`/fund/${response.id}`);
+      } else {
+        setLocation('/manage');
+      }
     } catch (error) {
       console.error("Error creating fund:", error);
       toast({
@@ -163,6 +180,50 @@ export default function CreateFund() {
                       value={minDeposit}
                       onChange={(e) => setMinDeposit(e.target.value)}
                       className="border-gray-300"
+                    />
+                  </div>
+
+                  {/* Fund Mode Selection */}
+                  <div className="space-y-3">
+                    <Label>Fund Allocation Mode</Label>
+                    <RadioGroup value={fundMode} onValueChange={setFundMode}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="manual" id="manual" />
+                        <Label htmlFor="manual" className="cursor-pointer">
+                          <div>
+                            <div className="font-medium">Manual Allocation</div>
+                            <div className="text-sm text-gray-500">
+                              Deposits accumulate as SOL for discretionary trading
+                            </div>
+                          </div>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="auto" id="auto" />
+                        <Label htmlFor="auto" className="cursor-pointer">
+                          <div>
+                            <div className="font-medium">Auto Allocation</div>
+                            <div className="text-sm text-gray-500">
+                              Deposits automatically buy tokens per current ratios
+                            </div>
+                          </div>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Jupiter Strict List */}
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="strict-list">Jupiter Strict List</Label>
+                      <div className="text-sm text-gray-500">
+                        Restrict trading to verified tokens only (recommended)
+                      </div>
+                    </div>
+                    <Switch
+                      id="strict-list"
+                      checked={jupiterStrictList}
+                      onCheckedChange={setJupiterStrictList}
                     />
                   </div>
 
