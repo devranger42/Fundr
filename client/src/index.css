@@ -97,4 +97,22 @@
   .bg-darker {
     background-color: var(--darker);
   }
+  
+  /* Ensure proper contrast */
+  .text-contrast {
+    color: hsl(240, 10%, 3.9%);
+  }
+  
+  .text-contrast-light {
+    color: hsl(0, 0%, 98%);
+  }
+  
+  /* High contrast text colors */
+  .text-readable {
+    color: hsl(220, 26%, 18%);
+  }
+  
+  .text-readable-light {
+    color: hsl(0, 0%, 95%);
+  }
 }
