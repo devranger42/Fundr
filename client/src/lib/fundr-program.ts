@@ -1,5 +1,6 @@
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { AnchorProvider, Program, web3, BN, Idl } from '@coral-xyz/anchor';
+import { Buffer } from 'buffer';
 
 // Fundr program ID (placeholder - will be updated after deployment)
 export const FUNDR_PROGRAM_ID = new PublicKey('7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe');
@@ -113,24 +114,27 @@ export class FundrService {
 
   // Generate fund PDA
   static findFundAddress(manager: PublicKey): [PublicKey, number] {
+    const buffer = globalThis.Buffer || Buffer;
     return PublicKey.findProgramAddressSync(
-      [Buffer.from('fund'), manager.toBuffer()],
+      [buffer.from('fund'), manager.toBuffer()],
       FUNDR_PROGRAM_ID
     );
   }
 
   // Generate fund vault PDA
   static findFundVaultAddress(fund: PublicKey): [PublicKey, number] {
+    const buffer = globalThis.Buffer || Buffer;
     return PublicKey.findProgramAddressSync(
-      [Buffer.from('vault'), fund.toBuffer()],
+      [buffer.from('vault'), fund.toBuffer()],
       FUNDR_PROGRAM_ID
     );
   }
 
   // Generate user stake PDA
   static findUserStakeAddress(fund: PublicKey, user: PublicKey): [PublicKey, number] {
+    const buffer = globalThis.Buffer || Buffer;
     return PublicKey.findProgramAddressSync(
-      [Buffer.from('stake'), fund.toBuffer(), user.toBuffer()],
+      [buffer.from('stake'), fund.toBuffer(), user.toBuffer()],
       FUNDR_PROGRAM_ID
     );
   }

@@ -6,7 +6,10 @@
     <title>Fundr - Solana Fund Management</title>
     <script>
       if (typeof global === 'undefined') {
-        window.global = window;
+        window.global = window;  
+      }
+      if (typeof Buffer === 'undefined') {
+        window.Buffer = {};
       }
     </script>
   </head>
