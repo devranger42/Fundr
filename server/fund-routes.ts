@@ -341,4 +341,37 @@ export function registerFundRoutes(app: Express) {
       res.status(500).json({ error: 'Failed to update fund settings' });
     }
   });
+
+  // Delete fund endpoint (with automatic investor withdrawal)
+  app.delete('/api/funds/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Get the fund first to check ownership
+      const fund = await storage.getFund(id);
+      if (!fund) {
+        return res.status(404).json({ error: 'Fund not found' });
+      }
+
+      // Check if user is the fund manager (simplified for now)
+      // In production, this would check authenticated user session
+      
+      // Prevent platform funds from being deleted
+      if (fund.isPlatformFund) {
+        return res.status(403).json({ error: 'Platform funds cannot be deleted' });
+      }
+
+      // Delete the fund and withdraw all investors
+      const result = await storage.deleteFund(id);
+      
+      res.json({
+        success: true,
+        message: `Fund deleted successfully. ${result.withdrawnInvestors} investors have been automatically withdrawn.`,
+        withdrawnInvestors: result.withdrawnInvestors
+      });
+    } catch (error) {
+      console.error('Fund deletion error:', error);
+      res.status(500).json({ error: 'Failed to delete fund' });
+    }
+  });
 }

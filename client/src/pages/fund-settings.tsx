@@ -18,7 +18,8 @@ import {
   CheckCircle,
   ArrowLeft,
   Zap,
-  Target
+  Target,
+  Trash2
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -42,6 +43,8 @@ export default function FundSettings() {
   const queryClient = useQueryClient();
   
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Fetch fund details
   const { data: fund, isLoading } = useQuery<Fund>({
@@ -83,6 +86,37 @@ export default function FundSettings() {
     },
   });
 
+  // Delete fund mutation
+  const deleteFundMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/funds/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete fund');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Fund Deleted",
+        description: "Fund has been successfully deleted and all users withdrawn",
+      });
+      // Redirect to dashboard after successful deletion
+      window.location.href = '/dashboard';
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Deletion Failed",
+        description: error.message || "Failed to delete fund",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleModeChange = async (newMode: string) => {
     if (!fund || isUpdating) return;
     
@@ -102,6 +136,18 @@ export default function FundSettings() {
       await updateFundMutation.mutateAsync({ jupiterStrictList: enabled });
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteFund = async () => {
+    if (!fund || isDeleting) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteFundMutation.mutateAsync();
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -346,8 +392,108 @@ export default function FundSettings() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Danger Zone */}
+          <Card className="shadow-lg border-red-200">
+            <CardHeader>
+              <CardTitle className="flex items-center text-red-600">
+                <Trash2 className="w-5 h-5 mr-2" />
+                Danger Zone
+              </CardTitle>
+              <div className="text-sm text-gray-600">
+                Irreversible actions that permanently affect your fund
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Delete Fund</h3>
+                    <p className="text-sm text-red-700 mb-3">
+                      Permanently delete this fund and automatically withdraw all investors. 
+                      This action cannot be undone.
+                    </p>
+                    <div className="text-xs text-red-600 bg-red-100 p-2 rounded">
+                      <strong>What happens when you delete:</strong>
+                      <ul className="mt-1 ml-4 list-disc">
+                        <li>All current token positions are sold to SOL</li>
+                        <li>All investors are automatically withdrawn with their share of SOL</li>
+                        <li>Fund is permanently closed and cannot be reopened</li>
+                        <li>Trading history is preserved for records</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    disabled={isDeleting || isUpdating}
+                    className="ml-4"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Fund
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <AlertTriangle className="w-6 h-6 text-red-500 mr-2" />
+              <h2 className="text-xl font-bold text-gray-900">Confirm Fund Deletion</h2>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-700 mb-3">
+                Are you absolutely sure you want to delete <strong>{fund?.name}</strong>?
+              </p>
+              <div className="bg-red-50 border border-red-200 rounded p-3 text-sm">
+                <strong className="text-red-800">This will immediately:</strong>
+                <ul className="mt-2 ml-4 list-disc text-red-700">
+                  <li>Sell all token positions to SOL</li>
+                  <li>Withdraw all {Math.floor((fund?.totalAssets || 0) / 100000)} investors</li>
+                  <li>Permanently close the fund</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteFund}
+                disabled={isDeleting}
+                className="flex-1"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Fund
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

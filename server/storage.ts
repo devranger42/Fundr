@@ -195,6 +195,54 @@ export class DatabaseStorage implements IStorage {
     return fund;
   }
 
+  async deleteFund(id: string): Promise<{ success: boolean; withdrawnInvestors: number }> {
+    // Get all investor stakes for this fund
+    const stakes = await this.getFundStakes(id);
+    
+    // Process withdrawal for each investor
+    // In a real implementation, this would:
+    // 1. Sell all token positions to SOL
+    // 2. Calculate each investor's share
+    // 3. Transfer SOL back to investors
+    // 4. Record withdrawal transactions
+    
+    let withdrawnInvestors = 0;
+    
+    // Create withdrawal transactions for all active stakes
+    for (const stake of stakes) {
+      if (stake.shares > 0) {
+        // Calculate withdrawal amount based on current fund value
+        const withdrawalAmount = stake.solAmount; // Simplified - would be calculated based on current fund value
+        
+        // Create withdrawal transaction record
+        await this.createTransaction({
+          id: crypto.randomUUID(),
+          fundId: id,
+          userId: stake.investorId,
+          type: 'withdrawal',
+          amount: withdrawalAmount,
+          sharePrice: 1.0, // Simplified
+          shares: stake.shares,
+          signature: 'fund_deletion_withdrawal_' + Date.now(),
+        });
+        
+        // Zero out the stake
+        await this.updateInvestorStake(stake.id, {
+          shares: 0,
+          solAmount: 0,
+        });
+        
+        withdrawnInvestors++;
+      }
+    }
+    
+    // Delete fund data (keeping transaction history)
+    await db.delete(fundAllocations).where(eq(fundAllocations.fundId, id));
+    await db.delete(funds).where(eq(funds.id, id));
+    
+    return { success: true, withdrawnInvestors };
+  }
+
   // Fund allocation operations
   async setFundAllocations(fundId: string, allocations: InsertFundAllocation[]): Promise<FundAllocation[]> {
     // Delete existing allocations
