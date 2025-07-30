@@ -260,6 +260,82 @@ pub mod fundr {
         
         Ok(())
     }
+
+    /// Reclaim rent from closed accounts (SOL incinerator function)
+    /// This allows fund managers to recover rent fees from closed PDAs and empty accounts
+    pub fn reclaim_rent(ctx: Context<ReclaimRent>) -> Result<()> {
+        let fund = &ctx.accounts.fund;
+        let manager = &ctx.accounts.manager;
+        let closed_account = &ctx.accounts.closed_account;
+        let fund_vault = &ctx.accounts.fund_vault;
+        
+        // Only fund manager can reclaim rent
+        require_keys_eq!(fund.authority, manager.key(), FundrError::UnauthorizedManager);
+        
+        // Check if the account is actually empty/closed
+        let account_lamports = closed_account.lamports();
+        let minimum_rent = Rent::get()?.minimum_balance(0); // For empty account
+        
+        require!(
+            account_lamports <= minimum_rent,
+            FundrError::AccountNotEmpty
+        );
+        
+        // Transfer any remaining lamports to the fund vault
+        if account_lamports > 0 {
+            **closed_account.try_borrow_mut_lamports()? = 0;
+            **fund_vault.try_borrow_mut_lamports()? = fund_vault.lamports()
+                .checked_add(account_lamports)
+                .ok_or(FundrError::MathOverflow)?;
+            
+            msg!(
+                "Reclaimed {} lamports rent from closed account {} to fund vault",
+                account_lamports,
+                closed_account.key()
+            );
+        } else {
+            msg!("No rent to reclaim from account {}", closed_account.key());
+        }
+        
+        Ok(())
+    }
+
+    /// Close empty token accounts and reclaim rent to fund vault
+    /// This is specifically for token accounts that are no longer needed
+    pub fn close_token_account(ctx: Context<CloseTokenAccount>) -> Result<()> {
+        let fund = &ctx.accounts.fund;
+        let manager = &ctx.accounts.manager;
+        let token_account = &ctx.accounts.token_account;
+        let fund_vault = &ctx.accounts.fund_vault;
+        
+        // Only fund manager can close token accounts
+        require_keys_eq!(fund.authority, manager.key(), FundrError::UnauthorizedManager);
+        
+        // Token account must be empty
+        require!(
+            token_account.amount == 0,
+            FundrError::TokenAccountNotEmpty
+        );
+        
+        // Close the token account and transfer rent to fund vault
+        let cpi_accounts = anchor_spl::token::CloseAccount {
+            account: token_account.to_account_info(),
+            destination: fund_vault.to_account_info(),
+            authority: fund.to_account_info(),
+        };
+        
+        let fund_key = fund.key();
+        let seeds = &[b"fund", fund_key.as_ref(), &[fund.bump]];
+        let signer_seeds = &[&seeds[..]];
+        
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
+        
+        token::close_account(cpi_ctx)?;
+        
+        msg!("Closed empty token account and reclaimed rent to fund vault");
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -377,6 +453,49 @@ pub struct CollectFees<'info> {
     pub manager: Signer<'info>,
 }
 
+#[derive(Accounts)]
+pub struct ReclaimRent<'info> {
+    #[account(mut)]
+    pub fund: Account<'info, Fund>,
+    
+    #[account(
+        mut,
+        seeds = [b"vault", fund.key().as_ref()],
+        bump
+    )]
+    /// CHECK: Fund vault PDA
+    pub fund_vault: AccountInfo<'info>,
+    
+    #[account(mut)]
+    pub manager: Signer<'info>,
+    
+    /// CHECK: Account to reclaim rent from - validated in instruction
+    #[account(mut)]
+    pub closed_account: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct CloseTokenAccount<'info> {
+    #[account(mut)]
+    pub fund: Account<'info, Fund>,
+    
+    #[account(
+        mut,
+        seeds = [b"vault", fund.key().as_ref()],
+        bump
+    )]
+    /// CHECK: Fund vault PDA
+    pub fund_vault: AccountInfo<'info>,
+    
+    #[account(mut)]
+    pub manager: Signer<'info>,
+    
+    #[account(mut)]
+    pub token_account: Account<'info, TokenAccount>,
+    
+    pub token_program: Program<'info, Token>,
+}
+
 #[account]
 #[derive(InitSpace)]
 pub struct Fund {
@@ -429,4 +548,12 @@ pub enum FundrError {
     InvalidTokenMint,
     #[msg("Slippage tolerance exceeded")]
     SlippageExceeded,
+    #[msg("Unauthorized access")]
+    Unauthorized,
+    #[msg("Account is not empty and cannot be closed")]
+    AccountNotEmpty,
+    #[msg("Token account is not empty and cannot be closed")]
+    TokenAccountNotEmpty,
+    #[msg("Invalid account provided")]
+    InvalidAccount,
 }

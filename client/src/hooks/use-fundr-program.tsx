@@ -72,7 +72,7 @@ export function useFundrProgram() {
       return result;
     } catch (error) {
       console.error('Fund creation failed in hook:', error);
-      console.error('Error details:', error.message || 'Unknown error');
+      console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
       throw error;
     }
   }, [fundrService, connected, publicKey]);
@@ -139,6 +139,28 @@ export function useFundrProgram() {
     );
   }, [fundrService, isInitialized]);
 
+  const reclaimRent = useCallback(async (
+    fundAddress: PublicKey,
+    closedAccountAddress: PublicKey
+  ) => {
+    if (!fundrService || !isInitialized) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.reclaimRent(fundAddress, closedAccountAddress);
+  }, [fundrService, isInitialized]);
+
+  const closeTokenAccount = useCallback(async (
+    fundAddress: PublicKey,
+    tokenAccountAddress: PublicKey
+  ) => {
+    if (!fundrService || !isInitialized) {
+      throw new Error('Fundr service not initialized');
+    }
+
+    return await fundrService.closeTokenAccount(fundAddress, tokenAccountAddress);
+  }, [fundrService, isInitialized]);
+
   return {
     fundrService,
     isInitialized,
@@ -150,5 +172,7 @@ export function useFundrProgram() {
     getFundData,
     getUserStake,
     rebalanceFund,
+    reclaimRent,
+    closeTokenAccount,
   };
 }

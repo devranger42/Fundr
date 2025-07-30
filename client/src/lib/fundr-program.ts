@@ -35,6 +35,16 @@ export interface FundrProgram {
   collectFees: (
     fundPubkey: PublicKey
   ) => Promise<string>;
+
+  reclaimRent: (
+    fundPubkey: PublicKey,
+    closedAccountPubkey: PublicKey
+  ) => Promise<string>;
+
+  closeTokenAccount: (
+    fundPubkey: PublicKey,
+    tokenAccountPubkey: PublicKey
+  ) => Promise<string>;
 }
 
 export class FundrService {
@@ -424,6 +434,93 @@ export class FundrService {
     // This would integrate with Jupiter for actual swaps
     // For now, return a mock transaction signature
     return 'mock_rebalance_signature';
+  }
+
+  async reclaimRent(fundAddress: PublicKey, closedAccountAddress: PublicKey): Promise<string> {
+    if (!this.provider?.wallet.publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    const manager = this.provider.wallet.publicKey;
+    const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
+
+    try {
+      console.log('Reclaiming rent from closed account:', {
+        fundAddress: fundAddress.toString(),
+        closedAccount: closedAccountAddress.toString(),
+        manager: manager.toString(),
+        vaultPDA: vaultPDA.toString()
+      });
+
+      // Simulate successful rent reclamation
+      const mockSignature = `fundr_reclaim_rent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // In a real deployment, this would call the actual program instruction:
+      /*
+      const instruction = await this.program.methods
+        .reclaimRent()
+        .accounts({
+          fund: fundAddress,
+          fundVault: vaultPDA,
+          manager: manager,
+          closedAccount: closedAccountAddress,
+        })
+        .instruction();
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await this.provider.sendAndConfirm(transaction);
+      */
+
+      console.log(`Rent reclamation simulated successfully: ${mockSignature}`);
+      return mockSignature;
+    } catch (error) {
+      console.error('Rent reclamation error:', error);
+      throw new Error(`Failed to reclaim rent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async closeTokenAccount(fundAddress: PublicKey, tokenAccountAddress: PublicKey): Promise<string> {
+    if (!this.provider?.wallet.publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    const manager = this.provider.wallet.publicKey;
+    const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
+
+    try {
+      console.log('Closing token account:', {
+        fundAddress: fundAddress.toString(),
+        tokenAccount: tokenAccountAddress.toString(),
+        manager: manager.toString(),
+        vaultPDA: vaultPDA.toString()
+      });
+
+      // Simulate successful token account closure
+      const mockSignature = `fundr_close_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // In a real deployment, this would call the actual program instruction:
+      /*
+      const instruction = await this.program.methods
+        .closeTokenAccount()
+        .accounts({
+          fund: fundAddress,
+          fundVault: vaultPDA,
+          manager: manager,
+          tokenAccount: tokenAccountAddress,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .instruction();
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await this.provider.sendAndConfirm(transaction);
+      */
+
+      console.log(`Token account closure simulated successfully: ${mockSignature}`);
+      return mockSignature;
+    } catch (error) {
+      console.error('Token account closure error:', error);
+      throw new Error(`Failed to close token account: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 }
 
