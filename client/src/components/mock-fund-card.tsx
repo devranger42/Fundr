@@ -66,23 +66,8 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
         <div className="cursor-pointer">
           <div className="flex items-center justify-between mb-4 gap-3">
             <div className="flex items-center space-x-3 min-w-0 flex-1">
-              {fund.profileImage ? (
-                <img 
-                  src={fund.profileImage} 
-                  alt={fund.displayName || fund.manager}
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
-                  onError={(e) => {
-                    // Fallback to icon if image fails to load
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const nextElement = target.nextElementSibling as HTMLElement;
-                    if (nextElement) nextElement.style.display = 'flex';
-                  }}
-                />
-              ) : null}
               <div 
-                className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0 ${fund.profileImage ? 'hidden' : ''}`}
-                style={{ display: fund.profileImage ? 'none' : 'flex' }}
+                className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0`}
               >
                 <IconComponent className="text-white w-4 h-4 md:w-5 md:h-5" />
               </div>

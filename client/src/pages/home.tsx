@@ -80,6 +80,7 @@ const mockFunds = [
     icon: "trending",
     verified: true,
     isSample: true,
+    profileImage: null, // Removed to avoid copyright issues
     allocations: [
       { name: "WIF", percentage: 35, color: "#8B5CF6" },
       { name: "BONK", percentage: 30, color: "#FF9233" },
