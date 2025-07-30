@@ -19,9 +19,10 @@ interface TokenSelectorProps {
   onChange: (token: Token | string) => void;
   placeholder?: string;
   className?: string;
+  strictOnly?: boolean; // Only show Jupiter strict list tokens
 }
 
-export function TokenSelector({ value, onChange, placeholder = "Search token or paste address", className }: TokenSelectorProps) {
+export function TokenSelector({ value, onChange, placeholder = "Search token or paste address", className, strictOnly = false }: TokenSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(value);
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -34,14 +35,30 @@ export function TokenSelector({ value, onChange, placeholder = "Search token or 
     'SOL', 'USDC', 'USDT', 'BONK', 'WIF', 'POPCAT', 'JUP', 'RAY', 'ORCA', 'MNGO'
   ];
 
-  // Load Jupiter token list
+  // Load Jupiter token list with strict list option
   useEffect(() => {
     const loadTokens = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://token.jup.ag/all');
-        const tokenList = await response.json();
-        setTokens(tokenList);
+        // Load both all tokens and strict list
+        const [allResponse, strictResponse] = await Promise.all([
+          fetch('https://token.jup.ag/all'),
+          fetch('https://token.jup.ag/strict')
+        ]);
+        
+        const allTokens = await allResponse.json();
+        const strictTokens = await strictResponse.json();
+        
+        // Mark strict tokens for identification
+        const tokensWithStrict = allTokens.map((token: Token) => ({
+          ...token,
+          tags: [
+            ...(token.tags || []),
+            ...(strictTokens.some((st: Token) => st.address === token.address) ? ['strict'] : [])
+          ]
+        }));
+        
+        setTokens(tokensWithStrict);
       } catch (error) {
         console.error('Failed to load token list:', error);
         // Fallback to basic Solana tokens
@@ -51,14 +68,16 @@ export function TokenSelector({ value, onChange, placeholder = "Search token or 
             symbol: 'SOL',
             name: 'Solana',
             decimals: 9,
-            logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
+            logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+            tags: ['strict']
           },
           {
             address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
             symbol: 'USDC',
             name: 'USD Coin',
             decimals: 6,
-            logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png'
+            logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+            tags: ['strict']
           }
         ]);
       } finally {
@@ -69,18 +88,25 @@ export function TokenSelector({ value, onChange, placeholder = "Search token or 
     loadTokens();
   }, []);
 
-  // Filter tokens based on search
+  // Filter tokens based on search and strict list restriction
   useEffect(() => {
+    let availableTokens = tokens;
+    
+    // Filter to strict list only if required
+    if (strictOnly) {
+      availableTokens = tokens.filter(token => token.tags?.includes('strict'));
+    }
+    
     if (!searchTerm.trim()) {
       // Show popular tokens first when no search
-      const popular = tokens.filter(token => popularTokens.includes(token.symbol));
-      const others = tokens.filter(token => !popularTokens.includes(token.symbol)).slice(0, 50);
+      const popular = availableTokens.filter(token => popularTokens.includes(token.symbol));
+      const others = availableTokens.filter(token => !popularTokens.includes(token.symbol)).slice(0, 50);
       setFilteredTokens([...popular, ...others]);
       return;
     }
 
     const term = searchTerm.toLowerCase();
-    const filtered = tokens.filter(token => {
+    const filtered = availableTokens.filter(token => {
       return (
         token.symbol.toLowerCase().includes(term) ||
         token.name.toLowerCase().includes(term) ||
@@ -100,7 +126,7 @@ export function TokenSelector({ value, onChange, placeholder = "Search token or 
     });
 
     setFilteredTokens(filtered);
-  }, [searchTerm, tokens]);
+  }, [searchTerm, tokens, strictOnly]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -187,6 +213,9 @@ export function TokenSelector({ value, onChange, placeholder = "Search token or 
                           <span className="font-medium">{token.symbol}</span>
                           {popularTokens.includes(token.symbol) && (
                             <Badge variant="secondary" className="text-xs">Popular</Badge>
+                          )}
+                          {token.tags?.includes('strict') && (
+                            <Badge variant="outline" className="text-xs text-green-600 border-green-600">Verified</Badge>
                           )}
                         </div>
                         <div className="text-sm text-gray-500 truncate">{token.name}</div>

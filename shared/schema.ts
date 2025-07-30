@@ -69,7 +69,11 @@ export const funds = pgTable("funds", {
   name: varchar("name").notNull(),
   description: varchar("description"),
   managementFee: integer("management_fee").notNull(), // basis points (0-2000)
+  performanceFee: integer("performance_fee").notNull().default(2000), // basis points (0-3000)
+  minDeposit: integer("min_deposit").notNull().default(1), // minimum deposit in SOL
   fundMode: varchar("fund_mode", { enum: ["manual", "auto"] }).notNull().default("manual"), // allocation mode
+  allocationOption: varchar("allocation_option", { enum: ["open", "managed", "locked"] }).notNull().default("open"), // manager allocation control
+  jupiterStrictList: boolean("jupiter_strict_list").notNull().default(false), // restrict to Jupiter strict list tokens
   totalAssets: bigint("total_assets", { mode: "number" }).default(0), // in lamports
   totalShares: bigint("total_shares", { mode: "number" }).default(0),
   isActive: boolean("is_active").default(true),

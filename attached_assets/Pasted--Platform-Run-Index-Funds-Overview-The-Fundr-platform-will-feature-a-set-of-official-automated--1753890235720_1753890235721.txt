@@ -1,0 +1,68 @@
+🏛️ Platform-Run Index Funds: Overview
+The Fundr platform will feature a set of official, automated index-style funds curated by the platform team. These funds offer users a passive, trustless way to gain exposure to popular sectors, launchpads, or themes within the Solana ecosystem.
+
+🧠 Purpose
+Give users high-trust, low-effort investing options
+
+Bootstrap liquidity and engagement across the platform
+
+Showcase trends in the Solana ecosystem (meme coins, launchpads, utilities)
+
+Act as default starter funds for new users
+
+🧩 Core Characteristics
+Non-custodial & onchain: Funds are built on the same smart contract architecture as user-created funds
+
+Auto allocation mode only: Deposits and withdrawals are always proportional to the fund's current token mix
+
+Platform-controlled: These funds are created and managed by the Fundr platform
+
+Dynamic or curated rebalancing: Based on snapshots, trading volume, or manual adjustments
+
+Leaderboard visible: Performance of platform-run funds is shown alongside user funds
+
+🧾 Platform Fund Examples
+Fund ID	Description
+sol50	Top 50 coins on Solana by market cap or trading volume
+meme25	Top 25 meme coins on Solana
+utility25	Top 25 utility tokens or protocols on Solana
+bonk10	Top 10 meme coins launched via BONK launchpad
+pump10	Top 10 tokens launched via Pump.fun
+jup10	Top 10 launchpad coins from Jupiter
+believe10	Top 10 tokens launched via Believe launchpad
+moby10	Top 10 coins tracked by MobyScreener (if integrated later)
+
+🧮 Rebalancing
+Daily or weekly rebalancing is supported
+
+Can be:
+
+Manual (platform authority adjusts weights)
+
+Automated via snapshot + oracle (e.g. trading volume or market cap feeds)
+
+Users always deposit/withdraw based on live token weights
+
+🖥️ User Experience
+Labeled clearly as “Platform Fund” in the app
+
+Fund info includes:
+
+Token breakdown (live percentages)
+
+7D/30D performance
+
+Description of fund theme
+
+Simple UI: one-click deposit/withdraw
+
+No manager profile or fees — platform earns via standard 1% fee mechanics
+
+🔐 Technical Details
+Stored in smart contract just like user funds, using fixed Fund IDs
+
+Managed via a platform authority wallet (can later shift to DAO governance)
+
+Fee mechanics (1% platform fee on deposit/withdraw) remain consistent
+
+No custom management logic per fund — rebalancing handled offchain and pushed onchain

@@ -187,6 +187,15 @@ The project structure supports both development and production environments with
 ✓ Clarified that managers only earn when investors profit above high water mark
 ✓ Platform fees remain: 1% on deposits (buy/burn), 1% on withdrawals (treasury)
 
+### Advanced Fund Creation Features (July 30, 2025)
+✓ Added comprehensive fund allocation control options (Open, Managed, Locked)
+✓ Implemented Jupiter Strict List token restriction for enhanced security
+✓ Enhanced token selector with verified token badges and strict list filtering
+✓ Added allocation control explanations for different fund management styles
+✓ Database schema updated with allocationOption and jupiterStrictList fields
+✓ Token restriction can be added during creation but cannot be removed later
+✓ Professional fund creation interface with detailed control options
+
 ### Portfolio Rebalancing System (July 30, 2025)
 ✓ Restored comprehensive portfolio allocation tracking with current vs target percentages
 ✓ Built interactive rebalancing interface with drift indicators and progress bars
