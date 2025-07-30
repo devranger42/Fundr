@@ -19,8 +19,7 @@ import {
   Cog,
   Shield,
   Lock,
-  Unlock,
-  Users
+  Unlock
 } from "lucide-react";
 import { TokenSelector } from "@/components/token-selector";
 import { useLocation } from "wouter";
@@ -49,7 +48,6 @@ export default function CreateFundBlockchain() {
     performanceFee: 20,  // 20%
     minDeposit: 1,       // 1 SOL
     fundMode: "manual",   // manual or auto
-    allocationOption: "open",  // open, managed, locked
     jupiterStrictList: false   // restrict to Jupiter strict list
   });
   
@@ -139,7 +137,7 @@ export default function CreateFundBlockchain() {
         performanceFee: formData.performanceFee * 100, // Convert to basis points
         minDeposit: formData.minDeposit,
         fundMode: formData.fundMode,
-        allocationOption: formData.allocationOption,
+        allocationOption: "open", // All user funds use open allocation
         jupiterStrictList: formData.jupiterStrictList,
         totalAssets: 0,
         totalShares: 0,
@@ -336,74 +334,6 @@ export default function CreateFundBlockchain() {
                     </p>
                     <div className="mt-2 text-xs text-gray-500">
                       <strong>Best for:</strong> Index funds, passive strategies, set-and-forget management
-                    </div>
-                  </div>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
-
-          {/* Fund Allocation Options */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-pump" />
-                Allocation Control
-              </CardTitle>
-              <CardDescription>
-                Choose who can modify fund allocations
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <RadioGroup
-                value={formData.allocationOption}
-                onValueChange={(value) => handleInputChange('allocationOption', value)}
-                className="space-y-4"
-              >
-                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <RadioGroupItem value="open" id="open" className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor="open" className="text-base font-medium cursor-pointer flex items-center">
-                      <Unlock className="w-4 h-4 mr-2 text-green-600" />
-                      Open Allocation
-                    </Label>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Fund manager can modify allocations anytime. Maximum flexibility for active management.
-                    </p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      <strong>Best for:</strong> Active traders, dynamic strategies, experimental approaches
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <RadioGroupItem value="managed" id="managed" className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor="managed" className="text-base font-medium cursor-pointer flex items-center">
-                      <Settings className="w-4 h-4 mr-2 text-blue-600" />
-                      Managed Allocation
-                    </Label>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Allocations can be updated but require 48-hour notice to investors. Balances transparency with flexibility.
-                    </p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      <strong>Best for:</strong> Professional funds, structured strategies, investor protection
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <RadioGroupItem value="locked" id="locked" className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor="locked" className="text-base font-medium cursor-pointer flex items-center">
-                      <Lock className="w-4 h-4 mr-2 text-red-600" />
-                      Locked Allocation
-                    </Label>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Allocations are permanently fixed after fund creation. Maximum investor trust and predictability.
-                    </p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      <strong>Best for:</strong> Index funds, conservative strategies, maximum transparency
                     </div>
                   </div>
                 </div>

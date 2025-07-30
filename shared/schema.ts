@@ -72,7 +72,7 @@ export const funds = pgTable("funds", {
   performanceFee: integer("performance_fee").notNull().default(2000), // basis points (0-3000)
   minDeposit: integer("min_deposit").notNull().default(1), // minimum deposit in SOL
   fundMode: varchar("fund_mode", { enum: ["manual", "auto"] }).notNull().default("manual"), // allocation mode
-  allocationOption: varchar("allocation_option", { enum: ["open", "managed", "locked"] }).notNull().default("open"), // manager allocation control
+  allocationOption: varchar("allocation_option", { enum: ["open", "managed", "locked"] }).notNull().default("open"), // all user funds are open, platform funds can be locked
   jupiterStrictList: boolean("jupiter_strict_list").notNull().default(false), // restrict to Jupiter strict list tokens
   isPlatformFund: boolean("is_platform_fund").notNull().default(false), // platform-managed index fund
   rebalanceFrequency: varchar("rebalance_frequency", { enum: ["daily", "weekly", "manual"] }).default("manual"), // rebalancing schedule

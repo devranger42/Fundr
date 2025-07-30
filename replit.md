@@ -188,13 +188,12 @@ The project structure supports both development and production environments with
 ✓ Platform fees remain: 1% on deposits (buy/burn), 1% on withdrawals (treasury)
 
 ### Advanced Fund Creation Features (July 30, 2025)
-✓ Added comprehensive fund allocation control options (Open, Managed, Locked)
 ✓ Implemented Jupiter Strict List token restriction for enhanced security
 ✓ Enhanced token selector with verified token badges and strict list filtering
-✓ Added allocation control explanations for different fund management styles
-✓ Database schema updated with allocationOption and jupiterStrictList fields
+✓ Database schema updated with jupiterStrictList field for token restrictions
 ✓ Token restriction can be added during creation but cannot be removed later
-✓ Professional fund creation interface with detailed control options
+✓ All user funds use open allocation (managers can modify allocations anytime)
+✓ Professional fund creation interface with security options
 
 ### Platform-Run Index Funds Implementation (July 30, 2025)
 ✓ Built comprehensive platform-run index fund system with automated rebalancing
