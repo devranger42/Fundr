@@ -134,112 +134,22 @@ function PlatformFundCard({ fund }: { fund: PlatformFund }) {
 }
 
 export default function PlatformFunds() {
-  const { data: platformFunds = [], isLoading, error } = useQuery<PlatformFund[]>({
-    queryKey: ['/api/platform-funds'],
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bonk mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading platform funds...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <p className="text-red-600">Failed to load platform funds</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Building2 className="w-8 h-8 text-bonk" />
-            <h1 className="text-4xl font-bold text-gray-900">Platform Index Funds</h1>
-          </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Official Fundr index funds offering passive exposure to popular Solana sectors. 
-            Automatically rebalanced with transparent, low-cost investing.
-          </p>
-          
-          {/* Key Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 max-w-4xl mx-auto">
-            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
-              <Shield className="w-6 h-6 text-bonk mx-auto mb-2" />
-              <h3 className="font-semibold text-gray-900">Non-Custodial</h3>
-              <p className="text-sm text-gray-600">Your funds remain secure on-chain</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
-              <Zap className="w-6 h-6 text-pump mx-auto mb-2" />
-              <h3 className="font-semibold text-gray-900">Auto Rebalancing</h3>
-              <p className="text-sm text-gray-600">Dynamic allocation adjustments</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
-              <DollarSign className="w-6 h-6 text-bonk mx-auto mb-2" />
-              <h3 className="font-semibold text-gray-900">Low Fees</h3>
-              <p className="text-sm text-gray-600">Only 1% platform fee on transactions</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Platform Funds Grid */}
-        {platformFunds.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {platformFunds.map((fund) => (
-              <PlatformFundCard key={fund.id} fund={fund} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
+        <div className="text-center py-16">
+          <div className="max-w-md mx-auto">
             <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Platform Funds Available</h3>
-            <p className="text-gray-600 mb-6">Platform index funds are being prepared for launch</p>
-            <Button 
-              onClick={() => window.location.reload()} 
-              variant="outline"
-              className="border-bonk text-bonk hover:bg-bonk hover:text-white"
-            >
-              Refresh Page
-            </Button>
-          </div>
-        )}
-
-        {/* Coming Soon Section */}
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-dark mb-4">Coming Soon</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            {[
-              { name: "DeFi Top 15", icon: Zap },
-              { name: "Gaming Top 10", icon: Target },
-              { name: "NFT Top 10", icon: Sparkles },
-              { name: "AI Top 5", icon: Rocket }
-            ].map((fund, index) => (
-              <div key={index} className="p-4 bg-white rounded-lg shadow-sm opacity-60">
-                <fund.icon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                <div className="text-sm font-medium text-gray-600">{fund.name}</div>
-                <div className="text-xs text-gray-400 mt-1">Q2 2025</div>
-              </div>
-            ))}
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Platform Funds Disabled</h1>
+            <p className="text-gray-600 mb-6">
+              Platform-managed index funds are currently disabled. All active funds have been removed.
+            </p>
+            <Link href="/">
+              <Button>
+                Back to Home
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

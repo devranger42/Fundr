@@ -1,98 +1,10 @@
 import { storage } from "./storage";
 
-// Platform-run index fund definitions
-export const PLATFORM_FUNDS = [
-  {
-    id: "sol50",
-    name: "SOL 50 Index",
-    description: "Top 50 coins on Solana by market cap and trading volume",
-    category: "broad-market",
-    rebalanceFrequency: "weekly" as const,
-    tokens: [] // Will be populated dynamically
-  },
-  {
-    id: "meme25",
-    name: "Meme 25 Index",
-    description: "Top 25 meme coins on Solana ecosystem",
-    category: "meme",
-    rebalanceFrequency: "daily" as const,
-    tokens: []
-  },
-  {
-    id: "utility25",
-    name: "Utility 25 Index",
-    description: "Top 25 utility tokens and DeFi protocols on Solana",
-    category: "utility",
-    rebalanceFrequency: "weekly" as const,
-    tokens: []
-  },
-  {
-    id: "bonk10",
-    name: "BONK Launchpad 10 Index",
-    description: "Top 10 meme coins launched via BONK launchpad",
-    category: "launchpad",
-    rebalanceFrequency: "daily" as const,
-    tokens: []
-  },
-  {
-    id: "pump10",
-    name: "Pump.fun 10 Index",
-    description: "Top 10 tokens launched via Pump.fun platform",
-    category: "launchpad",
-    rebalanceFrequency: "daily" as const,
-    tokens: []
-  },
-  {
-    id: "jup10",
-    name: "Jupiter Launchpad 10 Index",
-    description: "Top 10 launchpad coins from Jupiter ecosystem",
-    category: "launchpad",
-    rebalanceFrequency: "weekly" as const,
-    tokens: []
-  },
-  {
-    id: "believe10",
-    name: "Believe Launchpad 10 Index",
-    description: "Top 10 tokens launched via Believe launchpad",
-    category: "launchpad",
-    rebalanceFrequency: "daily" as const,
-    tokens: []
-  },
-  {
-    id: "moby10",
-    name: "MobyScreener 10 Index",
-    description: "Top 10 coins tracked by MobyScreener analytics",
-    category: "analytics",
-    rebalanceFrequency: "weekly" as const,
-    tokens: []
-  }
-];
+// Platform-run index fund definitions (currently disabled)
+export const PLATFORM_FUNDS: any[] = [];
 
-// Mock token data for platform funds (in production, this would come from real APIs)
-const MOCK_TOKEN_ALLOCATIONS = {
-  sol50: [
-    { symbol: "SOL", address: "So11111111111111111111111111111111111111112", percentage: 25 },
-    { symbol: "USDC", address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", percentage: 15 },
-    { symbol: "JUP", address: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", percentage: 10 },
-    { symbol: "RAY", address: "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", percentage: 8 },
-    { symbol: "ORCA", address: "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE", percentage: 7 },
-    // Additional tokens would be added dynamically
-  ],
-  meme25: [
-    { symbol: "BONK", address: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", percentage: 20 },
-    { symbol: "WIF", address: "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm", percentage: 15 },
-    { symbol: "POPCAT", address: "7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr", percentage: 12 },
-    { symbol: "MEW", address: "MEW1gQWJ3nEXg2qgERiKu7FAFj79PHvQVREQUzScPP5", percentage: 10 },
-    { symbol: "BOME", address: "ukHH6c7mMyiWCf1b9pnWe25TSpkDDt3H5pQZgZ74J82", percentage: 8 },
-  ],
-  utility25: [
-    { symbol: "JUP", address: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", percentage: 18 },
-    { symbol: "RAY", address: "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", percentage: 15 },
-    { symbol: "ORCA", address: "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE", percentage: 12 },
-    { symbol: "MNGO", address: "MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac", percentage: 10 },
-    { symbol: "SRM", address: "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt", percentage: 8 },
-  ]
-};
+// Mock token data for platform funds (currently disabled)
+const MOCK_TOKEN_ALLOCATIONS: any = {};
 
 export async function createPlatformFunds() {
   console.log("Platform funds disabled - returning empty array");
