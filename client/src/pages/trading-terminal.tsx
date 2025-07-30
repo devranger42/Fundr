@@ -204,6 +204,15 @@ export default function TradingTerminal() {
     );
   }
 
+  // Debug access control
+  console.log('Trading Terminal Access Check:', {
+    fund: fund?.id,
+    fundManagerId: fund?.managerId, 
+    userId: user?.id,
+    isAuthenticated,
+    match: fund?.managerId === user?.id
+  });
+
   if (!fund || !isAuthenticated || fund.managerId !== user?.id) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -212,6 +221,9 @@ export default function TradingTerminal() {
           <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-dark mb-4">Access Denied</h2>
           <p className="text-gray-600 mb-6">Only the fund manager can access the trading terminal.</p>
+          <div className="text-sm text-gray-400 mb-4">
+            Debug: Fund Manager: {fund?.managerId}, User: {user?.id}
+          </div>
           <Link href={`/fund/${id}`}>
             <Button className="bg-bonk hover:bg-bonk-hover text-white">
               Back to Fund Details
