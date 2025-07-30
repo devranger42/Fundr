@@ -7,17 +7,17 @@ interface FundrLogoProps {
 
 export default function FundrLogo({ className = "", size = "md" }: FundrLogoProps) {
   const sizeClasses = {
-    sm: "w-6 h-6",
-    md: "w-8 h-8", 
-    lg: "w-12 h-12",
-    xl: "w-16 h-16"
+    sm: "w-8 h-8",
+    md: "w-12 h-12", 
+    lg: "w-16 h-16",
+    xl: "w-20 h-20"
   };
 
   return (
     <img
       src={logoPath}
       alt="Fundr Logo"
-      className={`${sizeClasses[size]} ${className}`}
+      className={`${sizeClasses[size]} ${className} bg-white rounded-full`}
       style={{ objectFit: 'contain' }}
     />
   );
