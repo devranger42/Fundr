@@ -200,7 +200,7 @@ export default function TradingTerminal() {
 
   if (fundLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header />
         <div className="flex justify-center items-center py-20">
           <RefreshCw className="w-8 h-8 animate-spin text-bonk" />
@@ -221,7 +221,7 @@ export default function TradingTerminal() {
 
   if (!fund || !isAuthenticated || fund.managerId !== user?.id) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white">
         <Header />
         <div className="text-center py-20">
           <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
@@ -241,7 +241,7 @@ export default function TradingTerminal() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
       
       {/* Trading Header */}
@@ -392,7 +392,7 @@ export default function TradingTerminal() {
 
                 {/* Advanced Settings */}
                 {showAdvanced && (
-                  <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="space-y-4 p-4 bg-gray-100 border rounded-lg">
                     <div className="space-y-2">
                       <Label>Slippage Tolerance: {slippage}%</Label>
                       <Slider
@@ -429,7 +429,7 @@ export default function TradingTerminal() {
 
                 {/* Quote Information */}
                 {quote && (
-                  <div className="p-4 bg-blue-50 rounded-lg space-y-2">
+                  <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Rate</span>
                       <span>1 {fromToken.symbol} = {(parseFloat(quote.outAmount) / Math.pow(10, toToken.decimals) / (parseFloat(quote.inAmount) / Math.pow(10, fromToken.decimals))).toFixed(6)} {toToken.symbol}</span>
