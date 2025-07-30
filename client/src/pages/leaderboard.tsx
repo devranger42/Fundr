@@ -138,23 +138,23 @@ export default function Leaderboard() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-dark">Top Fund Managers</h2>
-              <p className="text-gray-600">Ranked by 30-day performance</p>
+            <div className="px-6 py-4 bg-dark border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-white">Top Fund Managers</h2>
+              <p className="text-gray-300">Ranked by 30-day performance</p>
             </div>
             
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-dark border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manager</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">30D ROI</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AUM</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Investors</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Win Rate</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Rank</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Manager</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">30D ROI</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">AUM</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Investors</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fee</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Win Rate</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -171,7 +171,7 @@ export default function Leaderboard() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-bold text-dark">{fund.manager}</div>
-                          <div className="text-sm text-gray-500">{fund.title}</div>
+                          <div className="text-sm text-gray-700">{fund.title}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -183,10 +183,10 @@ export default function Leaderboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-dark">
                         {fund.aum}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-dark font-medium">
                         {fund.investors}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-dark font-medium">
                         {fund.fee}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
