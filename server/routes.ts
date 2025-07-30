@@ -7,6 +7,8 @@ import { db } from "./db";
 import { sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+
+
   // Setup Twitter authentication
   setupTwitterAuth(app);
 

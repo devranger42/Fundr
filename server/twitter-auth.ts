@@ -24,6 +24,7 @@ export function setupTwitterAuth(app: Express) {
     tableName: "sessions",
   });
 
+  // Apply session middleware globally (required by passport)
   app.use(session({
     secret: process.env.SESSION_SECRET || 'fundr-session-secret',
     store: sessionStore,
@@ -160,15 +161,20 @@ export function setupTwitterAuth(app: Express) {
     }
   });
 
+
+
   // Twitter configuration status endpoint
   app.get('/api/auth/twitter/status', (req, res) => {
+    console.log('Twitter status route handler called');
     const callbackUrl = `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`;
-    res.json({
+    const response = {
       configured: !!(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET),
       callbackUrl,
       clientId: process.env.TWITTER_CLIENT_ID ? 'Set' : 'Missing',
       clientSecret: process.env.TWITTER_CLIENT_SECRET ? 'Set' : 'Missing',
       instructions: `Register this callback URL in your Twitter app settings: ${callbackUrl}`
-    });
+    };
+    console.log('Sending response:', response);
+    res.json(response);
   });
 }
