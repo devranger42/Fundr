@@ -147,9 +147,9 @@ export function setupTwitterAuth(app: Express) {
     
     console.log('Dynamic callback URL:', callbackUrl);
     
-    // Generate OAuth parameters
+    // Generate OAuth parameters (simplified for 'plain' PKCE)
     const state = generateRandomString(32);
-    const codeVerifier = generateRandomString(43);
+    const codeVerifier = state; // Use state as verifier for plain PKCE
     
     // Store in session
     req.session.oauthState = state;
@@ -158,7 +158,7 @@ export function setupTwitterAuth(app: Express) {
     console.log('Storing in session:', {
       sessionId: req.sessionID,
       state: state,
-      codeVerifier: codeVerifier.substring(0, 10) + '...',
+      codeVerifier: codeVerifier,
       callbackUrl: callbackUrl
     });
     
@@ -220,7 +220,7 @@ export function setupTwitterAuth(app: Express) {
     });
   });
 
-  // Direct OAuth callback handler
+  // Direct OAuth callback handler with stateless fallback
   app.get('/api/auth/twitter/callback', async (req, res) => {
     console.log('🎯 TWITTER CALLBACK RECEIVED!');
     console.log('Method:', req.method);
@@ -268,9 +268,9 @@ export function setupTwitterAuth(app: Express) {
       req.session.isLinking = false;
       req.session.walletToLink = null;
       
-      // Create a simple code verifier for this callback
-      const fallbackVerifier = state; // Use state as verifier since it's available
-      req.session.codeVerifier = fallbackVerifier;
+      // Use the state parameter as code verifier for PKCE plain method
+      // Since we're using 'plain' method, the verifier should match the challenge
+      req.session.codeVerifier = state;
       
       console.log('🔄 Fallback session setup complete');
     }
