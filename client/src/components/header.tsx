@@ -67,6 +67,14 @@ export default function Header() {
               Create Fund
             </Link>
             <Link 
+              href="/manager-dashboard"
+              className={`font-medium transition-colors duration-200 ${
+                isActive('/manager-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
+              }`}
+            >
+              Dashboard
+            </Link>
+            <Link 
               href="/profile"
               className={`font-medium transition-colors duration-200 ${
                 isActive('/profile') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'

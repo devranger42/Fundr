@@ -41,6 +41,7 @@ import { PriceChart } from "@/components/trading/price-chart";
 import { OrderBook } from "@/components/trading/order-book";
 import { RecentTrades } from "@/components/trading/recent-trades";
 import { TransactionHistory } from "@/components/trading/transaction-history";
+import { PortfolioAnalytics } from "@/components/trading/portfolio-analytics";
 
 // Popular tokens for trading
 const POPULAR_TOKENS: TokenInfo[] = [
@@ -500,6 +501,9 @@ export default function TradingTerminal() {
             
             {/* Transaction History */}
             <TransactionHistory fundId={id!} />
+            
+            {/* Portfolio Analytics */}
+            <PortfolioAnalytics fundId={id!} />
           </div>
 
           {/* Market Data & Portfolio */}
