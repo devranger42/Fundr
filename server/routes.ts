@@ -43,17 +43,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req as any).user?.id || (req.session as any).userId;
       
       if (userId) {
-        // Try to get user by ID first (for Twitter users)
-        let user = await storage.getUser(userId);
+        console.log('Looking up user with ID:', userId);
         
-        // If not found, try by Twitter ID
+        // Try to get user by ID first (primary lookup)
+        let user = await storage.getUser(userId);
+        console.log('User lookup result:', user ? 'Found' : 'Not found');
+        
+        // If not found by UUID, try by Twitter ID (fallback)
         if (!user) {
+          console.log('Trying Twitter ID lookup as fallback...');
           user = await storage.getUserByTwitterId(userId);
+          console.log('Twitter ID lookup result:', user ? 'Found' : 'Not found');
         }
         
         if (user) {
           res.json(user);
         } else {
+          console.log('No user found for ID:', userId);
           res.status(401).json({ error: 'User not found' });
         }
       } else {

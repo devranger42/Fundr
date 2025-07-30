@@ -347,25 +347,42 @@ export function setupTwitterAuth(app: Express) {
         delete req.session.walletToLink;
       } else {
         // Create new Twitter-only user
-        await storage.upsertUser({
+        const newUser = await storage.upsertUser({
           twitterId: twitterData.id,
           twitterUsername: twitterData.username,
           twitterProfileImage: twitterData.profile_image_url,
           email: '',
           displayName: twitterData.name || twitterData.username
         });
-        console.log('Created new Twitter user:', twitterData.username);
+        console.log('Created new Twitter user:', twitterData.username, 'with ID:', newUser.id);
       }
       
-      // Set up user session for authenticated Twitter user
-      (req as any).user = { 
-        id: twitterData.id,
-        twitterId: twitterData.id,
-        twitterUsername: twitterData.username 
-      };
-      
-      // Save user ID in session for persistence
-      (req.session as any).userId = twitterData.id;
+      // Find the saved user and set up session properly
+      const savedUser = await storage.getUserByTwitterId(twitterData.id);
+      if (savedUser) {
+        // Set up user session for authenticated Twitter user
+        (req as any).user = savedUser;
+        
+        // Save user ID in session for persistence using the database user ID
+        (req.session as any).userId = savedUser.id;
+        
+        // Force session save
+        req.session.save((err) => {
+          if (err) {
+            console.error('Session save error:', err);
+          } else {
+            console.log('Session saved successfully');
+          }
+        });
+        
+        console.log('✅ User session established:', {
+          userId: savedUser.id,
+          twitterUsername: savedUser.twitterUsername,
+          sessionId: req.sessionID
+        });
+      } else {
+        console.error('❌ Failed to find saved user after creation');
+      }
       
       // Clear OAuth session data
       delete req.session.oauthState;
