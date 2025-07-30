@@ -33,15 +33,15 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/">
-              <div className="cursor-pointer hover:opacity-80 transition-opacity flex items-center space-x-3">
-                <FundrLogo size="md" />
-                <span className="font-bold text-2xl text-gray-900">Fundr</span>
+              <div className="cursor-pointer hover:opacity-80 transition-opacity flex items-center space-x-2">
+                <FundrLogo size="sm" />
+                <span className="font-bold text-xl text-gray-900">Fundr</span>
               </div>
             </Link>
           </div>
           
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-6">
             <Link 
               href="/"
               className={`font-medium transition-colors duration-200 ${
@@ -59,62 +59,34 @@ export default function Header() {
               Leaderboard
             </Link>
             <Link 
-              href="/create-fund-blockchain"
-              className={`font-medium transition-colors duration-200 ${
-                isActive('/create-fund-blockchain') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
-              }`}
-            >
-              Create Fund
-            </Link>
-            <Link 
               href="/manager-dashboard"
               className={`font-medium transition-colors duration-200 ${
                 isActive('/manager-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
-              Manager
-            </Link>
-            <Link 
-              href="/investor-dashboard"
-              className={`font-medium transition-colors duration-200 ${
-                isActive('/investor-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
-              }`}
-            >
-              Investor
-            </Link>
-            <Link 
-              href="/profile"
-              className={`font-medium transition-colors duration-200 ${
-                isActive('/profile') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
-              }`}
-            >
-              Profile
+              Dashboard
             </Link>
           </nav>
           
           {/* Action Buttons */}
-          <div className="flex items-center space-x-4">
-            <Link href="/create-fund">
+          <div className="flex items-center space-x-3">
+            <Link href="/create-fund-blockchain">
               <Button 
                 variant="outline"
+                size="sm"
                 className="border-bonk text-bonk hover:bg-bonk hover:text-white hidden sm:flex items-center"
               >
-                <PlusCircle className="w-4 h-4 mr-2" />
-                Create Fund
+                <PlusCircle className="w-4 h-4 mr-1" />
+                Create
               </Button>
             </Link>
             
-            {/* Twitter Auth - compact mode */}
-            {connected && <TwitterAuth compact />}
-            
             {connected ? (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <TwitterAuth compact />
                 <div className="text-sm">
                   <div className="font-medium text-gray-900">
                     {publicKey && formatPublicKey(publicKey)}
-                  </div>
-                  <div className="text-muted-foreground">
-                    Connected {user?.twitterUsername && `• @${user.twitterUsername}`}
                   </div>
                 </div>
                 <Button 
@@ -129,7 +101,7 @@ export default function Header() {
             ) : (
               <Button 
                 onClick={handleConnectWallet}
-                className="bg-bonk hover:bg-bonk-hover text-white px-6 py-2 font-medium transition-all duration-200 transform hover:scale-105"
+                className="bg-bonk hover:bg-bonk-hover text-white px-4 py-2 font-medium"
               >
                 Connect Wallet
               </Button>
