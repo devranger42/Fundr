@@ -279,6 +279,8 @@ The project structure supports both development and production environments with
 ✓ Fixed import issues in TwitterAuth component with missing Loader2 icon
 ✓ Restored Twitter connect functionality with proper loading states
 ✓ Authentication flow now working correctly with 302 redirects to Twitter authorization
+✓ Added dynamic callback URL support and status endpoint for debugging
+⚠️ Requires Twitter app callback URL registration: https://8a554399-08f9-4288-b459-0c2d0044634e-00-2scigxqehe52q.riker.replit.dev/api/auth/twitter/callback
 ✓ Platform ready for Twitter social proof integration for fund managers
 
 ## Core Features Implementation Plan

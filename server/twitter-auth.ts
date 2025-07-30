@@ -59,7 +59,7 @@ export function setupTwitterAuth(app: Express) {
     tokenURL: 'https://api.twitter.com/2/oauth2/token',
     clientID: process.env.TWITTER_CLIENT_ID || 'dummy-id',
     clientSecret: process.env.TWITTER_CLIENT_SECRET || 'dummy-secret',
-    callbackURL: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+    callbackURL: process.env.TWITTER_CALLBACK_URL || `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
     scope: ['tweet.read', 'users.read', 'offline.access'],
     state: true,
     pkce: true
@@ -99,11 +99,16 @@ export function setupTwitterAuth(app: Express) {
   // Twitter auth routes
   app.get('/api/auth/twitter', (req, res, next) => {
     console.log('Twitter auth route accessed');
+    console.log('Callback URL configured:', `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`);
     next();
-  }, passport.authenticate('twitter-oauth2'));
+  }, passport.authenticate('twitter-oauth2', {
+    failureRedirect: '/?twitter=error&reason=auth_failed'
+  }));
 
   app.get('/api/auth/twitter/callback',
-    passport.authenticate('twitter-oauth2', { failureRedirect: '/' }),
+    passport.authenticate('twitter-oauth2', { 
+      failureRedirect: '/?twitter=error&reason=callback_failed' 
+    }),
     async (req: any, res) => {
       try {
         // Check if this is a linking request
@@ -153,5 +158,17 @@ export function setupTwitterAuth(app: Express) {
     } catch (error) {
       res.status(500).json({ error: 'Failed to initiate Twitter linking' });
     }
+  });
+
+  // Twitter configuration status endpoint
+  app.get('/api/auth/twitter/status', (req, res) => {
+    const callbackUrl = `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`;
+    res.json({
+      configured: !!(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET),
+      callbackUrl,
+      clientId: process.env.TWITTER_CLIENT_ID ? 'Set' : 'Missing',
+      clientSecret: process.env.TWITTER_CLIENT_SECRET ? 'Set' : 'Missing',
+      instructions: `Register this callback URL in your Twitter app settings: ${callbackUrl}`
+    });
   });
 }
