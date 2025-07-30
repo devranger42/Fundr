@@ -1,33 +1,12 @@
 import Header from "@/components/header";
 import FundCard from "@/components/fund-card";
-import MockFundCard from "@/components/mock-fund-card";
+
 import FundrLogo from "@/components/fundr-logo";
 import { useFunds } from "@/hooks/use-funds";
 import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
-const mockFunds = [
-  // Single Sample Fund for demonstration
-  {
-    manager: "@blknoiz06",
-    title: "Ansem's Fund",
-    displayName: "Zion Thomas", 
-    roi: "+142.7%",
-    aum: "$2.4M",
-    fee: "20%",
-    investors: 234,
-    icon: "trending",
-    verified: true,
-    isSample: true,
-    profileImage: null, // Removed to avoid copyright issues
-    allocations: [
-      { name: "WIF", percentage: 35, color: "#8B5CF6" },
-      { name: "BONK", percentage: 30, color: "#FF9233" },
-      { name: "POPCAT", percentage: 20, color: "#EC4899" },
-      { name: "JUP", percentage: 15, color: "#3B82F6" },
-    ],
-  },
-];
+const mockFunds: any[] = [];
 
 export default function Home() {
   const { data: funds, isLoading, error } = useFunds();
@@ -71,8 +50,8 @@ export default function Home() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Top Performing Funds</h2>
-            <p className="text-gray-600 text-lg">Choose from our curated selection of high-performing funds</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Active Funds</h2>
+            <p className="text-gray-600 text-lg">Discover funds managed by experienced traders on Solana</p>
           </div>
           
           {isLoading ? (
@@ -87,11 +66,6 @@ export default function Home() {
             </div>
           ) : funds && funds.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Show mock funds for demo */}
-              {mockFunds.map((fund, index) => (
-                <MockFundCard key={index} fund={fund} />
-              ))}
-              {/* Show real funds */}
               {funds.map((fund) => (
                 <FundCard key={fund.id} fund={fund} />
               ))}
@@ -100,12 +74,11 @@ export default function Home() {
             <div className="text-center py-20">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No funds available</h3>
               <p className="text-gray-600 mb-6">Be the first to create a fund on Fundr!</p>
-              <a 
-                href="/create-fund" 
-                className="inline-flex items-center px-6 py-3 bg-bonk hover:bg-bonk-hover text-white font-semibold rounded-lg transition-colors"
-              >
-                Create First Fund
-              </a>
+              <Link href="/create-fund">
+                <Button className="bg-bonk hover:bg-bonk-hover">
+                  Create First Fund
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -148,7 +121,7 @@ export default function Home() {
                 <li><Link href="/" className="hover:text-white transition-colors">Browse Funds</Link></li>
                 <li><Link href="/create-fund" className="hover:text-white transition-colors">Create Fund</Link></li>
                 <li><Link href="/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link></li>
-                <li><Link href="/platform-funds" className="hover:text-white transition-colors">Index Funds</Link></li>
+
               </ul>
             </div>
             

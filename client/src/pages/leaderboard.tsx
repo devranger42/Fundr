@@ -5,22 +5,7 @@ import { Crown, Medal, Award, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
 import FundrLogo from "@/components/fundr-logo";
 
-const leaderboardData = [
-  // Single Sample Fund
-  {
-    rank: 1,
-    manager: "@blknoiz06",
-    title: "Ansem's Fund",
-    displayName: "Zion Thomas",
-    roi: "+142.7%",
-    aum: "$2.4M",
-    investors: 234,
-    fee: "20%",
-    streak: 7,
-    winRate: "78%",
-    isSample: true,
-  },
-];
+const leaderboardData: any[] = [];
 
 export default function Leaderboard() {
   const getRankIcon = (rank: number) => {
@@ -91,92 +76,95 @@ export default function Leaderboard() {
               <p className="text-gray-300">Ranked by 30-day performance</p>
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-dark border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Rank</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Manager</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">30D ROI</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">AUM</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Investors</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fee</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Win Rate</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {leaderboardData.map((fund) => (
-                    <tr key={fund.rank} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-2">
-                          {getRankIcon(fund.rank)}
-                          <Badge className={`${getRankBadgeColor(fund.rank)} text-xs px-2 py-1`}>
-                            #{fund.rank}
-                          </Badge>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-bold text-gray-900 flex items-center space-x-2">
-                            <span>{fund.manager}</span>
-                            {fund.displayName && !fund.comingSoon && (
-                              <span className="text-gray-500 ml-1 font-normal">({fund.displayName})</span>
-                            )}
-                            {fund.isPlatform && (
-                              <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                                Platform
-                              </Badge>
-                            )}
-                            {fund.comingSoon && (
-                              <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800">
-                                Coming Soon
-                              </Badge>
-                            )}
-                            {fund.isSample && !fund.comingSoon && (
-                              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
-                                Sample
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="text-sm text-gray-600">{fund.title}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-1">
-                          <TrendingUp className="w-4 h-4 text-pump" />
-                          <span className="text-lg font-bold text-pump">{fund.roi}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {fund.aum}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
-                        {fund.investors}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
-                        {fund.fee}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant="secondary" className="text-xs">
-                          {fund.winRate}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Link href={`/fund/${fund.manager.replace('@', '')}`}>
-                          <Button 
-                            size="sm"
-                            className="bg-bonk hover:bg-bonk-hover text-white"
-                          >
-                            View Fund
-                          </Button>
-                        </Link>
-                      </td>
+            {leaderboardData.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-dark border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Rank</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Manager</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">30D ROI</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">AUM</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Investors</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fee</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Win Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {leaderboardData.map((fund) => (
+                      <tr key={fund.rank} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-2">
+                            {getRankIcon(fund.rank)}
+                            <Badge className={`${getRankBadgeColor(fund.rank)} text-xs px-2 py-1`}>
+                              #{fund.rank}
+                            </Badge>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-bold text-gray-900 flex items-center space-x-2">
+                              <span>{fund.manager}</span>
+                              {fund.displayName && (
+                                <span className="text-gray-500 ml-1 font-normal">({fund.displayName})</span>
+                              )}
+                              {fund.isSample && (
+                                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+                                  Sample
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-600">{fund.title}</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-1">
+                            <TrendingUp className="w-4 h-4 text-pump" />
+                            <span className="text-lg font-bold text-pump">{fund.roi}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {fund.aum}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                          {fund.investors}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
+                          {fund.fee}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Badge variant="secondary" className="text-xs">
+                            {fund.winRate}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Link href={`/fund/${fund.manager.replace('@', '')}`}>
+                            <Button 
+                              size="sm"
+                              className="bg-bonk hover:bg-bonk-hover text-white"
+                            >
+                              View Fund
+                            </Button>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <TrendingUp className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">No funds to rank yet</h3>
+                <p className="text-gray-300 mb-6">Create a fund to start building your track record</p>
+                <Link href="/create-fund">
+                  <Button className="bg-bonk hover:bg-bonk-hover">
+                    Create First Fund
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>
