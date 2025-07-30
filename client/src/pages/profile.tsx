@@ -3,12 +3,42 @@ import { useWallet } from "@/hooks/use-wallet";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TwitterAuth } from "@/components/twitter-auth";
 import { Button } from "@/components/ui/button";
-import { Wallet, User, Settings } from "lucide-react";
+import { Wallet, User, Settings, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 export default function Profile() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, refetch } = useAuth();
   const { connected, publicKey, disconnect } = useWallet();
+  const { toast } = useToast();
+
+  // Handle Twitter authentication success/error from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const twitterStatus = urlParams.get('twitter');
+    
+    if (twitterStatus === 'success') {
+      toast({
+        title: "Twitter Connected!",
+        description: "Your Twitter account has been successfully linked to your profile.",
+        variant: "default",
+      });
+      // Refresh user data to show updated connection
+      refetch();
+      // Clean up URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (twitterStatus === 'error') {
+      const reason = urlParams.get('reason') || 'unknown';
+      toast({
+        title: "Twitter Connection Failed",
+        description: `Failed to connect Twitter: ${reason}. Please try again.`,
+        variant: "destructive",
+      });
+      // Clean up URL parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [toast, refetch]);
 
   if (isLoading) {
     return (

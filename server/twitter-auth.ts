@@ -301,18 +301,40 @@ export function setupTwitterAuth(app: Express) {
         return res.redirect('/?twitter=error&reason=no_user_data');
       }
       
-      const user = userData.data;
+      const twitterData = userData.data;
       
-      // Store user in database (using correct schema)
-      await storage.upsertUser({
-        twitterId: user.id,
-        twitterUsername: user.username,
-        twitterProfileImage: user.profile_image_url,
-        email: '', // Twitter doesn't provide email in basic scope
-        displayName: user.name || user.username
-      });
-      
-      console.log('User stored successfully:', user.username);
+      // Check if this is a linking operation (wallet user linking Twitter)
+      if (req.session.isLinking && req.session.walletToLink) {
+        console.log('Linking Twitter to existing wallet user:', req.session.walletToLink);
+        
+        // Update existing wallet user with Twitter data
+        const existingUser = await storage.getUserByWallet(req.session.walletToLink);
+        if (existingUser) {
+          const updatedUser = await storage.upsertUser({
+            id: existingUser.id,
+            walletAddress: existingUser.walletAddress,
+            twitterId: twitterData.id,
+            twitterUsername: twitterData.username,
+            twitterProfileImage: twitterData.profile_image_url,
+            displayName: twitterData.name || twitterData.username
+          });
+          console.log('Successfully linked Twitter to wallet user:', updatedUser);
+        }
+        
+        // Clear linking flags
+        delete req.session.isLinking;
+        delete req.session.walletToLink;
+      } else {
+        // Create new Twitter-only user
+        await storage.upsertUser({
+          twitterId: twitterData.id,
+          twitterUsername: twitterData.username,
+          twitterProfileImage: twitterData.profile_image_url,
+          email: '',
+          displayName: twitterData.name || twitterData.username
+        });
+        console.log('Created new Twitter user:', twitterData.username);
+      }
       
       // Clear OAuth session data
       delete req.session.oauthState;
