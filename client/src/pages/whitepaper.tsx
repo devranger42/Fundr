@@ -101,11 +101,10 @@ export default function Whitepaper() {
               Version 1.0 • July 30, 2025
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Fundr Protocol <span className="text-pump">Whitepaper</span>
+              Fundr Protocol <span className="text-pump">Overview</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Comprehensive documentation of Fundr's decentralized fund management protocol, 
-              technical architecture, and economic model built on Solana.
+              Simple documentation of Fundr's decentralized fund management platform built on Solana.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -115,7 +114,7 @@ export default function Whitepaper() {
                 className="bg-pump hover:bg-pump-hover text-white"
               >
                 <Download className="w-5 h-5 mr-2" />
-                Download Whitepaper
+                Download Overview
               </Button>
               <Button 
                 size="lg" 

@@ -18,7 +18,7 @@ import ManagerDashboard from "@/pages/manager-dashboard";
 import InvestorDashboard from "@/pages/investor-dashboard";
 import PlatformFunds from "@/pages/platform-funds";
 import FundSettings from "@/pages/fund-settings";
-import Whitepaper from "@/pages/whitepaper";
+import Whitepaper from "@/pages/simple-whitepaper";
 import Terms from "@/pages/terms";
 
 function Router() {
