@@ -1,3 +1,5 @@
+import logoImage from "@assets/ChatGPT Image Jul 30, 2025, 09_17_22 AM_1753885236863.png";
+
 interface FundrLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
@@ -12,56 +14,10 @@ export default function FundrLogo({ className = "", size = "md" }: FundrLogoProp
   };
 
   return (
-    <svg 
-      className={`${sizeClasses[size]} ${className}`}
-      viewBox="0 0 200 200" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Orange segment (left side) */}
-      <path 
-        d="M 100 20 A 80 80 0 0 1 100 180 L 100 100 Z" 
-        fill="#FF9233" 
-        stroke="#1a2332" 
-        strokeWidth="8"
-        strokeLinejoin="round"
-      />
-      
-      {/* Green segment (top right) */}
-      <path 
-        d="M 100 20 A 80 80 0 0 1 156.56 143.43 L 100 100 Z" 
-        fill="#00FFB2" 
-        stroke="#1a2332" 
-        strokeWidth="8"
-        strokeLinejoin="round"
-      />
-      
-      {/* Transparent segment (bottom right) - only the border */}
-      <path 
-        d="M 156.56 143.43 A 80 80 0 0 1 100 180 L 100 100 Z" 
-        fill="transparent" 
-        stroke="#1a2332" 
-        strokeWidth="8"
-        strokeLinejoin="round"
-      />
-      
-      {/* Outer circle border */}
-      <circle 
-        cx="100" 
-        cy="100" 
-        r="80" 
-        fill="none" 
-        stroke="#1a2332" 
-        strokeWidth="8"
-      />
-      
-      {/* Center point */}
-      <circle 
-        cx="100" 
-        cy="100" 
-        r="6" 
-        fill="#1a2332"
-      />
-    </svg>
+    <img 
+      src={logoImage}
+      alt="Fundr Logo"
+      className={`${sizeClasses[size]} ${className} object-contain`}
+    />
   );
 }
