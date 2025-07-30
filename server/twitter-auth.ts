@@ -54,32 +54,45 @@ export function setupTwitterAuth(app: Express) {
     }
   });
 
-  // Configure Twitter OAuth 2.0 strategy
+  // Configure Twitter OAuth 2.0 strategy with better error handling
   passport.use('twitter-oauth2', new OAuth2Strategy({
     authorizationURL: 'https://twitter.com/i/oauth2/authorize',
     tokenURL: 'https://api.twitter.com/2/oauth2/token',
-    clientID: process.env.TWITTER_CLIENT_ID || 'dummy-id',
-    clientSecret: process.env.TWITTER_CLIENT_SECRET || 'dummy-secret',
-    callbackURL: process.env.TWITTER_CALLBACK_URL || `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+    clientID: process.env.TWITTER_CLIENT_ID!,
+    clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+    callbackURL: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
     scope: ['tweet.read', 'users.read', 'offline.access'],
     state: true,
-    pkce: true
+    pkce: true,
+    customHeaders: {
+      'User-Agent': 'FundrApp/1.0'
+    }
   },
   async (accessToken: string, refreshToken: string, profile: any, done: any) => {
     try {
+      console.log('Twitter OAuth callback received, fetching user profile...');
+      
       // Fetch user profile from Twitter API v2
       const response = await fetch('https://api.twitter.com/2/users/me?user.fields=profile_image_url,public_metrics', {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
-          'User-Agent': 'Fundr/1.0'
+          'User-Agent': 'FundrApp/1.0'
         }
       });
       
       if (!response.ok) {
-        throw new Error('Failed to fetch Twitter profile');
+        const errorText = await response.text();
+        console.error('Twitter API error:', response.status, errorText);
+        throw new Error(`Twitter API error: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
+      console.log('Twitter user data received:', data);
+      
+      if (!data.data) {
+        throw new Error('No user data returned from Twitter API');
+      }
+      
       const user = data.data;
       
       // Upsert user with Twitter data
@@ -91,8 +104,10 @@ export function setupTwitterAuth(app: Express) {
         displayName: user.name
       });
       
+      console.log('User saved successfully:', savedUser);
       return done(null, savedUser);
     } catch (error) {
+      console.error('Twitter OAuth strategy error:', error);
       return done(error, null);
     }
   }));
