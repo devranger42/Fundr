@@ -88,9 +88,14 @@ export default function TradingTerminal() {
   // Fetch token prices on mount
   useEffect(() => {
     const fetchPrices = async () => {
-      const tokenMints = POPULAR_TOKENS.map(token => token.mint);
-      const prices = await jupiterService.getTokenPrices(tokenMints);
-      setTokenPrices(prices);
+      try {
+        const tokenMints = POPULAR_TOKENS.map(token => token.mint);
+        const prices = await jupiterService.getTokenPrices(tokenMints);
+        setTokenPrices(prices);
+      } catch (error) {
+        console.error("Error fetching token prices:", error);
+        // Don't show toast for price fetch errors to avoid spam
+      }
     };
     
     fetchPrices();
@@ -123,12 +128,10 @@ export default function TradingTerminal() {
           setToAmount(outAmount.toFixed(6));
         }
       } catch (error) {
-        console.error("Error getting quote:", error);
-        toast({
-          title: "Quote Error",
-          description: "Failed to get swap quote",
-          variant: "destructive",
-        });
+        console.error("Error getting swap quote:", error);
+        // Don't show toast for quote errors to avoid spam
+        setQuote(null);
+        setToAmount("");
       } finally {
         setIsGettingQuote(false);
       }
