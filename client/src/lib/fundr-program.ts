@@ -116,7 +116,7 @@ export class FundrService {
   static findFundAddress(manager: PublicKey): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
     return PublicKey.findProgramAddressSync(
-      [buffer.from('fund'), manager.toBuffer()],
+      [buffer.from('fund'), manager.toBytes()],
       FUNDR_PROGRAM_ID
     );
   }
@@ -125,7 +125,7 @@ export class FundrService {
   static findFundVaultAddress(fund: PublicKey): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
     return PublicKey.findProgramAddressSync(
-      [buffer.from('vault'), fund.toBuffer()],
+      [buffer.from('vault'), fund.toBytes()],
       FUNDR_PROGRAM_ID
     );
   }
@@ -134,7 +134,7 @@ export class FundrService {
   static findUserStakeAddress(fund: PublicKey, user: PublicKey): [PublicKey, number] {
     const buffer = globalThis.Buffer || Buffer;
     return PublicKey.findProgramAddressSync(
-      [buffer.from('stake'), fund.toBuffer(), user.toBuffer()],
+      [buffer.from('stake'), fund.toBytes(), user.toBytes()],
       FUNDR_PROGRAM_ID
     );
   }
