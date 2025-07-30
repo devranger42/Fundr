@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WalletProvider } from "@/hooks/use-wallet";
 import { AuthProvider } from "@/hooks/use-auth";
+import { DebugPanel } from "@/components/debug-panel";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home.tsx";
 import Leaderboard from "@/pages/leaderboard";
@@ -39,8 +40,9 @@ function App() {
       <WalletProvider>
         <AuthProvider>
           <TooltipProvider>
-            <Toaster />
             <Router />
+            <DebugPanel />
+            <Toaster />
           </TooltipProvider>
         </AuthProvider>
       </WalletProvider>

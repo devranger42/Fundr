@@ -45,18 +45,32 @@ export function useFundrProgram() {
     performanceFee: number,
     minDeposit: number
   ) => {
-    if (!fundrService || !isInitialized) {
-      throw new Error('Fundr service not initialized');
+    if (!fundrService) {
+      throw new Error('Fundr service not available');
     }
 
-    return await fundrService.createFund(
-      name,
-      description,
-      managementFee,
-      performanceFee,
-      minDeposit
-    );
-  }, [fundrService, isInitialized]);
+    if (!connected || !publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    console.log('Creating fund with hook:', { name, description, managementFee, performanceFee, minDeposit });
+
+    try {
+      const result = await fundrService.createFund(
+        name,
+        description,
+        managementFee,
+        performanceFee,
+        minDeposit
+      );
+      
+      console.log('Fund creation successful:', result);
+      return result;
+    } catch (error) {
+      console.error('Fund creation failed in hook:', error);
+      throw error;
+    }
+  }, [fundrService, connected, publicKey]);
 
   const depositToFund = useCallback(async (
     fundAddress: PublicKey,
@@ -123,7 +137,7 @@ export function useFundrProgram() {
   return {
     fundrService,
     isInitialized,
-    connected: connected && isInitialized,
+    connected: connected && !!publicKey,
     programId: FUNDR_PROGRAM_ID,
     createFund,
     depositToFund,
