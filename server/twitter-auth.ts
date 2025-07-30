@@ -135,6 +135,7 @@ export function setupTwitterAuth(app: Express) {
   // Test different OAuth approaches based on X documentation
   app.get('/api/auth/twitter', (req, res) => {
     console.log('Twitter auth route accessed');
+    console.log('Session ID at start:', req.sessionID);
     console.log('Callback URL configured:', `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`);
     
     // Try the approach without PKCE first (plain method as suggested in docs)
@@ -145,30 +146,49 @@ export function setupTwitterAuth(app: Express) {
     req.session.oauthState = state;
     req.session.codeVerifier = codeVerifier;
     
-    // Use plain code challenge method as per X docs
-    const params = new URLSearchParams({
-      response_type: 'code',
-      client_id: process.env.TWITTER_CLIENT_ID!,
-      redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
-      scope: 'users.read tweet.read',
+    console.log('Storing in session:', {
+      sessionId: req.sessionID,
       state: state,
-      code_challenge: codeVerifier,
-      code_challenge_method: 'plain'
+      codeVerifier: codeVerifier.substring(0, 10) + '...'
     });
     
-    const authURL = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
-    console.log('Generated OAuth URL with plain PKCE:', authURL);
-    
-    res.redirect(authURL);
+    // Save session before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).send('Session save failed');
+      }
+      
+      // Use plain code challenge method as per X docs
+      const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: process.env.TWITTER_CLIENT_ID!,
+        redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+        scope: 'users.read tweet.read',
+        state: state,
+        code_challenge: codeVerifier,
+        code_challenge_method: 'plain'
+      });
+      
+      const authURL = `https://twitter.com/i/oauth2/authorize?${params.toString()}`;
+      console.log('Generated OAuth URL with plain PKCE:', authURL);
+      
+      res.redirect(authURL);
+    });
   });
 
   // Direct OAuth callback handler
   app.get('/api/auth/twitter/callback', async (req, res) => {
     console.log('🎯 TWITTER CALLBACK RECEIVED!');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Headers:', req.headers);
     console.log('Query params:', req.query);
+    console.log('Session ID:', req.sessionID);
     console.log('Session data:', { 
       oauthState: req.session.oauthState, 
-      codeVerifier: req.session.codeVerifier ? 'Present' : 'Missing' 
+      codeVerifier: req.session.codeVerifier ? 'Present' : 'Missing',
+      allSessionKeys: Object.keys(req.session)
     });
     
     const { code, state, error, error_description } = req.query;
@@ -248,14 +268,13 @@ export function setupTwitterAuth(app: Express) {
       
       const user = userData.data;
       
-      // Store user in database
+      // Store user in database (using correct schema)
       await storage.upsertUser({
-        id: user.id,
-        username: user.username,
-        email: '', // Twitter doesn't provide email in basic scope
         twitterId: user.id,
         twitterUsername: user.username,
-        twitterProfileImage: user.profile_image_url
+        twitterProfileImage: user.profile_image_url,
+        email: '', // Twitter doesn't provide email in basic scope
+        displayName: user.name || user.username
       });
       
       console.log('User stored successfully:', user.username);
@@ -266,9 +285,9 @@ export function setupTwitterAuth(app: Express) {
       
       res.redirect('/profile?twitter=success');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('OAuth callback error:', error);
-      res.redirect('/?twitter=error&reason=callback_exception');
+      res.redirect(`/?twitter=error&reason=callback_exception&details=${encodeURIComponent(error.message || 'unknown')}`);
     }
   });
 
