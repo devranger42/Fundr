@@ -1,13 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, LogOut } from "lucide-react";
 import FundrLogo from "./fundr-logo";
+import WalletModal from "./wallet-modal";
+import { useWallet } from "@/hooks/use-wallet";
+import { useState } from "react";
 
 export default function Header() {
   const [location] = useLocation();
+  const { connected, publicKey, disconnect } = useWallet();
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   
   const handleConnectWallet = () => {
-    console.log('Connect Wallet clicked');
+    setWalletModalOpen(true);
+  };
+
+  const formatPublicKey = (key: string) => {
+    return `${key.slice(0, 4)}...${key.slice(-4)}`;
   };
 
   const isActive = (path: string) => {
@@ -67,15 +76,39 @@ export default function Header() {
               </Button>
             </Link>
             
-            <Button 
-              onClick={handleConnectWallet}
-              className="bg-bonk hover:bg-bonk-hover text-white px-6 py-2 font-medium transition-all duration-200 transform hover:scale-105"
-            >
-              Connect Wallet
-            </Button>
+            {connected ? (
+              <div className="flex items-center space-x-3">
+                <div className="text-sm">
+                  <div className="font-medium text-gray-900">
+                    {publicKey && formatPublicKey(publicKey)}
+                  </div>
+                  <div className="text-gray-500">Connected</div>
+                </div>
+                <Button 
+                  onClick={disconnect}
+                  variant="outline"
+                  size="sm"
+                  className="border-red-200 text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                onClick={handleConnectWallet}
+                className="bg-bonk hover:bg-bonk-hover text-white px-6 py-2 font-medium transition-all duration-200 transform hover:scale-105"
+              >
+                Connect Wallet
+              </Button>
+            )}
           </div>
         </div>
       </div>
+      
+      <WalletModal 
+        open={walletModalOpen} 
+        onClose={() => setWalletModalOpen(false)} 
+      />
     </header>
   );
 }
