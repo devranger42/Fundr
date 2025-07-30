@@ -27,7 +27,6 @@ export default function CreateFund() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-dark to-darker text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -42,7 +41,6 @@ export default function CreateFund() {
           </p>
         </div>
       </section>
-
       {/* Create Fund Form */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,7 +189,7 @@ export default function CreateFund() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Withdrawal Fee:</span>
-                    <span className="font-semibold">1% (to treasury)</span>
+                    <span className="font-semibold">1% (ttreasury)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Your Profit Fee:</span>
