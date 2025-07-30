@@ -39,7 +39,7 @@ import { JupiterService, TokenInfo, SwapQuote, TokenPrice } from "@/lib/jupiter"
 import { Connection } from "@solana/web3.js";
 import { PriceChart } from "@/components/trading/price-chart";
 
-import { RecentTrades } from "@/components/trading/recent-trades";
+
 import { TransactionHistory } from "@/components/trading/transaction-history";
 
 
@@ -521,14 +521,8 @@ export default function TradingTerminal() {
             <TransactionHistory fundId={id!} />
           </div>
 
-          {/* Market Data & Portfolio */}
+          {/* Fund Summary */}
           <div className="xl:col-span-4 space-y-6">
-
-            {/* Recent Trades */}
-            <RecentTrades 
-              tokenPair={`${fromToken.symbol}/${toToken.symbol}`}
-              currentPrice={tokenPrices[fromToken.mint]?.price}
-            />
 
             {/* Fund Summary */}
             <Card className="shadow-lg">
