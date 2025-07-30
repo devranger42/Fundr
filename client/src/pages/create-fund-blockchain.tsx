@@ -106,6 +106,7 @@ export default function CreateFundBlockchain() {
     setIsSubmitting(true);
 
     try {
+      // Step 1: Create fund on blockchain
       const result = await createFund(
         formData.name,
         formData.description,
@@ -114,12 +115,40 @@ export default function CreateFundBlockchain() {
         formData.minDeposit
       );
 
-      toast({
-        title: "Fund Created Successfully!",
-        description: `Fund "${formData.name}" has been deployed to the blockchain`,
+      console.log('Fund creation result:', result);
+
+      // Step 2: Save fund to database
+      const fundData = {
+        publicKey: result.fundAddress.toString(),
+        managerId: user?.id || '', // Use the current user's ID
+        name: formData.name,
+        description: formData.description,
+        managementFee: formData.managementFee * 100, // Convert to basis points for database
+        totalAssets: 0,
+        totalShares: 0,
+        isActive: true
+      };
+
+      // Save to database via API
+      const response = await fetch('/api/funds', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fundData),
       });
 
-      console.log('Fund creation result:', result);
+      if (!response.ok) {
+        throw new Error('Failed to save fund to database');
+      }
+
+      const savedFund = await response.json();
+      console.log('Fund saved to database:', savedFund);
+
+      toast({
+        title: "Fund Created Successfully!",
+        description: `Fund "${formData.name}" has been deployed to the blockchain and saved`,
+      });
       
       // Redirect to manager dashboard
       setLocation('/manager-dashboard');
