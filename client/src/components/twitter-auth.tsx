@@ -18,8 +18,8 @@ export function TwitterAuth({ compact = false }: TwitterAuthProps) {
   const handleLinkTwitter = async () => {
     try {
       setIsLinking(true);
-      // This will redirect to Twitter OAuth
-      window.location.href = '/api/auth/twitter';
+      // Use the proper linkTwitter function from useAuth hook
+      await linkTwitter();
     } catch (error) {
       console.error('Twitter linking error:', error);
       toast({
