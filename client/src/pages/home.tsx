@@ -98,7 +98,7 @@ export default function Home() {
       <section className="bg-gradient-to-br from-slate-900 to-slate-950 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center mb-8">
-            <FundrLogo size="lg" pieOnly={true} />
+            <FundrLogo size="lg" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             <span className="text-white drop-shadow-lg">On-Chain Funds</span> <br className="hidden sm:block" />
@@ -147,7 +147,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="mb-4">
-                <FundrLogo size="lg" pieOnly={true} />
+                <FundrLogo size="lg" />
               </div>
               <p className="text-gray-400 mb-4">
                 The premier platform for on-chain fund management on Solana. 
