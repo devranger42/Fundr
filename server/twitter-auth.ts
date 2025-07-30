@@ -186,6 +186,32 @@ export function setupTwitterAuth(app: Express) {
     });
   });
 
+  // Test endpoint to verify callback reachability
+  app.get('/api/auth/twitter/callback/test', (req, res) => {
+    console.log('=== CALLBACK TEST ENDPOINT HIT ===');
+    console.log('Query params:', req.query);
+    res.json({ 
+      message: 'Callback endpoint is reachable',
+      query: req.query,
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Catch-all for any Twitter callback attempts
+  app.all('/api/auth/twitter/*', (req, res) => {
+    console.log('=== TWITTER AUTH WILDCARD HIT ===');
+    console.log('Method:', req.method);
+    console.log('Path:', req.path);
+    console.log('Query:', req.query);
+    console.log('Body:', req.body);
+    res.json({ 
+      message: 'Twitter auth wildcard endpoint',
+      method: req.method,
+      path: req.path,
+      query: req.query
+    });
+  });
+
   // Direct OAuth callback handler
   app.get('/api/auth/twitter/callback', async (req, res) => {
     console.log('🎯 TWITTER CALLBACK RECEIVED!');
@@ -240,7 +266,7 @@ export function setupTwitterAuth(app: Express) {
         body: new URLSearchParams({
           grant_type: 'authorization_code',
           code: code as string,
-          redirect_uri: `https://${process.env.REPLIT_DOMAINS}/api/auth/twitter/callback`,
+          redirect_uri: `${req.protocol}://${req.get('host')}/api/auth/twitter/callback`,
           code_verifier: req.session.codeVerifier
         })
       });
