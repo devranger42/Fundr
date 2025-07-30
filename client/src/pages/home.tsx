@@ -45,7 +45,7 @@ const mockFunds = [
       { name: "BONK", percentage: 30, color: "#FF9233" },
       { name: "WIF", percentage: 25, color: "#8B5CF6" },
       { name: "POPCAT", percentage: 20, color: "#EC4899" },
-      { name: "PEPE", percentage: 15, color: "#EAB308" },
+      { name: "BOME", percentage: 15, color: "#EAB308" },
       { name: "Others", percentage: 10, color: "#6B7280" },
     ],
   },
