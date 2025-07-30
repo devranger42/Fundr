@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Twitter, UserCheck, Link2, Unlink2 } from "lucide-react";
+import { Twitter, UserCheck, Link2, Unlink2, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 interface TwitterAuthProps {
@@ -82,11 +82,15 @@ export function TwitterAuth({ compact = false }: TwitterAuthProps) {
       <Button
         variant="outline"
         size="sm"
-        disabled={true}
-        title="Twitter authentication setup required"
+        onClick={handleLinkTwitter}
+        disabled={isLinking}
       >
-        <Twitter className="h-4 w-4 mr-2" />
-        Setup Required
+        {isLinking ? (
+          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+        ) : (
+          <Twitter className="h-4 w-4 mr-2" />
+        )}
+        {isLinking ? 'Linking...' : 'Connect Twitter'}
       </Button>
     );
   }
@@ -137,14 +141,23 @@ export function TwitterAuth({ compact = false }: TwitterAuthProps) {
         ) : (
           <div className="text-center py-6">
             <Twitter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 mb-4">Twitter authentication requires app configuration</p>
+            <p className="text-gray-500 mb-4">Connect your Twitter to build trust with investors</p>
             <Button 
-              disabled={true}
-              className="bg-gray-400 text-gray-600 cursor-not-allowed w-full"
-              title="Twitter app configuration required"
+              onClick={handleLinkTwitter}
+              disabled={isLinking}
+              className="bg-blue-500 hover:bg-blue-600 text-white w-full"
             >
-              <Twitter className="w-4 h-4 mr-2" />
-              Setup Required
+              {isLinking ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <Twitter className="w-4 h-4 mr-2" />
+                  Connect Twitter Account
+                </>
+              )}
             </Button>
           </div>
         )}
