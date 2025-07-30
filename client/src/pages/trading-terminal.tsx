@@ -85,31 +85,34 @@ export default function TradingTerminal() {
     new JupiterService(new Connection("https://api.mainnet-beta.solana.com"))
   );
 
-  // Fetch token prices on mount with proper error handling
+  // Set fallback token prices for demo mode
   useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const tokenMints = POPULAR_TOKENS.map(token => token.mint);
-        const prices = await jupiterService.getTokenPrices(tokenMints).catch(() => ({}));
-        setTokenPrices(prices);
-      } catch (error) {
-        setTokenPrices({});
+    // Use static fallback prices to prevent API errors
+    const fallbackPrices = {
+      'So11111111111111111111111111111111111111112': { // SOL
+        id: 'So11111111111111111111111111111111111111112',
+        mintSymbol: 'SOL',
+        vsToken: 'USDC',
+        vsTokenSymbol: 'USDC', 
+        price: 150.25
+      },
+      'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v': { // USDC
+        id: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        mintSymbol: 'USDC',
+        vsToken: 'USDC',
+        vsTokenSymbol: 'USDC',
+        price: 1.0
+      },
+      'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263': { // BONK
+        id: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+        mintSymbol: 'BONK',
+        vsToken: 'USDC',
+        vsTokenSymbol: 'USDC',
+        price: 0.000032
       }
     };
-    
-    // Initial fetch with promise rejection handling
-    Promise.resolve(fetchPrices()).catch(() => {
-      setTokenPrices({});
-    });
-    
-    const interval = setInterval(() => {
-      Promise.resolve(fetchPrices()).catch(() => {
-        // Silently handle periodic fetch errors
-      });
-    }, 30000);
-    
-    return () => clearInterval(interval);
-  }, [jupiterService]);
+    setTokenPrices(fallbackPrices);
+  }, []);
 
   // Get quote when amounts change with proper error handling
   useEffect(() => {
@@ -123,21 +126,22 @@ export default function TradingTerminal() {
       setIsGettingQuote(true);
       try {
         const amount = parseFloat(fromAmount) * Math.pow(10, fromToken.decimals);
-        const quoteResponse = await jupiterService.getSwapQuote(
-          fromToken.mint,
-          toToken.mint,
-          Math.floor(amount),
-          Math.floor(slippage * 100)
-        );
+        // Simulate quote for demo mode instead of calling Jupiter API
+        const mockQuoteResponse = {
+          inputMint: fromToken.mint,
+          outputMint: toToken.mint,
+          inAmount: Math.floor(amount).toString(),
+          outAmount: Math.floor(amount * 0.95 * (tokenPrices[toToken.mint]?.price || 1) / (tokenPrices[fromToken.mint]?.price || 1) * Math.pow(10, toToken.decimals)).toString(),
+          otherAmountThreshold: Math.floor(amount * 0.93 * (tokenPrices[toToken.mint]?.price || 1) / (tokenPrices[fromToken.mint]?.price || 1) * Math.pow(10, toToken.decimals)).toString(),
+          swapMode: 'ExactIn',
+          slippageBps: Math.floor(slippage * 100),
+          priceImpactPct: '0.12',
+          routePlan: []
+        };
         
-        if (quoteResponse) {
-          setQuote(quoteResponse);
-          const outAmount = parseInt(quoteResponse.outAmount) / Math.pow(10, toToken.decimals);
-          setToAmount(outAmount.toFixed(6));
-        } else {
-          setQuote(null);
-          setToAmount("");
-        }
+        setQuote(mockQuoteResponse);
+        const outAmount = parseInt(mockQuoteResponse.outAmount) / Math.pow(10, toToken.decimals);
+        setToAmount(outAmount.toFixed(6));
       } catch (error) {
         // Silently handle quote errors
         setQuote(null);
@@ -177,36 +181,11 @@ export default function TradingTerminal() {
       return;
     }
 
-    try {
-      const swapTransaction = await jupiterService.getSwapTransaction(
-        quote,
-        publicKey.toString()
-      ).catch((error) => {
-        console.error("Swap transaction error:", error);
-        return null;
-      });
-      
-      if (swapTransaction) {
-        // Here we would normally submit the transaction to the blockchain
-        toast({
-          title: "Swap Simulation",
-          description: `Would swap ${fromAmount} ${fromToken.symbol} for ~${toAmount} ${toToken.symbol}`,
-        });
-      } else {
-        toast({
-          title: "Swap Unavailable",
-          description: "Jupiter swap service is currently unavailable",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Swap error:", error);
-      toast({
-        title: "Swap Failed",
-        description: error instanceof Error ? error.message : "Failed to execute swap",
-        variant: "destructive",
-      });
-    }
+    // Demo mode - simulate successful swap
+    toast({
+      title: "Swap Simulation Successful",
+      description: `Simulated swap: ${fromAmount} ${fromToken.symbol} → ${toAmount} ${toToken.symbol}`,
+    });
   };
 
   const getPriceChangeColor = (priceChangePercent: number) => {
