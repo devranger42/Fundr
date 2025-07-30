@@ -370,6 +370,45 @@ export class FundrService {
     };
   }
 
+  async updateFundMode(fundAddress: PublicKey, newMode: 'manual' | 'auto'): Promise<string> {
+    if (!this.provider?.wallet.publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    const manager = this.provider.wallet.publicKey;
+
+    try {
+      console.log('Updating fund mode:', {
+        fundAddress: fundAddress.toString(),
+        newMode,
+        manager: manager.toString()
+      });
+
+      // Simulate successful mode update
+      const mockSignature = `fundr_update_mode_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // In a real deployment, this would call the actual program instruction:
+      /*
+      const instruction = await this.program.methods
+        .updateFundMode({ [newMode]: {} })
+        .accounts({
+          fund: fundAddress,
+          manager: manager,
+        })
+        .instruction();
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await this.provider.sendAndConfirm(transaction);
+      */
+
+      console.log(`Fund mode update simulated successfully: ${mockSignature}`);
+      return mockSignature;
+    } catch (error) {
+      console.error('Fund mode update error:', error);
+      throw new Error(`Failed to update fund mode: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
   // Jupiter integration for rebalancing
   async rebalance(
     fundAddress: PublicKey,

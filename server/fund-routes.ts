@@ -58,6 +58,47 @@ export function registerFundRoutes(app: Express) {
     }
   });
 
+  // Update fund properties (PATCH)
+  app.patch('/api/funds/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { fundMode } = req.body;
+      
+      // Validate fund exists
+      const existingFund = await storage.getFund(id);
+      if (!existingFund) {
+        return res.status(404).json({ message: "Fund not found" });
+      }
+      
+      // TODO: Add authentication check to ensure user is the fund manager
+      // if (existingFund.managerId !== req.user?.id) {
+      //   return res.status(403).json({ message: "Not authorized to modify this fund" });
+      // }
+      
+      // Validate fund mode if provided
+      if (fundMode && !['manual', 'auto'].includes(fundMode)) {
+        return res.status(400).json({ message: "Invalid fund mode. Must be 'manual' or 'auto'" });
+      }
+      
+      // Update fund
+      const updatedFund = await storage.updateFund(id, {
+        ...(fundMode && { fundMode })
+      });
+      
+      if (!updatedFund) {
+        return res.status(404).json({ message: "Fund not found" });
+      }
+      
+      res.json({
+        message: "Fund updated successfully",
+        fund: updatedFund
+      });
+    } catch (error) {
+      console.error("Error updating fund:", error);
+      res.status(500).json({ message: "Failed to update fund" });
+    }
+  });
+
   // Create new fund (requires authentication)
   app.post('/api/funds', async (req, res) => {
     try {

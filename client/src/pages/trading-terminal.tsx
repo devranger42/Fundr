@@ -28,7 +28,8 @@ import {
   AlertTriangle,
   CheckCircle,
   DollarSign,
-  Percent
+  Percent,
+  Cog
 } from "lucide-react";
 import { Link, useParams } from "wouter";
 import Header from "@/components/header";
@@ -652,6 +653,120 @@ export default function TradingTerminal() {
 
           {/* Fund Summary */}
           <div className="xl:col-span-4 space-y-6">
+            
+            {/* Fund Mode Toggle */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Cog className="w-5 h-5 mr-2 text-bonk" />
+                    Fund Mode
+                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    {fund?.fundMode === 'auto' ? 'Auto Allocation' : 'Manual Allocation'}
+                  </Badge>
+                </CardTitle>
+                <CardDescription>
+                  Control how deposits and withdrawals are handled
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className={`p-4 border rounded-lg transition-colors ${
+                    fund?.fundMode === 'manual' ? 'border-bonk bg-bonk/5' : 'border-gray-200 hover:bg-gray-50'
+                  }`}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm mb-1">Manual Allocation</h4>
+                        <p className="text-xs text-gray-600">
+                          Deposits accumulate as SOL. You manually allocate using trades.
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant={fund?.fundMode === 'manual' ? "default" : "outline"}
+                        disabled={fund?.fundMode === 'manual'}
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`/api/funds/${id}`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ fundMode: 'manual' })
+                            });
+                            if (response.ok) {
+                              toast({
+                                title: "Mode Updated",
+                                description: "Fund switched to Manual Allocation mode",
+                              });
+                              // Refresh fund data
+                              window.location.reload();
+                            }
+                          } catch (error) {
+                            toast({
+                              title: "Update Failed",
+                              description: "Could not change fund mode",
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                      >
+                        {fund?.fundMode === 'manual' ? 'Active' : 'Switch'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className={`p-4 border rounded-lg transition-colors ${
+                    fund?.fundMode === 'auto' ? 'border-pump bg-pump/5' : 'border-gray-200 hover:bg-gray-50'
+                  }`}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm mb-1">Auto Allocation</h4>
+                        <p className="text-xs text-gray-600">
+                          Deposits/withdrawals automatically mirror current ratios.
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant={fund?.fundMode === 'auto' ? "default" : "outline"}
+                        disabled={fund?.fundMode === 'auto'}
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`/api/funds/${id}`, {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ fundMode: 'auto' })
+                            });
+                            if (response.ok) {
+                              toast({
+                                title: "Mode Updated", 
+                                description: "Fund switched to Auto Allocation mode",
+                              });
+                              // Refresh fund data
+                              window.location.reload();
+                            }
+                          } catch (error) {
+                            toast({
+                              title: "Update Failed",
+                              description: "Could not change fund mode",
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                      >
+                        {fund?.fundMode === 'auto' ? 'Active' : 'Switch'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t">
+                  <div className="text-xs text-gray-500">
+                    <strong>Note:</strong> Mode changes take effect for new deposits/withdrawals. 
+                    Existing holdings are not automatically rebalanced.
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Portfolio Allocation & Rebalancing */}
             <Card className="shadow-lg">

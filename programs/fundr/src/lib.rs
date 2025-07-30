@@ -249,6 +249,24 @@ pub mod fundr {
 
         Ok(())
     }
+
+    pub fn update_fund_mode(ctx: Context<UpdateFundMode>, new_mode: FundMode) -> Result<()> {
+        let fund = &mut ctx.accounts.fund;
+        
+        // Only the fund manager can update the mode
+        require_keys_eq!(fund.authority, ctx.accounts.manager.key(), FundrError::Unauthorized);
+        
+        fund.fund_mode = new_mode;
+        
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct UpdateFundMode<'info> {
+    #[account(mut)]
+    pub fund: Account<'info, Fund>,
+    pub manager: Signer<'info>,
 }
 
 #[derive(Accounts)]
