@@ -6,52 +6,9 @@ import { Link } from "wouter";
 import FundrLogo from "@/components/fundr-logo";
 
 const leaderboardData = [
-  // Platform Index Funds (Coming Soon)
-  {
-    rank: 1,
-    manager: "Managed by Fundr",
-    title: "SOL 50 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    investors: 0,
-    fee: "0% mgmt",
-    streak: 0,
-    winRate: "Coming Soon",
-    isPlatform: true,
-    comingSoon: true,
-  },
-  {
-    rank: 2,
-    manager: "Managed by Fundr",
-    title: "Meme 25 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    investors: 0,
-    fee: "0% mgmt",
-    streak: 0,
-    winRate: "Coming Soon",
-    isPlatform: true,
-    comingSoon: true,
-  },
-  {
-    rank: 3,
-    manager: "Managed by Fundr",
-    title: "BONK 10 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    investors: 0,
-    fee: "0% mgmt",
-    streak: 0,
-    winRate: "Coming Soon",
-    isPlatform: true,
-    comingSoon: true,
-  },
   // Single Sample Fund
   {
-    rank: 4,
+    rank: 1,
     manager: "@blknoiz06",
     title: "Ansem's Fund",
     displayName: "Zion Thomas",

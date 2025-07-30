@@ -28,11 +28,9 @@ Both modes: Withdrawals sell tokens proportionally and return SOL
 FEES
 Platform: 1% on deposits + 1% on withdrawals (applies to all funds)
 Manager Performance: 0-20% on profits only (varies by fund)
-Platform Index Funds: No manager performance fees (0%)
 
 FUND TYPES
 User Funds: Created by any user, manager sets strategy
-Platform Index Funds: Managed by Fundr, automated rebalancing, no manager fees (Coming Soon)
 
 TECHNOLOGY
 Built on Solana blockchain
@@ -176,16 +174,7 @@ Non-custodial - users control their funds
                     <li>• Performance fees: 0-20%</li>
                   </ul>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-2">Platform Index Funds</h4>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Managed by Fundr</li>
-                    <li>• Automated rebalancing</li>
-                    <li>• No manager fees (0%)</li>
-                    <li>• Platform fees still apply</li>
-                    <li>• <span className="text-yellow-600 font-medium">Coming Soon</span></li>
-                  </ul>
-                </div>
+
               </div>
             </CardContent>
           </Card>

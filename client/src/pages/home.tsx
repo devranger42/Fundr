@@ -7,67 +7,6 @@ import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 const mockFunds = [
-  // Platform Index Funds (Coming Soon)
-  {
-    manager: "Managed by Fundr",
-    title: "SOL 50 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    fee: "0% mgmt",
-    investors: 0,
-    icon: "crown",
-    verified: true,
-    isPlatform: true,
-    comingSoon: true,
-    allocations: [
-      { name: "SOL", percentage: 25, color: "#9945FF" },
-      { name: "JUP", percentage: 15, color: "#3B82F6" },
-      { name: "RAY", percentage: 12, color: "#10B981" },
-      { name: "ORCA", percentage: 10, color: "#9333EA" },
-      { name: "BONK", percentage: 8, color: "#FF9233" },
-      { name: "Others", percentage: 30, color: "#6B7280" },
-    ],
-  },
-  {
-    manager: "Managed by Fundr",
-    title: "Meme 25 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    fee: "0% mgmt",
-    investors: 0,
-    icon: "rocket",
-    verified: true,
-    isPlatform: true,
-    comingSoon: true,
-    allocations: [
-      { name: "BONK", percentage: 30, color: "#FF9233" },
-      { name: "WIF", percentage: 25, color: "#8B5CF6" },
-      { name: "POPCAT", percentage: 20, color: "#EC4899" },
-      { name: "BOME", percentage: 15, color: "#EAB308" },
-      { name: "Others", percentage: 10, color: "#6B7280" },
-    ],
-  },
-  {
-    manager: "Managed by Fundr",
-    title: "BONK 10 Index",
-    displayName: "Coming Soon",
-    roi: "Coming Soon",
-    aum: "Coming Soon",
-    fee: "0% mgmt",
-    investors: 0,
-    icon: "gem",
-    verified: true,
-    isPlatform: true,
-    comingSoon: true,
-    allocations: [
-      { name: "BONK", percentage: 40, color: "#FF9233" },
-      { name: "WIF", percentage: 25, color: "#8B5CF6" },
-      { name: "POPCAT", percentage: 20, color: "#EC4899" },
-      { name: "MYRO", percentage: 15, color: "#EF4444" },
-    ],
-  },
   // Single Sample Fund for demonstration
   {
     manager: "@blknoiz06",
