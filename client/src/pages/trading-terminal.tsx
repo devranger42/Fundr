@@ -38,7 +38,7 @@ import { useFund } from "@/hooks/use-funds";
 import { JupiterService, TokenInfo, SwapQuote, TokenPrice } from "@/lib/jupiter";
 import { Connection } from "@solana/web3.js";
 import { PriceChart } from "@/components/trading/price-chart";
-import { OrderBook } from "@/components/trading/order-book";
+
 import { RecentTrades } from "@/components/trading/recent-trades";
 import { TransactionHistory } from "@/components/trading/transaction-history";
 import { PortfolioAnalytics } from "@/components/trading/portfolio-analytics";
@@ -542,12 +542,6 @@ export default function TradingTerminal() {
 
           {/* Market Data & Portfolio */}
           <div className="xl:col-span-4 space-y-6">
-            
-            {/* Order Book */}
-            <OrderBook 
-              tokenPair={`${fromToken.symbol}/${toToken.symbol}`}
-              currentPrice={tokenPrices[fromToken.mint]?.price}
-            />
 
             {/* Recent Trades */}
             <RecentTrades 
