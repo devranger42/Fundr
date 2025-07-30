@@ -32,7 +32,7 @@ Platform Index Funds: 0% fees
 
 FUND TYPES
 User Funds: Created by any user, manager sets strategy
-Platform Index Funds: Managed by Fundr, automated rebalancing, 0% fees
+Platform Index Funds: Managed by Fundr, automated rebalancing, 0% fees (Coming Soon)
 
 TECHNOLOGY
 Built on Solana blockchain
@@ -182,6 +182,7 @@ Non-custodial - users control their funds
                     <li>• Managed by Fundr</li>
                     <li>• Automated rebalancing</li>
                     <li>• 0% fees</li>
+                    <li>• <span className="text-yellow-600 font-medium">Coming Soon</span></li>
                   </ul>
                 </div>
               </div>

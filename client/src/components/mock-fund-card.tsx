@@ -16,6 +16,7 @@ interface MockFund {
   icon: string;
   verified?: boolean;
   isPlatform?: boolean;
+  comingSoon?: boolean;
   allocations: {
     name: string;
     percentage: number;
@@ -40,6 +41,7 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
   const [depositModalOpen, setDepositModalOpen] = useState(false);
 
   const handleDeposit = () => {
+    if (fund.comingSoon) return; // Disable deposits for coming soon funds
     setDepositModalOpen(true);
   };
 
@@ -89,18 +91,23 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
                   <p className="text-xs md:text-sm text-gray-500 flex-shrink-0">Managed by</p>
                   <span className="text-xs md:text-sm font-medium text-gray-700 truncate">
                     {fund.manager}
-                    {fund.displayName && (
+                    {fund.displayName && !fund.comingSoon && (
                       <span className="text-gray-500 ml-1">({fund.displayName})</span>
                     )}
                   </span>
                   {fund.verified && (
                     <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-blue-500 flex-shrink-0" fill="currentColor" />
                   )}
+                  {fund.comingSoon && (
+                    <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium ml-1">
+                      Coming Soon
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
             <div className="text-right flex-shrink-0">
-              <div className="text-lg md:text-2xl font-bold text-pump whitespace-nowrap">{fund.roi}</div>
+              <div className={`text-lg md:text-2xl font-bold whitespace-nowrap ${fund.comingSoon ? 'text-gray-400' : 'text-pump'}`}>{fund.roi}</div>
               <div className="text-xs md:text-sm text-gray-500 whitespace-nowrap">30D ROI</div>
             </div>
           </div>
@@ -140,7 +147,7 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
       
       <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
         <div className="text-center">
-          <div className="font-bold text-dark">{fund.aum}</div>
+          <div className={`font-bold ${fund.comingSoon ? 'text-gray-400' : 'text-dark'}`}>{fund.aum}</div>
           <div className="text-xs text-gray-500">AUM</div>
         </div>
         <div className="text-center">
@@ -148,17 +155,22 @@ export default function MockFundCard({ fund }: MockFundCardProps) {
           <div className="text-xs text-gray-500">Fee</div>
         </div>
         <div className="text-center">
-          <div className="font-bold text-dark">{fund.investors}</div>
+          <div className={`font-bold ${fund.comingSoon ? 'text-gray-400' : 'text-dark'}`}>{fund.comingSoon ? '-' : fund.investors}</div>
           <div className="text-xs text-gray-500">Investors</div>
         </div>
       </div>
       
       <Button 
         onClick={handleDeposit}
-        className="w-full bg-bonk hover:bg-bonk-hover text-white py-3 font-semibold transition-all duration-200 transform hover:scale-105"
+        disabled={fund.comingSoon}
+        className={`w-full py-3 font-semibold transition-all duration-200 transform ${
+          fund.comingSoon 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-bonk hover:bg-bonk-hover text-white hover:scale-105'
+        }`}
       >
         <ArrowUpRight className="w-4 h-4 mr-2" />
-        Invest Now
+        {fund.comingSoon ? 'Coming Soon' : 'Invest Now'}
       </Button>
 
       <DepositWithdrawModal
