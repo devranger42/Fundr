@@ -164,14 +164,19 @@ export function setupTwitterAuth(app: Express) {
 
   // Direct OAuth callback handler
   app.get('/api/auth/twitter/callback', async (req, res) => {
-    console.log('Twitter callback accessed');
+    console.log('🎯 TWITTER CALLBACK RECEIVED!');
     console.log('Query params:', req.query);
+    console.log('Session data:', { 
+      oauthState: req.session.oauthState, 
+      codeVerifier: req.session.codeVerifier ? 'Present' : 'Missing' 
+    });
     
-    const { code, state, error } = req.query;
+    const { code, state, error, error_description } = req.query;
     
     if (error) {
-      console.error('Twitter OAuth error:', error);
-      return res.redirect('/?twitter=error&reason=' + error);
+      console.error('❌ Twitter OAuth error:', error);
+      console.error('Error description:', error_description);
+      return res.redirect(`/?twitter=error&reason=${error}&description=${error_description || 'unknown'}`);
     }
     
     if (!code || !state) {
@@ -181,14 +186,19 @@ export function setupTwitterAuth(app: Express) {
     
     // Verify state parameter
     if (state !== req.session.oauthState) {
-      console.error('State mismatch - possible CSRF attack');
+      console.error('❌ State mismatch - possible CSRF attack');
+      console.error('Expected state:', req.session.oauthState);
+      console.error('Received state:', state);
       return res.redirect('/?twitter=error&reason=state_mismatch');
     }
     
     if (!req.session.codeVerifier) {
-      console.error('Missing code verifier in session');
+      console.error('❌ Missing code verifier in session');
+      console.error('Available session keys:', Object.keys(req.session));
       return res.redirect('/?twitter=error&reason=missing_verifier');
     }
+    
+    console.log('✅ State verification passed, proceeding with token exchange...');
     
     try {
       // Exchange code for access token using the correct X API endpoint
