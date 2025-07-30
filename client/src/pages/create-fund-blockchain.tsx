@@ -39,7 +39,7 @@ export default function CreateFundBlockchain() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    managementFee: 1,    // 1%
+    managementFee: 0,    // No management fee
     performanceFee: 20,  // 20%
     minDeposit: 1,       // 1 SOL
     fundMode: "manual"   // manual or auto
@@ -113,7 +113,7 @@ export default function CreateFundBlockchain() {
       const result = await createFund(
         formData.name,
         formData.description,
-        formData.managementFee * 100, // Convert to basis points
+        0, // No management fee
         formData.performanceFee * 100, // Convert to basis points
         formData.minDeposit,
         formData.fundMode
@@ -249,47 +249,32 @@ export default function CreateFundBlockchain() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <DollarSign className="w-5 h-5 mr-2 text-pump" />
-                Fee Structure
+                Performance Fee
               </CardTitle>
               <CardDescription>
-                Set your management and performance fees
+                Set your performance fee - the only fee charged to investors
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label>Management Fee: {formData.managementFee}% annually</Label>
-                  <div className="mt-2">
-                    <Slider
-                      value={[formData.managementFee]}
-                      onValueChange={(value) => handleInputChange('managementFee', value[0])}
-                      max={5}
-                      min={0}
-                      step={0.1}
-                      className="w-full"
-                    />
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Charged on total assets under management
-                  </p>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Performance Fee: {formData.performanceFee}%</Label>
+                <div className="mt-2">
+                  <Slider
+                    value={[formData.performanceFee]}
+                    onValueChange={(value) => handleInputChange('performanceFee', value[0])}
+                    max={30}
+                    min={0}
+                    step={1}
+                    className="w-full"
+                  />
                 </div>
-                
-                <div>
-                  <Label>Performance Fee: {formData.performanceFee}%</Label>
-                  <div className="mt-2">
-                    <Slider
-                      value={[formData.performanceFee]}
-                      onValueChange={(value) => handleInputChange('performanceFee', value[0])}
-                      max={30}
-                      min={0}
-                      step={1}
-                      className="w-full"
-                    />
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Charged only on profits above high water mark
-                  </p>
+                <div className="flex justify-between text-sm text-gray-500 mt-1">
+                  <span>0%</span>
+                  <span>30%</span>
                 </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  Charged only on profits above high water mark. No management fees - you only earn when your investors profit.
+                </p>
               </div>
             </CardContent>
           </Card>

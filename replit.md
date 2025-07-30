@@ -181,6 +181,12 @@ The project structure supports both development and production environments with
 ✓ Database schema migration completed with fundMode field added to funds table
 ✓ Added dynamic fund mode toggling with backend API and blockchain integration
 
+### Fee Structure Simplification (July 30, 2025)
+✓ Removed management fees entirely - only performance fees charged to investors
+✓ Updated fund creation form to show only performance fee selection (0-30%)
+✓ Clarified that managers only earn when investors profit above high water mark
+✓ Platform fees remain: 1% on deposits (buy/burn), 1% on withdrawals (treasury)
+
 ### Portfolio Rebalancing System (July 30, 2025)
 ✓ Restored comprehensive portfolio allocation tracking with current vs target percentages
 ✓ Built interactive rebalancing interface with drift indicators and progress bars
@@ -206,9 +212,10 @@ The project structure supports both development and production environments with
 - Test fund creation, deposits, withdrawals, and rebalancing on devnet
 - Deploy to mainnet after thorough testing and security audit
 
-### Platform Mechanics
+### Platform Mechanics (Updated July 30, 2025)
 - 1% fee on deposits goes to $FUND token buy/burn (deflationary)
 - 1% fee on withdrawals goes to platform treasury (operations)
-- Manager profit fees (0-20%) only taken from investor gains
+- NO management fees - only performance fees charged to investors
+- Manager performance fees (0-30%) only taken from investor gains above high water mark
 - Noncustodial withdrawal system with instant liquidity
 - On-chain fund state verification and transparency
