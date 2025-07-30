@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Crown, Rocket, TrendingUp, Gem, Zap, Shield } from "lucide-react";
+import { Link } from "wouter";
 
 interface TokenAllocation {
   name: string;
@@ -52,21 +53,25 @@ export default function FundCard({ fund }: FundCardProps) {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 border border-gray-100">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className={`w-12 h-12 ${getIconBgColor()} rounded-full flex items-center justify-center`}>
-            <IconComponent className="text-white text-lg w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-dark">{fund.manager}</h3>
-            <p className="text-sm text-gray-500">{fund.title}</p>
+      <Link href={`/fund/${fund.manager.replace('@', '')}`}>
+        <div className="cursor-pointer">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className={`w-12 h-12 ${getIconBgColor()} rounded-full flex items-center justify-center`}>
+                <IconComponent className="text-white text-lg w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-dark">{fund.manager}</h3>
+                <p className="text-sm text-gray-500">{fund.title}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-pump">{fund.roi}</div>
+              <div className="text-sm text-gray-500">30D ROI</div>
+            </div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-pump">{fund.roi}</div>
-          <div className="text-sm text-gray-500">30D ROI</div>
-        </div>
-      </div>
+      </Link>
       
       <div className="mb-6">
         <h4 className="font-semibold text-dark mb-3">Fund Allocation</h4>

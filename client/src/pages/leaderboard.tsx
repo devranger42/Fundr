@@ -1,0 +1,216 @@
+import Header from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Crown, Medal, Award, TrendingUp } from "lucide-react";
+import { Link } from "wouter";
+
+const leaderboardData = [
+  {
+    rank: 1,
+    manager: "@yolotrader",
+    title: "High Risk/Reward",
+    roi: "+89.3%",
+    aum: "$267K",
+    investors: 34,
+    fee: "4.0%",
+    streak: 7,
+    winRate: "78%",
+  },
+  {
+    rank: 2,
+    manager: "@memecoinmaxi", 
+    title: "Meme Specialist",
+    roi: "+67.8%",
+    aum: "$156K",
+    investors: 45,
+    fee: "3.0%",
+    streak: 5,
+    winRate: "71%",
+  },
+  {
+    rank: 3,
+    manager: "@nftpro",
+    title: "NFT Collector", 
+    roi: "+52.1%",
+    aum: "$423K",
+    investors: 67,
+    fee: "2.8%",
+    streak: 4,
+    winRate: "69%",
+  },
+  {
+    rank: 4,
+    manager: "@solanaking",
+    title: "Premium Trader",
+    roi: "+45.2%",
+    aum: "$324K", 
+    investors: 89,
+    fee: "2.5%",
+    streak: 3,
+    winRate: "65%",
+  },
+  {
+    rank: 5,
+    manager: "@defiwhale",
+    title: "DeFi Expert",
+    roi: "+28.4%",
+    aum: "$782K",
+    investors: 134,
+    fee: "2.0%",
+    streak: 2,
+    winRate: "62%",
+  },
+  {
+    rank: 6,
+    manager: "@stablegenius",
+    title: "Conservative",
+    roi: "+18.7%",
+    aum: "$945K",
+    investors: 203,
+    fee: "1.5%",
+    streak: 1,
+    winRate: "58%",
+  },
+];
+
+export default function Leaderboard() {
+  const getRankIcon = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return <Crown className="w-6 h-6 text-yellow-500" />;
+      case 2:
+        return <Medal className="w-6 h-6 text-gray-400" />;
+      case 3:
+        return <Award className="w-6 h-6 text-amber-600" />;
+      default:
+        return <span className="w-6 h-6 flex items-center justify-center text-sm font-bold text-gray-500">#{rank}</span>;
+    }
+  };
+
+  const getRankBadgeColor = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white";
+      case 2:
+        return "bg-gradient-to-r from-gray-300 to-gray-500 text-white";
+      case 3:
+        return "bg-gradient-to-r from-amber-400 to-amber-600 text-white";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-dark to-darker text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Fund Manager <span className="text-pump">Leaderboard</span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Top performing fund managers ranked by 30-day ROI performance
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-8 justify-center">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-pump">+89.3%</div>
+              <div className="text-gray-400">Best ROI</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-bonk">$2.4M</div>
+              <div className="text-gray-400">Total AUM</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-white">572</div>
+              <div className="text-gray-400">Total Investors</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Leaderboard Table */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-dark">Top Fund Managers</h2>
+              <p className="text-gray-600">Ranked by 30-day performance</p>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manager</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">30D ROI</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AUM</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Investors</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Win Rate</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {leaderboardData.map((fund) => (
+                    <tr key={fund.rank} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          {getRankIcon(fund.rank)}
+                          <Badge className={`${getRankBadgeColor(fund.rank)} text-xs px-2 py-1`}>
+                            #{fund.rank}
+                          </Badge>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-bold text-dark">{fund.manager}</div>
+                          <div className="text-sm text-gray-500">{fund.title}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-1">
+                          <TrendingUp className="w-4 h-4 text-pump" />
+                          <span className="text-lg font-bold text-pump">{fund.roi}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-dark">
+                        {fund.aum}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {fund.investors}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {fund.fee}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant="secondary" className="text-xs">
+                          {fund.winRate}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Link href={`/fund/${fund.manager.replace('@', '')}`}>
+                          <Button 
+                            size="sm"
+                            className="bg-bonk hover:bg-bonk-hover text-white"
+                          >
+                            View Fund
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

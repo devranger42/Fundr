@@ -25,9 +25,9 @@
   --radius: 0.5rem;
   
   /* Custom Solana-inspired colors */
-  --bonk: hsl(25, 100%, 59%);
-  --bonk-hover: hsl(25, 100%, 55%);
-  --pump: hsl(162, 100%, 50%);
+  --bonk: #FF9233;
+  --bonk-hover: #e6822e;
+  --pump: #00FFB2;
   --dark: hsl(220, 26%, 18%);
   --darker: hsl(220, 39%, 11%);
 }
