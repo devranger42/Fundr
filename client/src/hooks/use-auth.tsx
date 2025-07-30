@@ -117,6 +117,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     fetchUser();
   }, [connected, publicKey]);
 
+  // Check for Twitter auth callback parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('twitter') === 'linked') {
+      // Remove the parameter from URL
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('twitter');
+      window.history.replaceState({}, '', newUrl.toString());
+      
+      // Refresh user data to show updated Twitter info
+      setTimeout(() => fetchUser(), 500);
+    }
+  }, []);
+
   const value = {
     user,
     isLoading,
