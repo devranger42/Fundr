@@ -39,16 +39,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/auth/user', async (req, res) => {
     try {
-      const userId = (req as any).user?.id;
+      // Check for user ID in session or user object
+      const userId = (req as any).user?.id || (req.session as any).userId;
+      
       if (userId) {
-        const user = await storage.getUser(userId);
-        res.json(user);
+        // Try to get user by ID first (for Twitter users)
+        let user = await storage.getUser(userId);
+        
+        // If not found, try by Twitter ID
+        if (!user) {
+          user = await storage.getUserByTwitterId(userId);
+        }
+        
+        if (user) {
+          res.json(user);
+        } else {
+          res.status(401).json({ error: 'User not found' });
+        }
       } else {
         res.status(401).json({ error: 'Not authenticated' });
       }
     } catch (error) {
       console.error('Get user error:', error);
       res.status(500).json({ error: 'Failed to get user' });
+    }
+  });
+
+  // Get Twitter user by ID (for testing)
+  app.get('/api/auth/twitter-user/:twitterId', async (req, res) => {
+    try {
+      const { twitterId } = req.params;
+      const user = await storage.getUserByTwitterId(twitterId);
+      if (user) {
+        res.json(user);
+      } else {
+        res.status(404).json({ error: 'Twitter user not found' });
+      }
+    } catch (error) {
+      console.error('Get Twitter user error:', error);
+      res.status(500).json({ error: 'Failed to get Twitter user' });
     }
   });
 

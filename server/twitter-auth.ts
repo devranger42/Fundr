@@ -217,6 +217,8 @@ export function setupTwitterAuth(app: Express) {
     });
     
     const { code, state, error, error_description } = req.query;
+    const codeStr = Array.isArray(code) ? code[0] : code;
+    const stateStr = Array.isArray(state) ? state[0] : state;
     
     if (error) {
       console.error('❌ Twitter OAuth error:', error);
@@ -224,7 +226,7 @@ export function setupTwitterAuth(app: Express) {
       return res.redirect(`/?twitter=error&reason=${error}&description=${error_description || 'unknown'}`);
     }
     
-    if (!code || !state) {
+    if (!codeStr || !stateStr) {
       console.error('Missing code or state in callback');
       return res.redirect('/?twitter=error&reason=missing_params');
     }
@@ -232,15 +234,15 @@ export function setupTwitterAuth(app: Express) {
     // Verify state parameter (skip for testing)
     console.log('State verification:', {
       expectedState: req.session.oauthState,
-      receivedState: state,
-      stateMatch: state === req.session.oauthState
+      receivedState: stateStr,
+      stateMatch: stateStr === req.session.oauthState
     });
     
     // Temporarily skip state verification for testing
-    if (false && state !== req.session.oauthState) {
+    if (false && stateStr !== req.session.oauthState) {
       console.error('❌ State mismatch - possible CSRF attack');
       console.error('Expected state:', req.session.oauthState);
-      console.error('Received state:', state);
+      console.error('Received state:', stateStr);
       return res.redirect('/?twitter=error&reason=state_mismatch');
     }
     
@@ -258,7 +260,7 @@ export function setupTwitterAuth(app: Express) {
       
       // Use the state parameter as code verifier for PKCE plain method
       // Since we're using 'plain' method, the verifier should match the challenge
-      req.session.codeVerifier = state;
+      req.session.codeVerifier = stateStr;
       
       console.log('🔄 Fallback mode activated - continuing without session data');
       
@@ -269,8 +271,8 @@ export function setupTwitterAuth(app: Express) {
     
     try {
       // Use state as code verifier if session is missing it
-      const codeVerifier = req.session.codeVerifier || state;
-      console.log('Using code verifier:', codeVerifier.substring(0, 8) + '...');
+      const codeVerifier = req.session.codeVerifier || stateStr;
+      console.log('Using code verifier:', (typeof codeVerifier === 'string' ? codeVerifier.substring(0, 8) : 'invalid') + '...');
       
       // Use same callback URL for token exchange
       const callbackUrl = `https://${req.get('host')}/api/auth/twitter/callback`;
@@ -285,9 +287,9 @@ export function setupTwitterAuth(app: Express) {
         },
         body: new URLSearchParams({
           grant_type: 'authorization_code',
-          code: code as string,
+          code: codeStr,
           redirect_uri: callbackUrl,
-          code_verifier: codeVerifier
+          code_verifier: typeof codeVerifier === 'string' ? codeVerifier : stateStr
         })
       });
       
@@ -354,6 +356,16 @@ export function setupTwitterAuth(app: Express) {
         });
         console.log('Created new Twitter user:', twitterData.username);
       }
+      
+      // Set up user session for authenticated Twitter user
+      (req as any).user = { 
+        id: twitterData.id,
+        twitterId: twitterData.id,
+        twitterUsername: twitterData.username 
+      };
+      
+      // Save user ID in session for persistence
+      (req.session as any).userId = twitterData.id;
       
       // Clear OAuth session data
       delete req.session.oauthState;
