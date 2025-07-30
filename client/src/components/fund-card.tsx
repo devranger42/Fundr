@@ -67,6 +67,93 @@ export default function FundCard({ fund }: FundCardProps) {
   };
 
   return (
-    
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 border border-gray-100">
+      <Link href={`/fund/${fund.id}`}>
+        <div className="cursor-pointer">
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <div className="flex items-center space-x-3 min-w-0 flex-1">
+              <div className={`w-10 h-10 md:w-12 md:h-12 ${getIconBgColor()} rounded-full flex items-center justify-center flex-shrink-0`}>
+                <IconComponent className="text-white w-4 h-4 md:w-5 md:h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-bold text-dark truncate">{fund.name}</h3>
+                <p className="text-xs md:text-sm text-gray-600">Fund Manager</p>
+              </div>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-lg md:text-2xl font-bold text-pump whitespace-nowrap">+12.5%</div>
+              <div className="text-xs md:text-sm text-gray-600 whitespace-nowrap">30D ROI</div>
+            </div>
+          </div>
+        </div>
+      </Link>
+      
+      {fund.allocations.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-semibold text-dark mb-3">Fund Allocation</h4>
+          <div className="space-y-3">
+            {fund.allocations.map((allocation) => {
+              const color = getTokenColor(allocation.tokenSymbol);
+              const percentage = (allocation.targetPercentage / 100); // Convert basis points to percentage
+              return (
+                <div key={allocation.id}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div 
+                        className={`w-6 h-6 rounded-full`}
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      <span className="font-medium">{allocation.tokenSymbol}</span>
+                    </div>
+                    <span className="font-bold">{percentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                    <div 
+                      className="h-2 rounded-full" 
+                      style={{ 
+                        width: `${percentage}%`,
+                        backgroundColor: color 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      
+      <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="text-center">
+          <div className="font-bold text-dark">{totalAssetsSOL} SOL</div>
+          <div className="text-xs text-gray-600">AUM</div>
+        </div>
+        <div className="text-center">
+          <div className="font-bold text-dark">{managementFeePercent}%</div>
+          <div className="text-xs text-gray-600">Fee</div>
+        </div>
+        <div className="text-center">
+          <div className="font-bold text-dark">0</div>
+          <div className="text-xs text-gray-600">Investors</div>
+        </div>
+      </div>
+      
+      <Button 
+        onClick={handleDeposit}
+        className="w-full bg-bonk hover:bg-bonk-hover text-white py-3 font-semibold transition-all duration-200 transform hover:scale-105"
+      >
+        <ArrowUpRight className="w-4 h-4 mr-2" />
+        Deposit SOL
+      </Button>
+      
+      <DepositWithdrawModal
+        isOpen={depositModalOpen}
+        onClose={() => setDepositModalOpen(false)}
+        type="deposit"
+        fundName={fund.name}
+        fundId={fund.id}
+        sharePrice={0.00008}
+      />
+    </div>
   );
 }
