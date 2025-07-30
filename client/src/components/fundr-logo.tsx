@@ -16,14 +16,14 @@ export default function FundrLogo({ className = "", size = "md", pieOnly = false
   if (pieOnly) {
     // Show only the pie chart part - crop the image to just show the top circle
     return (
-      <div className={`${className} ${logoSizes[size]} aspect-square overflow-hidden relative`}>
+      <div className={`${className} ${logoSizes[size]} aspect-square overflow-hidden relative rounded-full`}>
         <img 
           src={logoImagePath}
           alt="Fundr Pie Chart"
-          className="absolute inset-0 w-full h-auto object-cover"
+          className="absolute w-full h-auto object-contain"
           style={{
-            transform: 'scale(1.8) translateY(-15%)', // Scale up and shift to show only pie
-            transformOrigin: 'center center'
+            transform: 'scale(1.5) translateY(-25%)', 
+            transformOrigin: 'center top'
           }}
         />
       </div>
