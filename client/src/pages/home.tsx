@@ -1,5 +1,6 @@
 import Header from "@/components/header";
 import FundCard from "@/components/fund-card";
+import FundrLogo from "@/components/fundr-logo";
 
 const mockFunds = [
   {
@@ -96,8 +97,11 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-dark to-darker text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center mb-8">
+            <FundrLogo size="lg" className="text-white" />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Fundr – On-Chain Funds <br className="hidden sm:block" />
+            On-Chain Funds <br className="hidden sm:block" />
             <span className="text-pump">You Can Join</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
@@ -142,7 +146,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4">Fundr</h3>
+              <div className="mb-4">
+                <FundrLogo size="lg" className="text-white" />
+              </div>
               <p className="text-gray-400 mb-4">
                 The premier platform for on-chain fund management on Solana. 
                 Join thousands of investors and fund managers building the future of DeFi.

@@ -24,12 +24,13 @@
   --ring: hsl(240, 10%, 3.9%);
   --radius: 0.5rem;
   
-  /* Custom Solana-inspired colors */
+  /* Custom Solana-inspired colors matching logo */
   --bonk: #FF9233;
   --bonk-hover: #e6822e;
   --pump: #00FFB2;
-  --dark: hsl(220, 26%, 18%);
-  --darker: hsl(220, 39%, 11%);
+  --pump-hover: #00e6a0;
+  --dark: #1f2937;
+  --darker: #111827;
 }
 
 .dark {
@@ -84,6 +85,10 @@
   
   .text-pump {
     color: var(--pump);
+  }
+  
+  .bg-pump-hover:hover {
+    background-color: var(--pump-hover);
   }
   
   .bg-dark {

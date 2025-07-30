@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { PlusCircle } from "lucide-react";
+import FundrLogo from "./fundr-logo";
 
 export default function Header() {
   const [location] = useLocation();
@@ -20,9 +21,9 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/">
-              <h1 className="text-2xl font-bold text-dark cursor-pointer hover:text-bonk transition-colors">
-                Fundr
-              </h1>
+              <div className="cursor-pointer hover:opacity-80 transition-opacity">
+                <FundrLogo size="md" />
+              </div>
             </Link>
           </div>
           

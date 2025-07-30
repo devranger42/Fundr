@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import { PlusCircle, Info, Rocket } from "lucide-react";
+import FundrLogo from "@/components/fundr-logo";
 
 export default function CreateFund() {
   const [fundName, setFundName] = useState("");

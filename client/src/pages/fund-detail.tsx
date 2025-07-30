@@ -9,6 +9,7 @@ import FeeCalculator from "@/components/fee-calculator";
 import { useState } from "react";
 import { ArrowLeft, TrendingUp, Users, DollarSign, Calendar, Award } from "lucide-react";
 import { Link } from "wouter";
+import FundrLogo from "@/components/fundr-logo";
 
 // Mock fund data - would come from route params in real app
 const fundData = {

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Medal, Award, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
+import FundrLogo from "@/components/fundr-logo";
 
 const leaderboardData = [
   {
