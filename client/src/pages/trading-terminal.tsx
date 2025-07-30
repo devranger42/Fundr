@@ -41,7 +41,7 @@ import { PriceChart } from "@/components/trading/price-chart";
 
 import { RecentTrades } from "@/components/trading/recent-trades";
 import { TransactionHistory } from "@/components/trading/transaction-history";
-import { PortfolioAnalytics } from "@/components/trading/portfolio-analytics";
+
 
 // Popular tokens for trading
 const POPULAR_TOKENS: TokenInfo[] = [
@@ -76,9 +76,7 @@ export default function TradingTerminal() {
   const [isGettingQuote, setIsGettingQuote] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   
-  // Portfolio management
-  const [rebalanceMode, setRebalanceMode] = useState(false);
-  const [newAllocations, setNewAllocations] = useState<{ [tokenMint: string]: number }>({});
+
   
   // Jupiter service
   const [jupiterService] = useState(() => 
@@ -521,9 +519,6 @@ export default function TradingTerminal() {
             
             {/* Transaction History */}
             <TransactionHistory fundId={id!} />
-            
-            {/* Portfolio Analytics */}
-            <PortfolioAnalytics fundId={id!} />
           </div>
 
           {/* Market Data & Portfolio */}
@@ -535,69 +530,33 @@ export default function TradingTerminal() {
               currentPrice={tokenPrices[fromToken.mint]?.price}
             />
 
-            {/* Current Portfolio */}
+            {/* Fund Summary */}
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span className="flex items-center">
-                    <Target className="w-5 h-5 mr-2 text-pump" />
-                    Portfolio Allocation
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setRebalanceMode(!rebalanceMode)}
-                  >
-                    {rebalanceMode ? "Cancel" : "Rebalance"}
-                  </Button>
+                <CardTitle className="flex items-center">
+                  <Target className="w-5 h-5 mr-2 text-pump" />
+                  Fund Summary
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {fund.allocations.length > 0 ? (
-                  <div className="space-y-4">
-                    {fund.allocations.map((allocation) => {
-                      const percentage = allocation.targetPercentage / 100;
-                      return (
-                        <div key={allocation.id} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <div className="w-6 h-6 bg-bonk rounded-full"></div>
-                              <span className="font-medium">{allocation.tokenSymbol}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <span className="font-bold">{percentage}%</span>
-                              {rebalanceMode && (
-                                <Input
-                                  type="number"
-                                  value={newAllocations[allocation.tokenMint] || percentage}
-                                  onChange={(e) => setNewAllocations(prev => ({
-                                    ...prev,
-                                    [allocation.tokenMint]: parseFloat(e.target.value) || 0
-                                  }))}
-                                  className="w-20 h-8"
-                                  min="0"
-                                  max="100"
-                                />
-                              )}
-                            </div>
-                          </div>
-                          <Progress value={percentage} className="h-2" />
-                        </div>
-                      );
-                    })}
-                    
-                    {rebalanceMode && (
-                      <Button className="w-full bg-pump hover:bg-pump/90 text-white mt-4">
-                        <Target className="w-4 h-4 mr-2" />
-                        Execute Rebalance
-                      </Button>
-                    )}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Fund Name</span>
+                    <span className="font-medium">{fund.name}</span>
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No allocations set</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Manager</span>
+                    <span className="font-medium">{fund.managerId}</span>
                   </div>
-                )}
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Description</span>
+                    <span className="font-medium">{fund.description}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Management Fee</span>
+                    <span className="font-medium">{fund.managementFee}%</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
