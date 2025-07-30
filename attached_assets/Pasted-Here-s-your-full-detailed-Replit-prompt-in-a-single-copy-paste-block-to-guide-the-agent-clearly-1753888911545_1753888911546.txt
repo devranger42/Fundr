@@ -1,0 +1,96 @@
+Here’s your **full, detailed Replit prompt** in a single copy-paste block to guide the agent clearly:
+
+---
+
+**Prompt:**
+
+I’m building a decentralized fund management app on Solana using Anchor. I want help writing the full smart contract logic. Here are the core requirements:
+
+---
+
+### 🔧 Core Concept
+
+Users can **deposit SOL into a fund** managed by a specific wallet (the manager). Each fund pools deposits, and the manager controls how the fund is allocated into SPL tokens on Solana (BONK, WIF, USDC, etc.). Users can **withdraw at any time**, and withdrawals are proportional to their share of the fund.
+
+---
+
+### 🧠 Fund Modes (selectable on creation)
+
+Each fund must be created in one of two modes:
+
+1. **Manual Allocation Mode**
+
+   * All deposits accrue as **SOL**.
+   * Manager must manually allocate tokens using swaps (via Jupiter).
+   * New deposits **do not auto-buy tokens**.
+   * Withdrawals attempt to use fund’s SOL balance. If insufficient, transaction fails.
+   * Intended for hands-on, discretionary trading.
+
+2. **Auto Allocation Mode**
+
+   * Deposits and withdrawals automatically **mirror current token allocation**.
+   * Example: if the fund holds 60% BONK, 30% JUP, 10% SOL, new deposits swap into those tokens proportionally.
+   * Withdrawals sell the same ratios and return SOL.
+   * Intended for passive, index-like funds.
+
+The smart contract should store the fund type (`manual` or `auto`) and use it to control deposit/withdraw behavior.
+
+---
+
+### 📦 Accounts
+
+* Each **Fund** is a PDA with:
+
+  * Manager pubkey
+  * Fund type (manual/auto)
+  * Manager fee (0–20%, on profits only)
+  * Allocation breakdown
+  * Total deposited value
+* Each **UserStake** PDA stores:
+
+  * User pubkey
+  * Amount deposited
+  * Entry price (for profit calculation)
+
+---
+
+### 💸 Fee Structure
+
+* **1% deposit fee** goes to the platform (used to buy and burn \$FUND token off-chain).
+* **1% withdrawal fee** goes to the platform.
+* **Manager fee (0–20%)** is applied only on **profits** during withdrawal.
+* Fees must be enforced by the contract.
+
+---
+
+### 🔁 Rebalancing (Manager Only)
+
+* Manager can trigger rebalances using Jupiter swap instructions.
+* Contract must update allocation ratios and store them.
+* Only the fund manager can call this.
+
+---
+
+### 🔐 Security & Constraints
+
+* All fund and stake accounts are PDAs.
+* Only fund manager can rebalance.
+* Withdrawals and deposits must be trustless and cannot be blocked.
+* Arithmetic safety: no overflows or bad accounting.
+* Support future upgrades and allow room for new fund types or logic later.
+
+---
+
+### ⚙️ Tech Stack
+
+* Anchor framework
+* Use SPL Token standard
+* Compatible with Jupiter for swaps (can be left stubbed or with placeholder swap logic)
+
+---
+
+Please write this contract in full Anchor format, modularize into separate instruction files if needed, and include full account validation. Prioritize clarity and correctness.
+
+---
+
+Let me know when you’re ready for the frontend logic.

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { 
@@ -76,7 +77,9 @@ export default function TradingTerminal() {
   const [isGettingQuote, setIsGettingQuote] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   
-
+  // Portfolio management
+  const [rebalanceMode, setRebalanceMode] = useState(false);
+  const [newAllocations, setNewAllocations] = useState<{ [tokenMint: string]: number }>({});
   
   // Jupiter service
   const [jupiterService] = useState(() => 
@@ -523,6 +526,110 @@ export default function TradingTerminal() {
 
           {/* Fund Summary */}
           <div className="xl:col-span-4 space-y-6">
+
+            {/* Portfolio Allocation & Rebalancing */}
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center">
+                    <Target className="w-5 h-5 mr-2 text-pump" />
+                    Portfolio Allocation
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRebalanceMode(!rebalanceMode)}
+                  >
+                    {rebalanceMode ? "Cancel" : "Rebalance"}
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {fund.allocations.length > 0 ? (
+                  <div className="space-y-4">
+                    {fund.allocations.map((allocation) => {
+                      const percentage = allocation.targetPercentage / 100;
+                      // Simulate current allocation with some drift
+                      const currentPercentage = percentage + (Math.random() - 0.5) * 10;
+                      const drift = currentPercentage - percentage;
+                      
+                      return (
+                        <div key={allocation.id} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-bonk rounded-full"></div>
+                              <span className="font-medium">{allocation.tokenSymbol}</span>
+                              <Badge variant="outline" className="text-xs">
+                                Target: {percentage.toFixed(1)}%
+                              </Badge>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="text-right">
+                                <div className="text-sm font-medium">
+                                  Current: {currentPercentage.toFixed(1)}%
+                                </div>
+                                <div className={`text-xs ${drift > 0 ? 'text-red-500' : drift < 0 ? 'text-blue-500' : 'text-green-500'}`}>
+                                  {drift > 0 ? '+' : ''}{drift.toFixed(1)}% drift
+                                </div>
+                              </div>
+                              {rebalanceMode && (
+                                <Input
+                                  type="number"
+                                  value={newAllocations[allocation.tokenMint] || percentage}
+                                  onChange={(e) => setNewAllocations(prev => ({
+                                    ...prev,
+                                    [allocation.tokenMint]: parseFloat(e.target.value) || 0
+                                  }))}
+                                  className="w-20 h-8"
+                                  min="0"
+                                  max="100"
+                                  step="0.1"
+                                />
+                              )}
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <Progress value={currentPercentage} className="h-2" />
+                            <div 
+                              className="absolute top-0 h-2 bg-gray-300 opacity-50 rounded-full"
+                              style={{ 
+                                width: `${percentage}%`,
+                                left: 0
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                    
+                    {rebalanceMode && (
+                      <div className="pt-4 border-t">
+                        <div className="flex justify-between text-sm text-gray-600 mb-2">
+                          <span>Total Allocation:</span>
+                          <span>
+                            {Object.values(newAllocations).reduce((sum, val) => sum + val, 0).toFixed(1)}%
+                          </span>
+                        </div>
+                        <Button 
+                          className="w-full bg-pump hover:bg-pump/90 text-white"
+                          disabled={Object.values(newAllocations).reduce((sum, val) => sum + val, 0) !== 100}
+                        >
+                          <Target className="w-4 h-4 mr-2" />
+                          Execute Rebalance
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No allocations set</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Set target allocations when creating your fund
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Fund Summary */}
             <Card className="shadow-lg">
