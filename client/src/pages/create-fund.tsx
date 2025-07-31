@@ -106,11 +106,12 @@ export default function CreateFund() {
           <div className="flex items-center justify-center mb-6">
             <Rocket className="w-12 h-12 text-pump mr-4" />
             <h1 className="text-4xl md:text-5xl font-bold">
-              Launch Your <span className="text-pump">Fund</span>
+              Prove Your <span className="text-pump">Trading Skills</span>
             </h1>
           </div>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Create your own on-chain fund and start managing investor capital on Solana
+            Launch a fund. Attract investors. Earn when you perform.<br />
+            Show the world you're the best trader on Solana.
           </p>
         </div>
       </section>
@@ -122,9 +123,9 @@ export default function CreateFund() {
             <div className="lg:col-span-2">
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-dark">Fund Details</CardTitle>
+                  <CardTitle className="text-2xl text-dark">Fund Setup</CardTitle>
                   <CardDescription>
-                    Set up your fund with basic information and fee structure
+                    Create your competitive fund and start building your trading reputation
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">

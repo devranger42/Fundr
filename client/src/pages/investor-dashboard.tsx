@@ -108,13 +108,13 @@ export default function InvestorDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Investment Dashboard</h1>
-              <p className="text-gray-300">Track your fund investments and performance</p>
+              <h1 className="text-4xl font-bold mb-2">Your Co-Trading Journey</h1>
+              <p className="text-gray-300">Follow the best traders. Share in their success. Track your co-investments.</p>
             </div>
             <Link href="/">
               <Button className="bg-bonk hover:bg-bonk-hover text-white">
                 <Plus className="w-4 h-4 mr-2" />
-                Discover Funds
+                Find Top Traders
               </Button>
             </Link>
           </div>

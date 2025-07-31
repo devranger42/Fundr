@@ -43,26 +43,34 @@ export default function Leaderboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Fund Manager <span className="text-pump">Leaderboard</span>
+              The Leaderboard <span className="text-pump">Never Lies</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Top performing fund managers ranked by 30-day ROI performance
+              Ranked by real, realized performance. The top spot is earned — not bought, not botted.
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-8 justify-center">
+          <div className="flex flex-col sm:flex-row gap-8 justify-center mb-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-pump">+89.3%</div>
-              <div className="text-gray-400">Best ROI</div>
+              <div className="text-3xl font-bold text-pump">$0</div>
+              <div className="text-gray-400">Best Fund AUM</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-bonk">$2.4M</div>
-              <div className="text-gray-400">Total AUM</div>
+              <div className="text-3xl font-bold text-bonk">0</div>
+              <div className="text-gray-400">Active Traders</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-white">572</div>
+              <div className="text-3xl font-bold text-white">0</div>
               <div className="text-gray-400">Total Investors</div>
             </div>
+          </div>
+          
+          <div className="text-center">
+            <Link href="/create-fund">
+              <Button className="bg-bonk hover:bg-bonk-hover text-white px-8 py-3 text-lg font-semibold">
+                Claim Your Spot
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

@@ -48,7 +48,7 @@ export default function Header() {
                 isActive('/') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
-              Funds
+              Explore
             </Link>
             <Link 
               href="/leaderboard"
@@ -65,7 +65,7 @@ export default function Header() {
                 isActive('/manager-dashboard') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
-              Dashboard
+              Manage
             </Link>
             <Link 
               href="/whitepaper"
@@ -73,7 +73,7 @@ export default function Header() {
                 isActive('/whitepaper') ? 'text-bonk' : 'text-gray-700 hover:text-bonk'
               }`}
             >
-              About
+              Docs
             </Link>
           </nav>
           
@@ -95,7 +95,7 @@ export default function Header() {
                 <TwitterAuth compact />
                 <div className="text-xs">
                   <div className="font-medium text-gray-900">
-                    {publicKey && formatPublicKey(publicKey)}
+                    {publicKey && formatPublicKey(publicKey.toString())}
                   </div>
                 </div>
                 <Button 

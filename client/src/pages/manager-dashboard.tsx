@@ -72,8 +72,8 @@ export default function ManagerDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Fund Manager Dashboard</h1>
-              <p className="text-gray-300">Manage your funds and track performance</p>
+              <h1 className="text-4xl font-bold mb-2">Your Trading Arena</h1>
+              <p className="text-gray-300">Prove your skills. Build your following. Compete for the top spot.</p>
             </div>
             <Link href="/create-fund">
               <Button className="bg-bonk hover:bg-bonk-hover text-white">
