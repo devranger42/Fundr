@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useWallet } from '@/lib/wallet-provider';
+import { useWallet } from '@/hooks/use-wallet';
 import { useToast } from '@/hooks/use-toast';
 
 // Declare global wallet objects for TypeScript
@@ -71,9 +71,20 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
       });
       onClose();
     } catch (error) {
+      console.error('Wallet connection error:', error);
+      let errorMessage = "Failed to connect wallet";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('base58') || error.message.includes('Invalid')) {
+          errorMessage = "Wallet connection issue. Try disconnecting and reconnecting your wallet.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Failed to connect wallet",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -84,15 +95,15 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
   const isWalletInstalled = (walletName: string) => {
     switch (walletName.toLowerCase()) {
       case 'phantom':
-        return window.solana?.isPhantom;
+        return window.solana?.isPhantom || window.phantom?.solana?.isPhantom;
       case 'solflare':
-        return window.solflare;
+        return window.solflare?.isSolflare;
       case 'backpack':
-        return window.backpack;
+        return window.backpack?.isBackpack;
       case 'glow':
-        return window.glow;
+        return window.glow?.isGlow;
       case 'slope':
-        return window.slope;
+        return window.slope?.isSlope;
       default:
         return false;
     }

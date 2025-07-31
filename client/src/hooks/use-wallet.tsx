@@ -26,15 +26,17 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const getWalletProvider = (walletName: string) => {
     switch (walletName.toLowerCase()) {
       case 'phantom':
-        return window.solana?.isPhantom ? window.solana : null;
+        // Check multiple ways Phantom might be available (desktop vs mobile)
+        return window.solana?.isPhantom ? window.solana : 
+               window.phantom?.solana?.isPhantom ? window.phantom.solana : null;
       case 'solflare':
-        return window.solflare;
+        return window.solflare?.isSolflare ? window.solflare : null;
       case 'backpack':
-        return window.backpack;
+        return window.backpack?.isBackpack ? window.backpack : null;
       case 'glow':
-        return window.glow;
+        return window.glow?.isGlow ? window.glow : null;
       case 'slope':
-        return window.slope;
+        return window.slope?.isSlope ? window.slope : null;
       default:
         return window.solana?.isPhantom ? window.solana : null;
     }
@@ -52,14 +54,33 @@ export function WalletProvider({ children }: WalletProviderProps) {
       const response = await provider.connect();
       
       if (response.publicKey) {
+        // Validate the public key is valid base58
+        const publicKeyString = response.publicKey.toString();
+        console.log('Received public key from wallet:', publicKeyString);
+        
+        if (!publicKeyString || publicKeyString.length === 0) {
+          throw new Error('Invalid public key received from wallet');
+        }
+        
+        // Test if it's valid base58 by trying to create a PublicKey
+        try {
+          const { PublicKey } = await import('@solana/web3.js');
+          new PublicKey(publicKeyString);
+          console.log('Public key validation successful');
+        } catch (e) {
+          console.error('Invalid public key from wallet:', e);
+          console.error('Public key that failed validation:', publicKeyString);
+          throw new Error('Wallet connection issue. Please try again or use a different wallet.');
+        }
+        
         setConnected(true);
-        setPublicKey(response.publicKey.toString());
+        setPublicKey(publicKeyString);
         setWalletName(selectedWallet);
         
         // Save to localStorage
         localStorage.setItem('walletConnected', 'true');
         localStorage.setItem('walletName', selectedWallet);
-        localStorage.setItem('publicKey', response.publicKey.toString());
+        localStorage.setItem('publicKey', publicKeyString);
       }
     } catch (error) {
       console.error('Wallet connection failed:', error);
@@ -95,11 +116,23 @@ export function WalletProvider({ children }: WalletProviderProps) {
     const savedPublicKey = localStorage.getItem('publicKey');
     
     if (savedConnected === 'true' && savedWalletName && savedPublicKey) {
-      const provider = getWalletProvider(savedWalletName);
-      if (provider) {
-        setConnected(true);
-        setWalletName(savedWalletName);
-        setPublicKey(savedPublicKey);
+      // Validate saved public key before auto-connecting
+      try {
+        import('@solana/web3.js').then(({ PublicKey }) => {
+          new PublicKey(savedPublicKey);
+          const provider = getWalletProvider(savedWalletName);
+          if (provider) {
+            setConnected(true);
+            setWalletName(savedWalletName);
+            setPublicKey(savedPublicKey);
+          }
+        });
+      } catch (e) {
+        // Clear invalid saved data
+        localStorage.removeItem('walletConnected');
+        localStorage.removeItem('walletName');
+        localStorage.removeItem('publicKey');
+        console.warn('Cleared invalid saved wallet data');
       }
     }
   }, []);

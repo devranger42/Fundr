@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WalletProvider } from "@/lib/wallet-provider";
+import { WalletProvider as HookWalletProvider } from "@/hooks/use-wallet";
 import { AuthProvider } from "@/hooks/use-auth";
 import { DebugPanel } from "@/components/debug-panel";
 import NotFound from "@/pages/not-found";
@@ -48,13 +49,15 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WalletProvider>
-        <AuthProvider>
-          <TooltipProvider>
-            <Router />
-            <DebugPanel />
-            <Toaster />
-          </TooltipProvider>
-        </AuthProvider>
+        <HookWalletProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Router />
+              <DebugPanel />
+              <Toaster />
+            </TooltipProvider>
+          </AuthProvider>
+        </HookWalletProvider>
       </WalletProvider>
     </QueryClientProvider>
   );

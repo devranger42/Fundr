@@ -37,9 +37,9 @@ class MockWalletAdapter implements WalletAdapter {
         const walletData = JSON.parse(savedWallet);
         this._publicKey = new PublicKey(walletData.publicKey);
       } else {
-        // Generate a new test wallet
+        // Generate a new test wallet with valid base58 address
         const testWallet = {
-          publicKey: 'devnetTestWallet1111111111111111111111111',
+          publicKey: '11111111111111111111111111111111',
           balance: 2.0,
           network: 'devnet'
         };
@@ -47,8 +47,8 @@ class MockWalletAdapter implements WalletAdapter {
         this._publicKey = new PublicKey(testWallet.publicKey);
       }
     } catch {
-      // Fallback to a test public key
-      this._publicKey = new PublicKey('devnetTestWallet1111111111111111111111111');
+      // Fallback to a valid test public key
+      this._publicKey = new PublicKey('11111111111111111111111111111111');
     }
     
     this._connected = true;
