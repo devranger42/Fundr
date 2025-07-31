@@ -22,9 +22,9 @@ export default function Home() {
             <FundrLogo size="lg" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            <span className="text-white drop-shadow-lg">Prove You're the Best</span>
+            <span className="text-white drop-shadow-lg">Prove You're the</span>
             <br />
-            <span className="text-pump drop-shadow-lg">Trader On-Chain</span>
+            <span className="text-pump drop-shadow-lg">Best Trader On-Chain</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-4">
             Start your fund. Grow your following. Rise to the top of the leaderboard. Profit.
