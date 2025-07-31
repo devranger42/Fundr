@@ -22,10 +22,14 @@ export default function Home() {
             <FundrLogo size="lg" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Start your fund. Grow your following.{" "}
-            <span className="text-pump drop-shadow-lg">Rise to the top</span> of the leaderboard. Profit.
+            <span className="text-white drop-shadow-lg">Prove You're the Best</span>
+            <br />
+            <span className="text-pump drop-shadow-lg">Trader On-Chain</span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-4">
+            Start your fund. Grow your following. Rise to the top of the leaderboard. Profit.
+          </p>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
             It's not copy-trading — it's <span className="text-bonk font-semibold">co-trading</span>.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -34,7 +38,7 @@ export default function Home() {
                 Create a Fund
               </Button>
             </Link>
-            <Link href="/leaderboard">
+            <Link href="/">
               <Button variant="outline" className="border-pump text-pump hover:bg-pump hover:text-black px-8 py-3 text-lg font-semibold">
                 Explore Funds
               </Button>
@@ -81,23 +85,32 @@ export default function Home() {
                 <span className="text-white font-bold text-2xl">1</span>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Create a Fund</h3>
-              <p className="text-gray-600">Pick your strategy. Set your performance fee. You're live.</p>
+              <p className="text-gray-600 mb-4">Pick your fee. Choose your style.</p>
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold">Manual Mode</span> – Deposits arrive as SOL. You trade however you want.<br />
+                <span className="font-semibold">Auto Mode</span> – Deposits mirror your fund's current portfolio instantly.
+              </p>
             </div>
             
             <div className="text-center">
               <div className="w-16 h-16 bg-pump rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-black font-bold text-2xl">2</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Trade With Your Fund</h3>
-              <p className="text-gray-600">As a fund manager, you actively manage a live portfolio. Investor deposits go into your fund, and you decide how to trade them.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Manage the Portfolio</h3>
+              <p className="text-gray-600 mb-2">You control the strategy.</p>
+              <p className="text-sm text-gray-600">
+                Backers' deposits are pooled — you decide the allocations, from memes to majors.<br />
+                <span className="font-semibold">You can trade. You can't withdraw.</span>
+              </p>
             </div>
             
             <div className="text-center">
               <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-white font-bold text-2xl">3</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Earn When You Perform</h3>
-              <p className="text-gray-600">You only get paid when your investors profit. Fund managers earn performance fees only on profitable withdrawals.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Withdrawals Are Proportional</h3>
+              <p className="text-gray-600 mb-2">Users exit any time. They receive their share of the fund's current mix.</p>
+              <p className="text-sm text-gray-600 font-semibold">No delays. No lockups. No games.</p>
             </div>
           </div>
         </div>
@@ -110,9 +123,10 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Not Copy-Trading. Co-Trading.</h2>
             <div className="max-w-4xl mx-auto">
               <p className="text-xl text-gray-700 leading-relaxed">
-                This isn't wallet mirroring. It's pooled, on-chain strategy.<br />
-                Backers join your trades directly — and you earn your cut when they profit.<br />
-                <span className="font-semibold">They aren't exit liquidity — they're your liquidity.</span>
+                This isn't wallet mirroring. It's on-chain pooled strategy.<br />
+                Your backers join your trades directly.<br />
+                You earn your cut only when they profit.<br />
+                <span className="font-semibold">They're not exit liquidity — they're your liquidity.</span>
               </p>
             </div>
           </div>
@@ -149,11 +163,12 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Leaderboard-Driven</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">The Leaderboard Never Lies</h2>
             <div className="max-w-3xl mx-auto mb-8">
               <p className="text-xl text-gray-700 leading-relaxed">
-                Every fund is ranked. Top-performing managers gain visibility, backers, and bragging rights.<br />
-                <span className="font-semibold text-bonk">Prove you're the best trader — on-chain</span>
+                Every fund is ranked by performance.<br />
+                Returns are public. Profits are provable.<br />
+                <span className="font-semibold text-bonk">Earn trust. Grow your following. Rise to the top.</span>
               </p>
             </div>
             <Link href="/leaderboard">
