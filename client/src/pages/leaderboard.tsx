@@ -156,8 +156,8 @@ export default function Leaderboard() {
             ) : (
               <div className="text-center py-20">
                 <TrendingUp className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">No funds to rank yet</h3>
-                <p className="text-gray-300 mb-6">Create a fund to start building your track record</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No funds to rank yet</h3>
+                <p className="text-gray-600 mb-6">Create a fund to start building your track record</p>
                 <Link href="/create-fund">
                   <Button className="bg-bonk hover:bg-bonk-hover">
                     Create First Fund

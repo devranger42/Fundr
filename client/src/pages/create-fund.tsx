@@ -166,7 +166,7 @@ export default function CreateFund() {
                         className="w-full"
                       />
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-600">
                       Fee taken only when investors make profits (0-20%)
                     </p>
                   </div>
@@ -192,7 +192,7 @@ export default function CreateFund() {
                         <Label htmlFor="manual" className="cursor-pointer">
                           <div>
                             <div className="font-medium">Manual Allocation</div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-600">
                               Deposits accumulate as SOL for discretionary trading
                             </div>
                           </div>
@@ -203,7 +203,7 @@ export default function CreateFund() {
                         <Label htmlFor="auto" className="cursor-pointer">
                           <div>
                             <div className="font-medium">Auto Allocation</div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-600">
                               Deposits automatically buy tokens per current ratios
                             </div>
                           </div>
@@ -216,7 +216,7 @@ export default function CreateFund() {
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label htmlFor="strict-list">Jupiter Strict List</Label>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-600">
                         Restrict trading to verified tokens only (recommended)
                       </div>
                     </div>

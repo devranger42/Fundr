@@ -114,7 +114,7 @@ export default function Profile() {
               ) : (
                 <div className="text-center py-6">
                   <Wallet className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">No wallet connected</p>
+                  <p className="text-gray-600 mb-4">No wallet connected</p>
                   <Button className="bg-bonk hover:bg-bonk-hover text-white">
                     Connect Wallet
                   </Button>
@@ -141,41 +141,41 @@ export default function Profile() {
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">User ID</label>
+                    <label className="text-sm font-medium text-gray-600">User ID</label>
                     <p className="text-gray-900 font-mono text-sm">{user.id}</p>
                   </div>
                   
                   {user.displayName && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Display Name</label>
+                      <label className="text-sm font-medium text-gray-600">Display Name</label>
                       <p className="text-gray-900">{user.displayName}</p>
                     </div>
                   )}
 
                   {user.email && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Email</label>
+                      <label className="text-sm font-medium text-gray-600">Email</label>
                       <p className="text-gray-900">{user.email}</p>
                     </div>
                   )}
 
                   {user.walletAddress && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Wallet Address</label>
+                      <label className="text-sm font-medium text-gray-600">Wallet Address</label>
                       <p className="text-gray-900 font-mono text-sm">{user.walletAddress}</p>
                     </div>
                   )}
 
                   {user.twitterUsername && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Twitter</label>
+                      <label className="text-sm font-medium text-gray-600">Twitter</label>
                       <p className="text-gray-900">@{user.twitterUsername}</p>
                     </div>
                   )}
 
                   {user.createdAt && (
                     <div>
-                      <label className="text-sm font-medium text-gray-500">Member Since</label>
+                      <label className="text-sm font-medium text-gray-600">Member Since</label>
                       <p className="text-gray-900">{formatDate(user.createdAt)}</p>
                     </div>
                   )}
