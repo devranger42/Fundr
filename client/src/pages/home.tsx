@@ -22,32 +22,117 @@ export default function Home() {
             <FundrLogo size="lg" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            <span className="text-white drop-shadow-lg">On-Chain Funds</span>
+            <span className="text-white drop-shadow-lg">Prove You're the Best</span>
             <br />
-            <span className="text-pump drop-shadow-lg">You Can Join</span>
+            <span className="text-pump drop-shadow-lg">Trader On-Chain</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Discover and invest in top-performing Solana funds managed by experienced traders. 
-            Join the future of decentralized fund management.
+            Launch a fund. Grow your following. Rise to the top.<br />
+            It's not copy-trading — it's co-trading.
           </p>
-          <div className="flex flex-col sm:flex-row gap-8 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <Link href="/create-fund">
+              <Button className="bg-bonk hover:bg-bonk-hover text-white px-8 py-3 text-lg font-semibold">
+                Create a Fund
+              </Button>
+            </Link>
+            <Link href="/leaderboard">
+              <Button variant="outline" className="border-pump text-pump hover:bg-pump hover:text-black px-8 py-3 text-lg font-semibold">
+                Explore Funds
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-8 justify-center text-sm">
             <div className="text-center">
-              <div className="text-3xl font-bold text-pump">$0</div>
-              <div className="text-gray-400">Total Value Locked</div>
+              <div className="text-2xl font-bold text-pump">$0</div>
+              <div className="text-gray-400">TVL</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-bonk">{funds?.length || 0}</div>
+              <div className="text-2xl font-bold text-bonk">{funds?.length || 0}</div>
               <div className="text-gray-400">Active Funds</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-gray-400">Investors</div>
+              <div className="text-2xl font-bold text-white">0</div>
+              <div className="text-gray-400">Unique Investors</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Funds Grid */}
+      {/* How It Works */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-bonk rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-white font-bold text-2xl">1</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Create a Fund</h3>
+              <p className="text-gray-600">Deploy a smart contract. Choose your strategy. Set your fees.</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-pump rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-black font-bold text-2xl">2</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Attract Investors</h3>
+              <p className="text-gray-600">Your performance is public and on-chain. Anyone can join your trades.</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-white font-bold text-2xl">3</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Earn When You Perform</h3>
+              <p className="text-gray-600">Only profitable withdrawals trigger fees. You win when they win.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Co-Trading Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Not Copy-Trading. Co-Trading.</h2>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Forget copy-pasting wallets. Fundr lets traders and investors move together — same assets, same timing, same execution.<br />
+                <span className="font-semibold">No exit liquidity. No hidden trades.</span><br />
+                Just transparent, on-chain alignment.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Leaderboard Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">The Leaderboard Never Lies</h2>
+            <div className="max-w-3xl mx-auto mb-8">
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Every fund is ranked by real, realized performance.<br />
+                The top spot is earned — not bought, not botted.<br />
+                <span className="font-semibold text-bonk">Compete to be the best trader on Solana.</span>
+              </p>
+            </div>
+            <Link href="/leaderboard">
+              <Button className="bg-pump hover:bg-pump-hover text-black px-8 py-3 text-lg font-semibold">
+                View Leaderboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Active Funds */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -94,8 +179,8 @@ export default function Home() {
                 <FundrLogo size="lg" />
               </div>
               <p className="text-gray-400 mb-4">
-                The premier platform for on-chain fund management on Solana. 
-                Join thousands of investors and fund managers building the future of DeFi.
+                Competitive on-chain fund management on Solana. 
+                Prove your trading skills. Build your following. Rise to the top.
               </p>
               <div className="flex space-x-4">
                 <a href="https://twitter.com/fundr_protocol" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-bonk transition-colors" title="Follow us on Twitter">
@@ -119,26 +204,24 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Platform</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/" className="hover:text-white transition-colors">Browse Funds</Link></li>
                 <li><Link href="/create-fund" className="hover:text-white transition-colors">Create Fund</Link></li>
                 <li><Link href="/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link></li>
-
+                <li><Link href="/" className="hover:text-white transition-colors">Explore</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-4">Resources</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/whitepaper" className="hover:text-white transition-colors">Whitepaper</Link></li>
-                <li><a href="https://docs.fundr.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="https://help.fundr.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Help Center</a></li>
+                <li><a href="https://docs.fundr.app" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Docs</a></li>
                 <li><Link href="/terms" className="hover:text-white transition-colors">Terms & Privacy</Link></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Fundr. All rights reserved. Built on Solana.</p>
+            <p>&copy; 2025 Fundr. All rights reserved. Built on Solana.</p>
+            <p className="text-sm mt-2">Not financial advice. For entertainment purposes only.</p>
           </div>
         </div>
       </footer>
