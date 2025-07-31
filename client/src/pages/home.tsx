@@ -22,7 +22,8 @@ export default function Home() {
             <FundrLogo size="lg" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            <span className="text-white drop-shadow-lg">On-Chain Funds</span> <br className="hidden sm:block" />
+            <span className="text-white drop-shadow-lg">On-Chain Funds</span>
+            <br />
             <span className="text-pump drop-shadow-lg">You Can Join</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
