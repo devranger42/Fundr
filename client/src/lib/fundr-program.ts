@@ -7,9 +7,10 @@ import {
 } from '@solana/web3.js';
 import { connection } from './solana';
 import BN from 'bn.js';
+import './polyfills'; // Import polyfills for browser compatibility
 
 // Program ID - will be updated when deployed to devnet
-export const FUNDR_PROGRAM_ID = new PublicKey('FundrProgram11111111111111111111111111111111');
+export const FUNDR_PROGRAM_ID = new PublicKey('bRjEVMQ2ZFKj3ioMEmC7Dqg1ktaEGA4nnEedsHux9ka');
 
 // Account discriminators (first 8 bytes of account data)
 const FUND_DISCRIMINATOR = new Uint8Array([217, 230, 65, 101, 201, 162, 27, 125]);
@@ -112,9 +113,9 @@ export class FundrProgram {
       programId: this.programId,
       data: new Uint8Array([
         0, // initialize_fund instruction discriminator
-        ...new TextEncoder().encode(fundData.name),
+        ...Array.from(new TextEncoder().encode(fundData.name)),
         0, // null terminator
-        ...new TextEncoder().encode(fundData.description),
+        ...Array.from(new TextEncoder().encode(fundData.description)),
         0, // null terminator
         ...new BN(fundData.managementFee).toArray('le', 2),
         ...new BN(fundData.performanceFee).toArray('le', 2),

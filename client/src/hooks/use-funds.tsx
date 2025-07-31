@@ -61,10 +61,7 @@ export function useCreateFund() {
         targetPercentage: number;
       }[];
     }) => {
-      const response = await apiRequest('/api/funds', {
-        method: 'POST',
-        body: fundData,
-      });
+      const response = await apiRequest('POST', '/api/funds', fundData);
       
       return response;
     },
@@ -81,9 +78,8 @@ export function useDeposit() {
   
   return useMutation({
     mutationFn: async (data: { fundId: string; amount: number }) => {
-      const response = await apiRequest(`/api/funds/${data.fundId}/deposit`, {
-        method: 'POST',
-        body: { amount: Math.round(data.amount * 1e9) }, // Convert SOL to lamports
+      const response = await apiRequest('POST', `/api/funds/${data.fundId}/deposit`, { 
+        amount: Math.round(data.amount * 1e9) // Convert SOL to lamports
       });
       return response;
     },
@@ -101,9 +97,8 @@ export function useWithdraw() {
   
   return useMutation({
     mutationFn: async (data: { fundId: string; amount: number }) => {
-      const response = await apiRequest(`/api/funds/${data.fundId}/withdraw`, {
-        method: 'POST',
-        body: { amount: Math.round(data.amount * 1e9) }, // Convert SOL to lamports
+      const response = await apiRequest('POST', `/api/funds/${data.fundId}/withdraw`, { 
+        amount: Math.round(data.amount * 1e9) // Convert SOL to lamports
       });
       return response;
     },
@@ -131,10 +126,7 @@ export function useUpdateAllocations() {
         targetPercentage: number;
       }[];
     }) => {
-      const response = await apiRequest(`/api/funds/${fundId}/allocations`, {
-        method: 'PUT',
-        body: { allocations },
-      });
+      const response = await apiRequest('PUT', `/api/funds/${fundId}/allocations`, { allocations });
       
       return response;
     },

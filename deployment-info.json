@@ -1,9 +1,9 @@
 {
-  "programId": "2piYLB18NnQZXurPztppdtz9R4CuCK8vMPtqTHcog9ZS",
+  "programId": "bRjEVMQ2ZFKj3ioMEmC7Dqg1ktaEGA4nnEedsHux9ka",
   "network": "devnet-simulation",
-  "deployedAt": "2025-07-30T13:17:12.498Z",
+  "deployedAt": "2025-07-31T13:25:26.202Z",
   "accounts": {
-    "program": "2piYLB18NnQZXurPztppdtz9R4CuCK8vMPtqTHcog9ZS",
-    "upgradeAuthority": "2piYLB18NnQZXurPztppdtz9R4CuCK8vMPtqTHcog9ZS"
+    "program": "bRjEVMQ2ZFKj3ioMEmC7Dqg1ktaEGA4nnEedsHux9ka",
+    "upgradeAuthority": "bRjEVMQ2ZFKj3ioMEmC7Dqg1ktaEGA4nnEedsHux9ka"
   }
 }
