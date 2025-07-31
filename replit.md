@@ -298,6 +298,20 @@ The project structure supports both development and production environments with
 ✓ Added debugging endpoints to verify Twitter user data persistence
 ✓ Enhanced user lookup with both UUID and Twitter ID fallback mechanisms
 
+### Platform-Wide Competitive Messaging Overhaul (July 31, 2025)
+✓ Updated homepage hero with refined competitive copy: "Start your fund. Grow your following. Rise to the top of the leaderboard. Profit."
+✓ Enhanced co-trading messaging: "It's not copy-trading — it's co-trading" with emphasis on pooled strategy vs wallet mirroring
+✓ Restructured homepage sections with "What Is Fundr?" explaining non-custodial fund management
+✓ Added "Fund Types & Mechanics" section detailing Manual/Auto allocation modes and proportional withdrawals
+✓ Updated "How It Works" with precise language: "Pick your strategy. Set your performance fee. You're live."
+✓ Enhanced leaderboard section to "Leaderboard-Driven" emphasizing visibility and bragging rights
+✓ Updated all major pages (leaderboard, create fund, manager dashboard, investor dashboard) with consistent competitive messaging
+✓ Fixed wallet connection LSP errors by properly converting PublicKey objects to strings
+✓ Streamlined navigation to: Explore | Leaderboard | Manage | Docs for clear user flow
+✓ Manager dashboard now "Your Trading Arena" focused on proving skills and building following
+✓ Investor dashboard repositioned as "Your Co-Trading Journey" emphasizing shared success with top traders
+✓ All messaging now consistently emphasizes proving skills, transparent performance, and earning through competition rather than traditional fund management language
+
 ## Core Features Implementation Plan
 
 ### Immediate Frontend (Current)

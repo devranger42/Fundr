@@ -22,13 +22,11 @@ export default function Home() {
             <FundrLogo size="lg" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            <span className="text-white drop-shadow-lg">Prove You're the Best</span>
-            <br />
-            <span className="text-pump drop-shadow-lg">Trader On-Chain</span>
+            Start your fund. Grow your following.{" "}
+            <span className="text-pump drop-shadow-lg">Rise to the top</span> of the leaderboard. Profit.
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Launch a fund. Grow your following. Rise to the top.<br />
-            It's not copy-trading — it's co-trading.
+            It's not copy-trading — it's <span className="text-bonk font-semibold">co-trading</span>.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Link href="/create-fund">
@@ -60,11 +58,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* What Is Fundr */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">What Is Fundr?</h2>
+            <div className="max-w-4xl mx-auto mb-16">
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Fundr is a decentralized platform where anyone can create, manage, and invest in non-custodial on-chain funds.
+              </p>
+              <p className="text-lg text-gray-600 mt-4">
+                As a manager, you control the portfolio. Investors' deposits are pooled, and you decide how to allocate — from meme coins to majors.<br />
+                <span className="font-semibold">You can't withdraw investor funds — you can only trade.</span>
+              </p>
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">How It Works</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -73,15 +81,15 @@ export default function Home() {
                 <span className="text-white font-bold text-2xl">1</span>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Create a Fund</h3>
-              <p className="text-gray-600">Deploy a smart contract. Choose your strategy. Set your fees.</p>
+              <p className="text-gray-600">Pick your strategy. Set your performance fee. You're live.</p>
             </div>
             
             <div className="text-center">
               <div className="w-16 h-16 bg-pump rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-black font-bold text-2xl">2</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Attract Investors</h3>
-              <p className="text-gray-600">Your performance is public and on-chain. Anyone can join your trades.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Trade With Your Fund</h3>
+              <p className="text-gray-600">As a fund manager, you actively manage a live portfolio. Investor deposits go into your fund, and you decide how to trade them.</p>
             </div>
             
             <div className="text-center">
@@ -89,7 +97,7 @@ export default function Home() {
                 <span className="text-white font-bold text-2xl">3</span>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">Earn When You Perform</h3>
-              <p className="text-gray-600">Only profitable withdrawals trigger fees. You win when they win.</p>
+              <p className="text-gray-600">You only get paid when your investors profit. Fund managers earn performance fees only on profitable withdrawals.</p>
             </div>
           </div>
         </div>
@@ -102,10 +110,36 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Not Copy-Trading. Co-Trading.</h2>
             <div className="max-w-4xl mx-auto">
               <p className="text-xl text-gray-700 leading-relaxed">
-                Forget copy-pasting wallets. Fundr lets traders and investors move together — same assets, same timing, same execution.<br />
-                <span className="font-semibold">No exit liquidity. No hidden trades.</span><br />
-                Just transparent, on-chain alignment.
+                This isn't wallet mirroring. It's pooled, on-chain strategy.<br />
+                Backers join your trades directly — and you earn your cut when they profit.<br />
+                <span className="font-semibold">They aren't exit liquidity — they're your liquidity.</span>
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fund Types & Mechanics */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Fund Types & Mechanics</h2>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Non-Custodial</h3>
+                  <p className="text-gray-600">Funds are trustless and on-chain. You don't touch user wallets.</p>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Two Allocation Modes</h3>
+                  <p className="text-gray-600 mb-2"><span className="font-semibold">Manual:</span> New deposits accrue in SOL. You rebalance with Jupiter.</p>
+                  <p className="text-gray-600"><span className="font-semibold">Auto:</span> All deposits are instantly split across current fund allocations.</p>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Proportional Withdrawals</h3>
+                  <p className="text-gray-600">Users withdraw a proportional basket of assets based on the fund's live token weights.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -115,12 +149,11 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">The Leaderboard Never Lies</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Leaderboard-Driven</h2>
             <div className="max-w-3xl mx-auto mb-8">
               <p className="text-xl text-gray-700 leading-relaxed">
-                Every fund is ranked by real, realized performance.<br />
-                The top spot is earned — not bought, not botted.<br />
-                <span className="font-semibold text-bonk">Compete to be the best trader on Solana.</span>
+                Every fund is ranked. Top-performing managers gain visibility, backers, and bragging rights.<br />
+                <span className="font-semibold text-bonk">Prove you're the best trader — on-chain</span>
               </p>
             </div>
             <Link href="/leaderboard">
