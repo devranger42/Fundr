@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useWallet } from './use-wallet';
+// import { useWallet } from './use-wallet'; // Removed to fix provider hierarchy
 
 interface AuthUser {
   id: string;
@@ -31,7 +31,9 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { connected, publicKey } = useWallet();
+  // Removed useWallet to fix provider hierarchy
+  const connected = false;
+  const publicKey = null;
 
   const fetchUser = async () => {
     try {

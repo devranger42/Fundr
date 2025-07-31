@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useWallet } from '@/hooks/use-wallet';
+import { useWallet } from '@/lib/wallet-provider';
 import { useToast } from '@/hooks/use-toast';
 
 // Declare global wallet objects for TypeScript

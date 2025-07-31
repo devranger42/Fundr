@@ -4,7 +4,7 @@ import { PlusCircle, LogOut } from "lucide-react";
 import FundrLogo from "./fundr-logo";
 import WalletModal from "./wallet-modal";
 import { TwitterAuth } from "./twitter-auth";
-import { useWallet } from "@/hooks/use-wallet";
+import { useWallet } from "@/lib/wallet-provider";
 import { useAuth } from "@/hooks/use-auth";
 import { useState } from "react";
 

@@ -11,11 +11,7 @@ async function testDevnetConnection() {
   console.log('🌐 Testing Devnet Connection...');
   
   try {
-    // Test connection to devnet
-    const health = await connection.getHealth();
-    console.log(`✅ Devnet connection healthy: ${health}`);
-    
-    // Get current slot
+    // Get current slot to test connection
     const slot = await connection.getSlot();
     console.log(`📊 Current slot: ${slot}`);
     

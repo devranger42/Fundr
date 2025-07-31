@@ -1,544 +1,303 @@
-import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { AnchorProvider, Program, web3, BN, Idl } from '@coral-xyz/anchor';
-import { Buffer } from 'buffer';
+import { 
+  Connection, 
+  PublicKey, 
+  Transaction, 
+  SystemProgram,
+  LAMPORTS_PER_SOL 
+} from '@solana/web3.js';
+import { connection } from './solana';
+import BN from 'bn.js';
 
-// Fundr program ID (placeholder - will be updated after deployment)
-export const FUNDR_PROGRAM_ID = new PublicKey('7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe');
+// Program ID - will be updated when deployed to devnet
+export const FUNDR_PROGRAM_ID = new PublicKey('FundrProgram11111111111111111111111111111111');
 
-// Program IDL interface (generated from Anchor)
-export interface FundrProgram {
-  initializeFund: (
-    name: string,
-    description: string,
-    managementFee: number,
-    performanceFee: number,
-    minDeposit: BN
-  ) => Promise<string>;
-  
-  deposit: (
-    fundPubkey: PublicKey,
-    amount: BN
-  ) => Promise<string>;
-  
-  withdraw: (
-    fundPubkey: PublicKey,
-    shares: BN
-  ) => Promise<string>;
-  
-  rebalance: (
-    fundPubkey: PublicKey,
-    tokenInAmount: BN,
-    tokenOutMint: PublicKey,
-    minimumAmountOut: BN
-  ) => Promise<string>;
-  
-  collectFees: (
-    fundPubkey: PublicKey
-  ) => Promise<string>;
+// Account discriminators (first 8 bytes of account data)
+const FUND_DISCRIMINATOR = new Uint8Array([217, 230, 65, 101, 201, 162, 27, 125]);
+const USER_STAKE_DISCRIMINATOR = new Uint8Array([206, 132, 208, 58, 248, 24, 235, 89]);
 
-  reclaimRent: (
-    fundPubkey: PublicKey,
-    closedAccountPubkey: PublicKey
-  ) => Promise<string>;
-
-  closeTokenAccount: (
-    fundPubkey: PublicKey,
-    tokenAccountPubkey: PublicKey
-  ) => Promise<string>;
+export enum FundMode {
+  Manual = 0,
+  Auto = 1,
 }
 
-export class FundrService {
+export interface FundData {
+  authority: PublicKey;
+  name: string;
+  description: string;
+  managementFee: number;
+  performanceFee: number;
+  minDeposit: BN;
+  fundMode: FundMode;
+  totalShares: BN;
+  totalAssets: BN;
+  investorCount: number;
+  bump: number;
+  createdAt: BN;
+  lastFeeCollection: BN;
+  highWaterMark: BN;
+}
+
+export interface UserStakeData {
+  user: PublicKey;
+  fund: PublicKey;
+  shares: BN;
+  totalDeposited: BN;
+  lastDeposit: BN;
+  lastWithdrawal: BN;
+}
+
+export class FundrProgram {
   private connection: Connection;
-  private provider?: AnchorProvider;
-  private program?: Program;
+  private programId: PublicKey;
 
-  constructor(connection: Connection) {
+  constructor() {
     this.connection = connection;
+    this.programId = FUNDR_PROGRAM_ID;
   }
 
-  async initialize(wallet: any) {
+  // Generate PDA for fund account
+  getFundPDA(manager: PublicKey): [PublicKey, number] {
+    return FundrProgram.getFundPDA(manager);
+  }
+  
+  static getFundPDA(manager: PublicKey): [PublicKey, number] {
+    const encoder = new TextEncoder();
+    return PublicKey.findProgramAddressSync(
+      [encoder.encode('fund'), manager.toBuffer()],
+      FUNDR_PROGRAM_ID
+    );
+  }
+
+  // Generate PDA for fund vault
+  static getFundVaultPDA(fund: PublicKey): [PublicKey, number] {
+    const encoder = new TextEncoder();
+    return PublicKey.findProgramAddressSync(
+      [encoder.encode('vault'), fund.toBuffer()],
+      FUNDR_PROGRAM_ID
+    );
+  }
+
+  // Generate PDA for user stake
+  static getUserStakePDA(fund: PublicKey, user: PublicKey): [PublicKey, number] {
+    const encoder = new TextEncoder();
+    return PublicKey.findProgramAddressSync(
+      [encoder.encode('stake'), fund.toBuffer(), user.toBuffer()],
+      FUNDR_PROGRAM_ID
+    );
+  }
+
+  // Initialize a new fund
+  async initializeFund(
+    manager: PublicKey,
+    fundData: {
+      name: string;
+      description: string;
+      managementFee: number;
+      performanceFee: number;
+      minDeposit: number;
+      fundMode: FundMode;
+    }
+  ): Promise<Transaction> {
+    const [fund] = FundrProgram.getFundPDA(manager);
+    const [fundVault] = FundrProgram.getFundVaultPDA(fund);
+
+    // Create instruction data
+    const instruction = new Transaction().add({
+      keys: [
+        { pubkey: fund, isSigner: false, isWritable: true },
+        { pubkey: fundVault, isSigner: false, isWritable: true },
+        { pubkey: manager, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ],
+      programId: this.programId,
+      data: new Uint8Array([
+        0, // initialize_fund instruction discriminator
+        ...new TextEncoder().encode(fundData.name),
+        0, // null terminator
+        ...new TextEncoder().encode(fundData.description),
+        0, // null terminator
+        ...new BN(fundData.managementFee).toArray('le', 2),
+        ...new BN(fundData.performanceFee).toArray('le', 2),
+        ...new BN(fundData.minDeposit * LAMPORTS_PER_SOL).toArray('le', 8),
+        fundData.fundMode,
+      ])
+    });
+
+    return instruction;
+  }
+
+  // Deposit SOL to fund
+  async deposit(
+    depositor: PublicKey,
+    fund: PublicKey,
+    amount: number
+  ): Promise<Transaction> {
+    const [userStake] = FundrProgram.getUserStakePDA(fund, depositor);
+    const [fundVault] = FundrProgram.getFundVaultPDA(fund);
+
+    const instruction = new Transaction().add({
+      keys: [
+        { pubkey: fund, isSigner: false, isWritable: true },
+        { pubkey: userStake, isSigner: false, isWritable: true },
+        { pubkey: fundVault, isSigner: false, isWritable: true },
+        { pubkey: depositor, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ],
+      programId: this.programId,
+      data: new Uint8Array([
+        1, // deposit instruction discriminator
+        ...new BN(amount * LAMPORTS_PER_SOL).toArray('le', 8),
+      ])
+    });
+
+    return instruction;
+  }
+
+  // Withdraw from fund
+  async withdraw(
+    withdrawer: PublicKey,
+    fund: PublicKey,
+    sharesToRedeem: BN
+  ): Promise<Transaction> {
+    const [userStake] = FundrProgram.getUserStakePDA(fund, withdrawer);
+    const [fundVault] = FundrProgram.getFundVaultPDA(fund);
+
+    const instruction = new Transaction().add({
+      keys: [
+        { pubkey: fund, isSigner: false, isWritable: true },
+        { pubkey: userStake, isSigner: false, isWritable: true },
+        { pubkey: fundVault, isSigner: false, isWritable: true },
+        { pubkey: withdrawer, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ],
+      programId: this.programId,
+      data: new Uint8Array([
+        2, // withdraw instruction discriminator
+        ...sharesToRedeem.toArray('le', 8),
+      ])
+    });
+
+    return instruction;
+  }
+
+  // Get fund account data
+  async getFundData(fund: PublicKey): Promise<FundData | null> {
     try {
-      this.provider = new AnchorProvider(this.connection, wallet, {
-        commitment: 'confirmed',
-        preflightCommitment: 'confirmed',
-      });
+      const accountInfo = await this.connection.getAccountInfo(fund);
+      if (!accountInfo || !accountInfo.data) {
+        return null;
+      }
 
-      // Load program IDL (would be generated by Anchor)
-      // For now, we'll create a minimal interface
-      const idl = {
-        version: "0.1.0",
-        name: "fundr",
-        instructions: [
-          {
-            name: "initializeFund",
-            accounts: [
-              { name: "fund", isMut: true, isSigner: false },
-              { name: "fundVault", isMut: true, isSigner: false },
-              { name: "manager", isMut: true, isSigner: true },
-              { name: "systemProgram", isMut: false, isSigner: false }
-            ],
-            args: [
-              { name: "name", type: "string" },
-              { name: "description", type: "string" },
-              { name: "managementFee", type: "u16" },
-              { name: "performanceFee", type: "u16" },
-              { name: "minDeposit", type: "u64" },
-              { name: "fundMode", type: "u8" }
-            ]
-          }
-        ],
-        accounts: [
-          {
-            name: "Fund",
-            type: {
-              kind: "struct",
-              fields: [
-                { name: "authority", type: "publicKey" },
-                { name: "name", type: "string" },
-                { name: "description", type: "string" },
-                { name: "managementFee", type: "u16" },
-                { name: "performanceFee", type: "u16" },
-                { name: "minDeposit", type: "u64" },
-                { name: "fundMode", type: "u8" },
-                { name: "totalShares", type: "u64" },
-                { name: "totalAssets", type: "u64" },
-                { name: "investorCount", type: "u32" },
-                { name: "bump", type: "u8" },
-                { name: "createdAt", type: "i64" },
-                { name: "lastFeeCollection", type: "i64" },
-                { name: "highWaterMark", type: "u64" }
-              ]
-            }
-          }
-        ]
-      };
-
-      // this.program = new Program(idl as Idl, FUNDR_PROGRAM_ID, this.provider);
+      // Parse account data (simplified - in real implementation would use Anchor's borsh)
+      const data = accountInfo.data;
       
-      console.log('Fundr service initialized successfully');
-      console.log('Program ID:', FUNDR_PROGRAM_ID.toString());
-      console.log('Wallet connected:', wallet.publicKey.toString());
-    } catch (error) {
-      console.error('Failed to initialize Fundr service:', error);
-      throw error;
-    }
-  }
+      // Verify discriminator - simplified check for browser compatibility
+      const dataArray = new Uint8Array(data.slice(0, 8));
+      let discriminatorMatch = true;
+      for (let i = 0; i < 8; i++) {
+        if (dataArray[i] !== FUND_DISCRIMINATOR[i]) {
+          discriminatorMatch = false;
+          break;
+        }
+      }
+      if (!discriminatorMatch) {
+        return null;
+      }
 
-  // Generate fund PDA
-  static findFundAddress(manager: PublicKey | string): [PublicKey, number] {
-    const buffer = globalThis.Buffer || Buffer;
-    
-    // Convert string to PublicKey if needed
-    let managerPubkey: PublicKey;
-    if (typeof manager === 'string') {
-      managerPubkey = new PublicKey(manager);
-    } else {
-      managerPubkey = manager;
-    }
-    
-    return PublicKey.findProgramAddressSync(
-      [buffer.from('fund'), managerPubkey.toBytes()],
-      FUNDR_PROGRAM_ID
-    );
-  }
-
-  // Generate fund vault PDA
-  static findFundVaultAddress(fund: PublicKey | string): [PublicKey, number] {
-    const buffer = globalThis.Buffer || Buffer;
-    
-    // Convert string to PublicKey if needed
-    let fundPubkey: PublicKey;
-    if (typeof fund === 'string') {
-      fundPubkey = new PublicKey(fund);
-    } else {
-      fundPubkey = fund;
-    }
-    
-    return PublicKey.findProgramAddressSync(
-      [buffer.from('vault'), fundPubkey.toBytes()],
-      FUNDR_PROGRAM_ID
-    );
-  }
-
-  // Generate user stake PDA
-  static findUserStakeAddress(fund: PublicKey | string, user: PublicKey | string): [PublicKey, number] {
-    const buffer = globalThis.Buffer || Buffer;
-    
-    // Convert strings to PublicKey if needed
-    let fundPubkey: PublicKey;
-    let userPubkey: PublicKey;
-    
-    if (typeof fund === 'string') {
-      fundPubkey = new PublicKey(fund);
-    } else {
-      fundPubkey = fund;
-    }
-    
-    if (typeof user === 'string') {
-      userPubkey = new PublicKey(user);
-    } else {
-      userPubkey = user;
-    }
-    
-    return PublicKey.findProgramAddressSync(
-      [buffer.from('stake'), fundPubkey.toBytes(), userPubkey.toBytes()],
-      FUNDR_PROGRAM_ID
-    );
-  }
-
-  async createFund(
-    name: string,
-    description: string,
-    managementFee: number, // in basis points
-    performanceFee: number, // in basis points
-    minDeposit: number, // in SOL
-    fundMode: string = "manual" // manual or auto
-  ): Promise<{ signature: string; fundAddress: PublicKey }> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
-    }
-
-    const manager = this.provider.wallet.publicKey;
-    console.log('Manager wallet publicKey:', manager, typeof manager);
-    const [fundPDA, fundBump] = FundrService.findFundAddress(manager);
-    const [vaultPDA, vaultBump] = FundrService.findFundVaultAddress(fundPDA);
-    
-    const minDepositLamports = new BN(minDeposit * LAMPORTS_PER_SOL);
-
-    try {
-      // For development, simulate the fund creation process
-      console.log('Creating fund with parameters:', {
-        name,
-        description,
-        managementFee,
-        performanceFee,
-        minDeposit,
-        fundMode,
-        fundPDA: fundPDA.toString(),
-        vaultPDA: vaultPDA.toString()
-      });
-
-      // Simulate transaction success
-      const mockSignature = `fundr_create_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // In a real deployment, this would call the actual program instruction:
-      /*
-      const instruction = await this.program.methods
-        .initializeFund(name, description, managementFee, performanceFee, minDepositLamports)
-        .accounts({
-          fund: fundPDA,
-          fundVault: vaultPDA,
-          manager: manager,
-          systemProgram: SystemProgram.programId,
-        })
-        .instruction();
-
-      const transaction = new Transaction().add(instruction);
-      const signature = await this.provider.sendAndConfirm(transaction);
-      */
-
-      console.log(`Fund creation simulated successfully: ${mockSignature}`);
-
+      // This is a simplified parser - real implementation would use proper borsh deserialization
       return {
-        signature: mockSignature,
-        fundAddress: fundPDA
+        authority: new PublicKey(data.slice(8, 40)),
+        name: 'Fund Name', // Would be parsed from data
+        description: 'Fund Description',
+        managementFee: 100, // 1%
+        performanceFee: 2000, // 20%
+        minDeposit: new BN(1000000), // 0.001 SOL minimum
+        fundMode: FundMode.Manual,
+        totalShares: new BN(0),
+        totalAssets: new BN(0),
+        investorCount: 0,
+        bump: data[data.length - 1],
+        createdAt: new BN(0),
+        lastFeeCollection: new BN(0),
+        highWaterMark: new BN(1000000),
       };
     } catch (error) {
-      console.error('Fund creation error:', error);
-      throw new Error(`Failed to create fund: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error fetching fund data:', error);
+      return null;
     }
   }
 
-  async deposit(fundAddress: PublicKey, amount: number): Promise<string> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
-    }
+  // Get user stake data
+  async getUserStakeData(fund: PublicKey, user: PublicKey): Promise<UserStakeData | null> {
+    try {
+      const [userStake] = FundrProgram.getUserStakePDA(fund, user);
+      const accountInfo = await this.connection.getAccountInfo(userStake);
+      
+      if (!accountInfo || !accountInfo.data) {
+        return null;
+      }
 
-    const user = this.provider.wallet.publicKey;
-    const [userStakePDA] = FundrService.findUserStakeAddress(fundAddress, user);
-    const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
+      const data = accountInfo.data;
+      
+      // Verify discriminator - simplified check for browser compatibility  
+      const dataArray = new Uint8Array(data.slice(0, 8));
+      let discriminatorMatch = true;
+      for (let i = 0; i < 8; i++) {
+        if (dataArray[i] !== USER_STAKE_DISCRIMINATOR[i]) {
+          discriminatorMatch = false;
+          break;
+        }
+      }
+      if (!discriminatorMatch) {
+        return null;
+      }
+
+      // Simplified parser
+      return {
+        user: new PublicKey(data.slice(8, 40)),
+        fund: new PublicKey(data.slice(40, 72)),
+        shares: new BN(0),
+        totalDeposited: new BN(0),
+        lastDeposit: new BN(0),
+        lastWithdrawal: new BN(0),
+      };
+    } catch (error) {
+      console.error('Error fetching user stake data:', error);
+      return null;
+    }
+  }
+
+  // Calculate expected shares for deposit
+  calculateShares(depositAmount: number, fundData: FundData): BN {
+    const depositLamports = new BN(depositAmount * LAMPORTS_PER_SOL);
     
-    const amountLamports = new BN(amount * LAMPORTS_PER_SOL);
-
-    try {
-      console.log('Depositing to fund:', {
-        fundAddress: fundAddress.toString(),
-        amount,
-        userStakePDA: userStakePDA.toString(),
-        vaultPDA: vaultPDA.toString()
-      });
-
-      // Simulate successful deposit
-      const mockSignature = `fundr_deposit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // In a real deployment, this would call the actual program instruction:
-      /*
-      const instruction = await this.program.methods
-        .deposit(amountLamports)
-        .accounts({
-          fund: fundAddress,
-          userStake: userStakePDA,
-          fundVault: vaultPDA,
-          depositor: user,
-          systemProgram: SystemProgram.programId,
-        })
-        .instruction();
-
-      const transaction = new Transaction().add(instruction);
-      const signature = await this.provider.sendAndConfirm(transaction);
-      */
-
-      console.log(`Deposit simulated successfully: ${mockSignature}`);
-      return mockSignature;
-    } catch (error) {
-      console.error('Deposit error:', error);
-      throw new Error(`Failed to deposit: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    if (fundData.totalShares.eq(new BN(0))) {
+      // First deposit: 1 SOL = 1M shares
+      return depositLamports.mul(new BN(1_000_000));
+    } else {
+      // Subsequent deposits: shares = (deposit * total_shares) / total_assets
+      return depositLamports.mul(fundData.totalShares).div(fundData.totalAssets);
     }
   }
 
-  async withdraw(fundAddress: PublicKey, shares: number | BN): Promise<string> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
+  // Calculate withdrawal amount for shares
+  calculateWithdrawal(sharesToRedeem: BN, fundData: FundData): BN {
+    if (fundData.totalShares.eq(new BN(0))) {
+      return new BN(0);
     }
-
-    const user = this.provider.wallet.publicKey;
-    const [userStakePDA] = FundrService.findUserStakeAddress(fundAddress, user);
-    const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
     
-    const sharesBN = typeof shares === 'number' ? new BN(shares) : shares;
+    return sharesToRedeem.mul(fundData.totalAssets).div(fundData.totalShares);
+  }
 
+  // Check if program is deployed
+  async isProgramDeployed(): Promise<boolean> {
     try {
-      console.log('Withdrawing from fund:', {
-        fundAddress: fundAddress.toString(),
-        shares: sharesBN.toString(),
-        userStakePDA: userStakePDA.toString(),
-        vaultPDA: vaultPDA.toString()
-      });
-
-      // Simulate successful withdrawal
-      const mockSignature = `fundr_withdraw_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // In a real deployment, this would call the actual program instruction:
-      /*
-      const instruction = await this.program.methods
-        .withdraw(sharesBN)
-        .accounts({
-          fund: fundAddress,
-          userStake: userStakePDA,
-          fundVault: vaultPDA,
-          withdrawer: user,
-          systemProgram: SystemProgram.programId,
-        })
-        .instruction();
-
-      const transaction = new Transaction().add(instruction);
-      const signature = await this.provider.sendAndConfirm(transaction);
-      */
-
-      console.log(`Withdrawal simulated successfully: ${mockSignature}`);
-      return mockSignature;
-    } catch (error) {
-      console.error('Withdrawal error:', error);
-      throw new Error(`Failed to withdraw: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-
-  async getFundData(fundAddress: PublicKey) {
-    if (!this.program) {
-      throw new Error('Program not initialized');
-    }
-
-    // This would fetch actual fund data from the blockchain
-    // For now, return mock data structure
-    return {
-      authority: new PublicKey('11111111111111111111111111111111'),
-      name: 'Mock Fund',
-      description: 'Mock fund data',
-      managementFee: 100, // 1%
-      performanceFee: 2000, // 20%
-      minDeposit: new BN(1 * LAMPORTS_PER_SOL),
-      totalShares: new BN(0),
-      totalAssets: new BN(0),
-      investorCount: 0,
-      createdAt: new BN(Date.now() / 1000),
-      lastFeeCollection: new BN(Date.now() / 1000),
-      highWaterMark: new BN(1000000)
-    };
-  }
-
-  async getUserStake(fundAddress: PublicKey, userAddress: PublicKey) {
-    const [userStakePDA] = FundrService.findUserStakeAddress(fundAddress, userAddress);
-    
-    // This would fetch actual stake data
-    return {
-      user: userAddress,
-      fund: fundAddress,
-      shares: new BN(0),
-      totalDeposited: new BN(0),
-      lastDeposit: new BN(0),
-      lastWithdrawal: new BN(0)
-    };
-  }
-
-  async updateFundMode(fundAddress: PublicKey, newMode: 'manual' | 'auto'): Promise<string> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
-    }
-
-    const manager = this.provider.wallet.publicKey;
-
-    try {
-      console.log('Updating fund mode:', {
-        fundAddress: fundAddress.toString(),
-        newMode,
-        manager: manager.toString()
-      });
-
-      // Simulate successful mode update
-      const mockSignature = `fundr_update_mode_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // In a real deployment, this would call the actual program instruction:
-      /*
-      const instruction = await this.program.methods
-        .updateFundMode({ [newMode]: {} })
-        .accounts({
-          fund: fundAddress,
-          manager: manager,
-        })
-        .instruction();
-
-      const transaction = new Transaction().add(instruction);
-      const signature = await this.provider.sendAndConfirm(transaction);
-      */
-
-      console.log(`Fund mode update simulated successfully: ${mockSignature}`);
-      return mockSignature;
-    } catch (error) {
-      console.error('Fund mode update error:', error);
-      throw new Error(`Failed to update fund mode: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-
-  // Jupiter integration for rebalancing
-  async rebalance(
-    fundAddress: PublicKey,
-    tokenInMint: PublicKey,
-    tokenOutMint: PublicKey,
-    amount: BN,
-    slippageBps: number = 50
-  ): Promise<string> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
-    }
-
-    // This would integrate with Jupiter for actual swaps
-    // For now, return a mock transaction signature
-    return 'mock_rebalance_signature';
-  }
-
-  async reclaimRent(fundAddress: PublicKey, closedAccountAddress: PublicKey): Promise<string> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
-    }
-
-    const manager = this.provider.wallet.publicKey;
-    const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
-
-    try {
-      console.log('Reclaiming rent from closed account:', {
-        fundAddress: fundAddress.toString(),
-        closedAccount: closedAccountAddress.toString(),
-        manager: manager.toString(),
-        vaultPDA: vaultPDA.toString()
-      });
-
-      // Simulate successful rent reclamation
-      const mockSignature = `fundr_reclaim_rent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // In a real deployment, this would call the actual program instruction:
-      /*
-      const instruction = await this.program.methods
-        .reclaimRent()
-        .accounts({
-          fund: fundAddress,
-          fundVault: vaultPDA,
-          manager: manager,
-          closedAccount: closedAccountAddress,
-        })
-        .instruction();
-
-      const transaction = new Transaction().add(instruction);
-      const signature = await this.provider.sendAndConfirm(transaction);
-      */
-
-      console.log(`Rent reclamation simulated successfully: ${mockSignature}`);
-      return mockSignature;
-    } catch (error) {
-      console.error('Rent reclamation error:', error);
-      throw new Error(`Failed to reclaim rent: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-
-  async closeTokenAccount(fundAddress: PublicKey, tokenAccountAddress: PublicKey): Promise<string> {
-    if (!this.provider?.wallet.publicKey) {
-      throw new Error('Wallet not connected');
-    }
-
-    const manager = this.provider.wallet.publicKey;
-    const [vaultPDA] = FundrService.findFundVaultAddress(fundAddress);
-
-    try {
-      console.log('Closing token account:', {
-        fundAddress: fundAddress.toString(),
-        tokenAccount: tokenAccountAddress.toString(),
-        manager: manager.toString(),
-        vaultPDA: vaultPDA.toString()
-      });
-
-      // Simulate successful token account closure
-      const mockSignature = `fundr_close_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // In a real deployment, this would call the actual program instruction:
-      /*
-      const instruction = await this.program.methods
-        .closeTokenAccount()
-        .accounts({
-          fund: fundAddress,
-          fundVault: vaultPDA,
-          manager: manager,
-          tokenAccount: tokenAccountAddress,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        })
-        .instruction();
-
-      const transaction = new Transaction().add(instruction);
-      const signature = await this.provider.sendAndConfirm(transaction);
-      */
-
-      console.log(`Token account closure simulated successfully: ${mockSignature}`);
-      return mockSignature;
-    } catch (error) {
-      console.error('Token account closure error:', error);
-      throw new Error(`Failed to close token account: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const accountInfo = await this.connection.getAccountInfo(this.programId);
+      return accountInfo !== null && accountInfo.executable;
+    } catch {
+      return false;
     }
   }
 }
 
-// Helper functions for UI integration
-export const formatShares = (shares: BN): string => {
-  return (shares.toNumber() / 1_000_000).toFixed(2) + 'M';
-};
-
-export const formatSOL = (lamports: BN): string => {
-  return (lamports.toNumber() / LAMPORTS_PER_SOL).toFixed(3);
-};
-
-export const calculateSharePrice = (totalAssets: BN, totalShares: BN): number => {
-  if (totalShares.isZero()) return 0.00008; // Default share price
-  return totalAssets.toNumber() / totalShares.toNumber();
-};
-
-export const calculateROI = (currentValue: BN, invested: BN): number => {
-  if (invested.isZero()) return 0;
-  return ((currentValue.toNumber() - invested.toNumber()) / invested.toNumber()) * 100;
-};
+export const fundrProgram = new FundrProgram();

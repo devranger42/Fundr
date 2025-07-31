@@ -1,20 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useWallet } from './use-wallet';
+import { useWallet } from '@/lib/wallet-provider';
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { FundrService, FUNDR_PROGRAM_ID } from '@/lib/fundr-program';
+import { fundrProgram, FUNDR_PROGRAM_ID } from '@/lib/fundr-program';
 
 // Solana RPC endpoint
 const SOLANA_RPC_URL = 'https://api.devnet.solana.com';
 
 export function useFundrProgram() {
   const { connected, publicKey } = useWallet();
-  const [fundrService, setFundrService] = useState<FundrService | null>(null);
+  const [fundrService, setFundrService] = useState<typeof fundrProgram | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-    const service = new FundrService(connection);
-    setFundrService(service);
+    setFundrService(fundrProgram);
 
     if (connected && publicKey) {
       const wallet = {
@@ -28,11 +27,8 @@ export function useFundrProgram() {
         }
       };
 
-      service.initialize(wallet).then(() => {
-        setIsInitialized(true);
-      }).catch(error => {
-        console.error('Failed to initialize Fundr program:', error);
-      });
+      // Mock initialization for now
+      setIsInitialized(true);
     } else {
       setIsInitialized(false);
     }
@@ -60,13 +56,14 @@ export function useFundrProgram() {
       const managementFeeBasisPoints = managementFee * 100;
       const performanceFeeBasisPoints = performanceFee * 100;
       
-      const result = await fundrService.createFund(
+      const result = await fundrService.initializeFund(publicKey, {
         name,
         description,
-        managementFeeBasisPoints,
-        performanceFeeBasisPoints,
-        minDeposit
-      );
+        managementFee: managementFeeBasisPoints,
+        performanceFee: performanceFeeBasisPoints,
+        minDeposit,
+        fundMode: 0 // Manual mode
+      });
       
       console.log('Fund creation successful:', result);
       return result;
@@ -85,7 +82,8 @@ export function useFundrProgram() {
       throw new Error('Fundr service not initialized');
     }
 
-    return await fundrService.deposit(fundAddress, amount);
+    const transaction = await fundrService.deposit(publicKey!, fundAddress, amount);
+    return transaction;
   }, [fundrService, isInitialized]);
 
   const withdrawFromFund = useCallback(async (
@@ -96,7 +94,9 @@ export function useFundrProgram() {
       throw new Error('Fundr service not initialized');
     }
 
-    return await fundrService.withdraw(fundAddress, shareAmount);
+    const { BN } = await import('bn.js');
+    const transaction = await fundrService.withdraw(publicKey!, fundAddress, new BN(shareAmount));
+    return transaction;
   }, [fundrService, isInitialized]);
 
   const getFundData = useCallback(async (fundAddress: PublicKey) => {

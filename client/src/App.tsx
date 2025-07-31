@@ -3,7 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { WalletProvider } from "@/hooks/use-wallet";
+import { WalletProvider } from "@/lib/wallet-provider";
 import { AuthProvider } from "@/hooks/use-auth";
 import { DebugPanel } from "@/components/debug-panel";
 import NotFound from "@/pages/not-found";
@@ -20,6 +20,7 @@ import PlatformFunds from "@/pages/platform-funds";
 import FundSettings from "@/pages/fund-settings";
 import Whitepaper from "@/pages/simple-whitepaper";
 import Terms from "@/pages/terms";
+import SolanaTestPage from "@/pages/SolanaTestPage";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/platform-funds" component={PlatformFunds} />
       <Route path="/whitepaper" component={Whitepaper} />
       <Route path="/terms" component={Terms} />
+      <Route path="/solana-test" component={SolanaTestPage} />
       <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>

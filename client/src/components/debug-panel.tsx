@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFundrProgram } from "@/hooks/use-fundr-program";
-import { useWallet } from "@/hooks/use-wallet";
+import { useWallet } from "@/lib/wallet-provider";
 import { useAuth } from "@/hooks/use-auth";
 import { 
   Bug, 
