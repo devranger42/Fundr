@@ -10,7 +10,7 @@ import BN from 'bn.js';
 import './polyfills'; // Import polyfills for browser compatibility
 
 // Program ID - will be updated when deployed to devnet
-export const FUNDR_PROGRAM_ID = new PublicKey('bRjEVMQ2ZFKj3ioMEmC7Dqg1ktaEGA4nnEedsHux9ka');
+export const FUNDR_PROGRAM_ID = new PublicKey('9Q7jD6RkFhw92Yt6YgR6RzoJT4MgB6Up4n8BqQ6nT7K5');
 
 // Account discriminators (first 8 bytes of account data)
 const FUND_DISCRIMINATOR = new Uint8Array([217, 230, 65, 101, 201, 162, 27, 125]);
@@ -111,7 +111,7 @@ export class FundrProgram {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: this.programId,
-      data: new Uint8Array([
+      data: Buffer.from([
         0, // initialize_fund instruction discriminator
         ...Array.from(new TextEncoder().encode(fundData.name)),
         0, // null terminator
@@ -145,7 +145,7 @@ export class FundrProgram {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: this.programId,
-      data: new Uint8Array([
+      data: Buffer.from([
         1, // deposit instruction discriminator
         ...new BN(amount * LAMPORTS_PER_SOL).toArray('le', 8),
       ])
@@ -172,7 +172,7 @@ export class FundrProgram {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: this.programId,
-      data: new Uint8Array([
+      data: Buffer.from([
         2, // withdraw instruction discriminator
         ...sharesToRedeem.toArray('le', 8),
       ])
