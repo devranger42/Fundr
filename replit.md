@@ -56,27 +56,28 @@ The application employs a modern full-stack architecture with a clear separation
 
 ## Smart Contract Status (Updated: 2025-08-01)
 
-**Current Status: Development Ready with Simulation Mode**
+**Current Status: Ready for GitHub Deployment**
 
-- **Smart Contract Code**: Complete Rust/Anchor implementation with full functionality
-- **Program ID**: `9Q7jD6RkFhw92Yt6YgR6RzoJT4MgB6Up4n8BqQ6nT7K5` (Development simulation)
-- **Deployment Status**: Anchor CLI version conflicts prevented devnet deployment
-- **Frontend Integration**: Fully functional with simulated program interaction
-- **Features Working**: Fund creation UI, wallet connection, deposit/withdraw interfaces, portfolio management
+- **Smart Contract Code**: Complete Rust/Anchor implementation with corrected fee structure
+- **Program ID**: `7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe` (Ready for deployment)
+- **Deployment Method**: GitHub Actions (Replit cannot compile BPF binaries)
+- **Frontend Integration**: Fully functional, awaiting real program deployment
+- **Fee Structure Fixed**: 1% platform fees, 0-20% performance fee cap, NO management fees
 
-**Deployment Blockers Encountered:**
-- Anchor CLI version mismatch (needs v0.31.2, available v0.31.0/v0.31.1)
-- System dependency conflicts (libudev, build tools)
-- Alternative deployment approaches attempted
+**Recent Security Updates:**
+- Removed management_fee field from contract
+- Added 20% cap on performance fees
+- Performance fees only charged on profits above high water mark
+- Platform fees: 1% on deposit, 1% on withdrawal (hardcoded)
 
-**Current Development Mode:**
-- Frontend operates with generated program ID for testing
-- All UI components and wallet integration fully functional  
-- Smart contract ready for deployment when CLI issues resolved
-- Complete feature set available in simulation mode
+**Trading Architecture:**
+- Manager executes Jupiter swaps with fund vault assets
+- Funds never leave vault PDA except for legitimate trades
+- Standard DeFi pattern: contract manages funds, frontend executes swaps
+- Full Jupiter integration ready in frontend
 
-**Deployment Solution Available:**
-- GitHub Actions workflow created for automated deployment
-- Program ID: `7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe` (Ready for real deployment)
-- Multiple deployment paths documented in DEPLOYMENT_GUIDE.md
-- Replit confirmed capable of deployment with external build process
+**Deployment Solution:**
+- GitHub Actions workflow ready (.github/workflows/deploy-solana.yml)
+- Mobile-friendly deployment guide (QUICK_DEPLOY_GUIDE.md)
+- Funded deployment wallet ready
+- One-click deployment after GitHub setup
