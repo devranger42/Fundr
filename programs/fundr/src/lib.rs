@@ -13,16 +13,17 @@ pub mod fundr {
         ctx: Context<InitializeFund>,
         name: String,
         description: String,
-        management_fee: u16, // in basis points (e.g., 100 = 1%)
         performance_fee: u16, // in basis points (e.g., 2000 = 20%)
         min_deposit: u64,
         fund_mode: FundMode, // manual or auto allocation mode
     ) -> Result<()> {
+        // Cap performance fee at 20%
+        require!(performance_fee <= 2000, FundrError::ExcessiveFees);
+        
         let fund = &mut ctx.accounts.fund;
         fund.authority = ctx.accounts.manager.key();
         fund.name = name;
         fund.description = description;
-        fund.management_fee = management_fee;
         fund.performance_fee = performance_fee;
         fund.min_deposit = min_deposit;
         fund.fund_mode = fund_mode;
@@ -177,27 +178,14 @@ pub mod fundr {
         Ok(())
     }
 
-    /// Collect management and performance fees
+    /// Collect performance fees only (no management fees)
     pub fn collect_fees(ctx: Context<CollectFees>) -> Result<()> {
         let fund = &mut ctx.accounts.fund;
         
         require!(ctx.accounts.manager.key() == fund.authority, FundrError::UnauthorizedManager);
         
         let current_time = Clock::get()?.unix_timestamp;
-        let time_elapsed = current_time - fund.last_fee_collection;
         
-        // Calculate management fee (annual, pro-rated)
-        let annual_seconds = 365 * 24 * 60 * 60;
-        let management_fee_amount = fund.total_assets
-            .checked_mul(fund.management_fee as u64)
-            .ok_or(FundrError::MathOverflow)?
-            .checked_mul(time_elapsed as u64)
-            .ok_or(FundrError::MathOverflow)?
-            .checked_div(10000) // basis points conversion
-            .ok_or(FundrError::MathOverflow)?
-            .checked_div(annual_seconds as u64)
-            .ok_or(FundrError::MathOverflow)?;
-
         // Calculate performance fee if above high water mark
         let current_nav = if fund.total_shares > 0 {
             fund.total_assets
@@ -224,26 +212,19 @@ pub mod fundr {
             0
         };
 
-        let total_fees = management_fee_amount + performance_fee_amount;
+        if performance_fee_amount > 0 {
+            // Transfer performance fees to manager
+            **ctx.accounts.fund_vault.to_account_info().try_borrow_mut_lamports()? -= performance_fee_amount;
+            **ctx.accounts.manager.to_account_info().try_borrow_mut_lamports()? += performance_fee_amount;
 
-        if total_fees > 0 {
-            // Transfer fees to manager
-            **ctx.accounts.fund_vault.to_account_info().try_borrow_mut_lamports()? -= total_fees;
-            **ctx.accounts.manager.to_account_info().try_borrow_mut_lamports()? += total_fees;
-
-            fund.total_assets = fund.total_assets.checked_sub(total_fees).ok_or(FundrError::MathOverflow)?;
-            
-            if performance_fee_amount > 0 {
-                fund.high_water_mark = current_nav;
-            }
+            fund.total_assets = fund.total_assets.checked_sub(performance_fee_amount).ok_or(FundrError::MathOverflow)?;
+            fund.high_water_mark = current_nav;
         }
 
         fund.last_fee_collection = current_time;
 
         msg!(
-            "Collected {} lamports in fees (mgmt: {}, perf: {})",
-            total_fees,
-            management_fee_amount,
+            "Collected {} lamports in performance fees",
             performance_fee_amount
         );
 
@@ -504,8 +485,7 @@ pub struct Fund {
     pub name: String,           // Fund name
     #[max_len(200)]
     pub description: String,    // Fund description
-    pub management_fee: u16,    // Annual management fee in basis points
-    pub performance_fee: u16,   // Performance fee in basis points
+    pub performance_fee: u16,   // Performance fee in basis points (capped at 20%)
     pub min_deposit: u64,       // Minimum deposit amount in lamports
     pub fund_mode: FundMode,    // Manual or auto allocation mode
     pub total_shares: u64,      // Total shares outstanding
@@ -556,4 +536,6 @@ pub enum FundrError {
     TokenAccountNotEmpty,
     #[msg("Invalid account provided")]
     InvalidAccount,
+    #[msg("Performance fee exceeds 20% maximum")]
+    ExcessiveFees,
 }
