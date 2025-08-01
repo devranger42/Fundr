@@ -41,8 +41,10 @@ jobs:
       - name: Install Anchor
         run: |
           cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
+          export PATH="$HOME/.cargo/bin:$PATH"
           avm install latest
           avm use latest
+          export PATH="$HOME/.avm/bin:$PATH"
           anchor --version
           
       - name: Setup Solana Wallet
@@ -59,11 +61,17 @@ jobs:
           
       - name: Build Program
         run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          export PATH="$HOME/.avm/bin:$PATH"
+          export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
           anchor build
           
       - name: Deploy Program
         id: deploy
         run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          export PATH="$HOME/.avm/bin:$PATH"
+          export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
           PROGRAM_ID=$(solana address -k target/deploy/fundr-keypair.json)
           echo "Program ID: $PROGRAM_ID"
           echo "program_id=$PROGRAM_ID" >> $GITHUB_OUTPUT
