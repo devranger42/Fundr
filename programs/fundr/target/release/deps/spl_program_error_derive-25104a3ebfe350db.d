@@ -1,0 +1,7 @@
+/home/runner/workspace/programs/fundr/target/release/deps/spl_program_error_derive-25104a3ebfe350db.d: /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/lib.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/macro_impl.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/parser.rs
+
+/home/runner/workspace/programs/fundr/target/release/deps/libspl_program_error_derive-25104a3ebfe350db.so: /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/lib.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/macro_impl.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/parser.rs
+
+/home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/lib.rs:
+/home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/macro_impl.rs:
+/home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-program-error-derive-0.4.1/src/parser.rs:

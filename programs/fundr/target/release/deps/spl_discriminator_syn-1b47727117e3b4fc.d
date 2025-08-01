@@ -1,0 +1,9 @@
+/home/runner/workspace/programs/fundr/target/release/deps/spl_discriminator_syn-1b47727117e3b4fc.d: /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/lib.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/error.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/parser.rs
+
+/home/runner/workspace/programs/fundr/target/release/deps/libspl_discriminator_syn-1b47727117e3b4fc.rlib: /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/lib.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/error.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/parser.rs
+
+/home/runner/workspace/programs/fundr/target/release/deps/libspl_discriminator_syn-1b47727117e3b4fc.rmeta: /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/lib.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/error.rs /home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/parser.rs
+
+/home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/lib.rs:
+/home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/error.rs:
+/home/runner/workspace/.local/share/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/spl-discriminator-syn-0.2.0/src/parser.rs:

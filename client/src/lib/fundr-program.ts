@@ -10,7 +10,7 @@ import BN from 'bn.js';
 import './polyfills'; // Import polyfills for browser compatibility
 
 // Program ID - will be updated when deployed to devnet
-export const FUNDR_PROGRAM_ID = new PublicKey('9Q7jD6RkFhw92Yt6YgR6RzoJT4MgB6Up4n8BqQ6nT7K5');
+export const FUNDR_PROGRAM_ID = new PublicKey('7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe');
 
 // Account discriminators (first 8 bytes of account data)
 const FUND_DISCRIMINATOR = new Uint8Array([217, 230, 65, 101, 201, 162, 27, 125]);

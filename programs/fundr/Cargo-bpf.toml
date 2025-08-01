@@ -1,0 +1,19 @@
+[package]
+name = "fundr"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "fundr"
+
+[dependencies]
+solana-program = "1.18.26"
+borsh = "1.5.7"
+borsh-derive = "1.5.7"
+spl-token = "4.0.0"
+spl-associated-token-account = "2.3.0"
+
+[profile.release]
+opt-level = "z"
+lto = true
