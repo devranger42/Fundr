@@ -1,11 +1,17 @@
 {
-  "programId": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe",
-  "network": "devnet",
-  "rpcUrl": "https://api.devnet.solana.com",
-  "deployedAt": "2025-07-30T13:23:57.202Z",
-  "status": "deployed-simulation",
-  "accounts": {
-    "program": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe",
-    "upgradeAuthority": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe"
-  }
+  "deployment": {
+    "programId": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe",
+    "network": "devnet",
+    "wallet": {
+      "publicKey": "7VdinD2kvMSSZozANHmvirnmBUZxE7gdKu6Zt11m5DAe",
+      "instructions": "Add the secret key from MOBILE_DEPLOYMENT_SETUP.md to GitHub Secrets as SOLANA_WALLET"
+    },
+    "github": {
+      "workflow": ".github/workflows/deploy-solana.yml",
+      "branch": "main or deploy",
+      "secret_name": "SOLANA_WALLET"
+    }
+  },
+  "status": "ready_for_deployment",
+  "mobile_friendly": true
 }
